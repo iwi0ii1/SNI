@@ -1,6 +1,5 @@
 #pragma once
-#include "../boot/multiboot_structs.hpp"
-
+#include "../boot/boot.hpp"
 
 namespace bos {
     /**
@@ -8,51 +7,48 @@ namespace bos {
      */
     class framebuffer final {
     private:
-        static inline uint32_t* fb = nullptr;
-        static inline uint32_t width = 0;
-        static inline uint32_t height = 0;
-        static inline uint32_t pitch = 0;
+        inline static bool initialized = false;
+        inline static boot::framebuffer_t fb;
 
     public:
-        inline static void init(const uint64_t info) noexcept {
-            if (fb)
+        /**
+         * @brief Initialize framebuffer manager.
+         */
+        inline static void init(const boot::framebuffer_t& info) noexcept {
+            if (initialized)
                 return;
 
-            auto* tag = static_cast<multiboot_tag*>(info);
+            fb = info;
 
-            while (tag->type != 0) {
-                if (tag->type == MULTIBOOT_TAG_TYPE_FRAMEBUFFER) {
-                    auto* f = (multiboot_tag_framebuffer*)tag;
-
-                    if (f->bpp != 32)
-                        return;
-
-                    fb = (uint32_t*)f->address;
-                    width = f->width;
-                    height = f->height;
-                    pitch = f->pitch / 4;
-                    return;
-                }
-
-                tag = static_cast<multiboot_tag*>(static_cast<uint8_t*>(tag) + ((tag->size + 7) & ~7));
-            }
+            initialized = true;
         }
 
-        static void put_pixel(uint32_t x, uint32_t y, uint32_t color) {
-            if (!fb || x >= width || y >= height)
-                return;
-            fb[y * pitch + x] = color;
+        inline static const decltype(fb)& fb_cref = fb; // Constant reference to framebuffer info
+
+        /**
+         * @brief Set a specific pixel to a color (hexal)
+         */
+        inline static void put_pixel(const uint32_t x, const uint32_t y, const uint32_t color) noexcept {
+            if (
+                !initialized
+                 || x >= fb_cref.width
+                 || y >= fb_cref.height
+            ) return;
+
+            fb[y * fb_cref.pitch + x] = color;
         }
 
-        static void clear(uint32_t color) {
-            if (!fb)
+        /**
+         * @brief Fill the entire screen with a color (hexal)
+         * @note Might be slow in some cases
+         */
+        inline static void fill(const uint32_t color) noexcept {
+            if (!initialized)
                 return;
 
-            for (uint32_t i = 0; i < width * height; i++)
-                fb[i] = color;
+            for (uint32_t y = 0; y < fb_cref.height; y++)
+                for (uint32_t x = 0; x < fb_cref.width; x++)
+                    fb[y * fb_cref.pitch + x] = color;
         }
-
-        static uint32_t get_width() { return width; }
-        static uint32_t get_height() { return height; }
     };
 }
