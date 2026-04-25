@@ -5,6 +5,10 @@ g++ -c start.cpp \
 -nostdlib \
 -fno-stack-protector \
 -m64 \
--I../vendor/limine \
 -o start.o \
 -std=gnu++20
+
+g++ -ffreestanding -nostdlib -m64 \
+./**/*.o \
+-T linker.ld \
+-o kernel.elf

@@ -35,20 +35,13 @@ namespace bos {
                  || y >= fb_cref.height
             ) return;
 
-            fb[y * fb_cref.pitch + x] = color;
+            fb.addr[y * fb_cref.pitch + x] = color;
         }
 
         /**
          * @brief Fill the entire screen with a color (hexal)
          * @note Might be slow in some cases
          */
-        inline static void fill(const uint32_t color) noexcept {
-            if (!initialized)
-                return;
-
-            for (uint32_t y = 0; y < fb_cref.height; y++)
-                for (uint32_t x = 0; x < fb_cref.width; x++)
-                    fb[y * fb_cref.pitch + x] = color;
-        }
+        static void fill(const uint32_t color) noexcept;
     };
 }

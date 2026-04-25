@@ -2,9 +2,9 @@
 
 
 template<typename T>
-static T read(const uint8_t* p, uint32_t offset) {
+T read(const uint8_t* p, uint32_t offset) {
     T out = {};
-    const uint8_t* dst = reinterpret_cast<const uint8_t*>(&out);
+    uint8_t* dst = reinterpret_cast<uint8_t*>(&out);
 
     for (size_t i = 0; i < sizeof(T); i++)
         dst[i] = *(p + offset + i);
@@ -15,7 +15,7 @@ static T read(const uint8_t* p, uint32_t offset) {
 
 namespace bos {
     #pragma region Definitions
-    static const tag_header_t* boot::find(const info_type type) noexcept {
+    const tag_header_t* boot::find(const info_type type) noexcept {
         if (!base || !initialized)
             return nullptr;
 
@@ -40,7 +40,7 @@ namespace bos {
     
 
 
-    static boot::framebuffer_t boot::get_framebuffer() noexcept {
+    boot::framebuffer_t boot::get_framebuffer() noexcept {
         if (!base || !initialized)
             return {};
 
@@ -72,7 +72,7 @@ namespace bos {
 
 
 
-    static boot::memory_map_t boot::get_memory_map() noexcept {
+    boot::memory_map_t boot::get_memory_map() noexcept {
         if (!base || !initialized)
             return {};
 
@@ -80,7 +80,7 @@ namespace bos {
 
 
     
-    static boot::modules_t boot::get_modules() noexcept {
+    boot::modules_t boot::get_modules() noexcept {
         if (!base || !initialized)
             return {};
 

@@ -1,4 +1,5 @@
 #include <cstdint>
+#include <cstddef>
 
 namespace bos {
     constexpr uint32_t MULTIBOOT2_MAGIC = 0x36d76289;
