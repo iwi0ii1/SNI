@@ -3,19 +3,22 @@
 
 extern "C"
 __attribute__((used, section(".multiboot"), aligned(8)))
-volatile const uint32_t mb2_header[] = {
-    0xE85250D6,
-    0x0,
-    44,
+const uint32_t mb2_header[] = {
+    bos::MULTIBOOT2_MAGIC,   // magic
+    0x0,          // architecture
+    44,           // total header length
 
-    -(0xE85250D6 + 0 + 44),
+    -(0xE85250D6 + 0 + 44), // checksum (correct full header sum)
 
-    5,
-    20,
-    1024,
-    768,
-    32,
+    // framebuffer tag
+    5,            // type
+    0,            // flags (IMPORTANT)
+    20,           // size
+    1024,         // width
+    768,          // height
+    32,           // bpp
 
+    // end tag
     0,
     8
 };
