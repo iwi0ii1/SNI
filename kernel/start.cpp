@@ -26,8 +26,10 @@ void main(const uint64_t magic, const void* info) noexcept {
 /**
  * @brief Just calls the kernel.
  */
-extern "C" [[noreturn]] void _start()
-{
+extern "C" [[noreturn]] void _start() {
+    volatile uint16_t* vga = (uint16_t*)0xB8000;
+    vga[0] = 0x4F4D; // 'M'
+
     uint64_t magic;
     void* info;
 

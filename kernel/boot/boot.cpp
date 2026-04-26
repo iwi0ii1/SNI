@@ -4,20 +4,20 @@
 extern "C"
 __attribute__((used, section(".multiboot"), aligned(8)))
 volatile const uint32_t mb2_header[] = {
-    0xE85250D6,  // magic
-    0x0,         // architecture
-    44,          // header length
-    -(0xE85250D6 + 0 + 24),
+    0xE85250D6,
+    0x0,
+    44,
 
-    // framebuffer request tag
-    5,          // type (framebuffer request)
-    20,         // size
-    1024,       // width (0 = any)
-    768,        // height (0 = any)
-    32,         // bpp
+    -(0xE85250D6 + 0 + 44),
 
-    0,           // end tag type (short, but padded)
-    8            // end tag size
+    5,
+    20,
+    1024,
+    768,
+    32,
+
+    0,
+    8
 };
 
 

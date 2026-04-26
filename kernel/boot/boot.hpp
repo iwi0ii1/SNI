@@ -53,8 +53,10 @@ namespace bos {
             base = nullptr;
             total = 0;
 
-            if (magic != MULTIBOOT2_MAGIC)
-                for(;;); // Stucked here??
+            if (magic != MULTIBOOT2_MAGIC) {
+                vga::write_str("Given magic number is not multiboot2 magic!", 44);
+                for (;;);
+            }
 
             base = reinterpret_cast<const uint8_t*>(info);
             total = *reinterpret_cast<const uint32_t*>(base);
