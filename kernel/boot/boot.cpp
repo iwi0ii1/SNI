@@ -1,6 +1,18 @@
 #include "boot.hpp"
 
 
+__attribute__((section(".multiboot"), aligned(8)))
+const unsigned int mb2_header[] = {
+    0xE85250D6,  // magic
+    0x0,         // architecture
+    24,          // header length
+    -(0xE85250D6 + 0 + 24),
+
+    0,           // end tag type (short, but padded)
+    8            // end tag size
+};
+
+
 template<typename T>
 T read(const uint8_t* p, uint32_t offset) {
     T out = {};
