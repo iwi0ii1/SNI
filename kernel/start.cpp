@@ -6,30 +6,20 @@
  * @brief Where the kernel starts.
  */
 extern "C"
-void _start() noexcept {
-    uint64_t magic;
-    void* info;
+void _start(uint64_t magic, void* info) noexcept {
+    if (magic != bos::MULTIBOOT2_MAGIC) {
+        volatile uint16_t* vga = (uint16_t*)0xB8000;
+        vga[0] = 0x4F4D; // 'M'
+        while (1) asm("hlt");
+    }
 
-    // Hell naw, we writing inline assembly??
-    asm volatile (
-        "mov %%rax, %0\n"
-        "mov %%rbx, %1\n"
-        : "=m"(magic), "=m"(info)
-        :
-        : "rax", "rbx"
-    );
-    
-    volatile uint16_t* vga = reinterpret_cast<uint16_t*>(0xB8000);
-    vga[0] = 0x4F58; // red 'X'
-    vga[1] = 0x4F59; // red 'Y'
-    vga[2] = 0x4F5A; // red 'Z'
+    if (!info) {
+        volatile uint16_t* vga = (uint16_t*)0xB8000;
+        vga[1] = 0x4F49; // 'I'
+        while (1) asm("hlt");
+    }
 
-    /*
-    bos::boot::init(magic, info);
-    bos::framebuffer::init(bos::boot::get_framebuffer());
-
-    bos::framebuffer::fill(0x00FF0000); // XRGB?
-    */
+    bos::vga::write_str("Hello world!!", 14);
 
     while (1)
         asm("hlt");

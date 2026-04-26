@@ -1,4 +1,4 @@
-g++ -c start.cpp \
+cc -c start.cpp \
 -ffreestanding \
 -fno-exceptions \
 -fno-rtti \
@@ -10,7 +10,7 @@ g++ -c start.cpp \
 
 set +f # Enable globbing (the star thingy)
 
-g++ -ffreestanding -nostdlib -m64 \
+cc -ffreestanding -nostdlib -m64 \
 start.o \
 ./**/*.o \
 -T linker.ld \

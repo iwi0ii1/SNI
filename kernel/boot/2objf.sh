@@ -1,4 +1,4 @@
-g++ -c boot.cpp \
+cc -c boot.cpp \
 -ffreestanding \
 -fno-exceptions \
 -fno-rtti \

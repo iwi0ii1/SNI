@@ -1,12 +1,20 @@
 #include "boot.hpp"
 
 
-__attribute__((section(".multiboot"), aligned(8)))
-const unsigned int mb2_header[] = {
+extern "C"
+__attribute__((used, section(".multiboot"), aligned(8)))
+volatile const uint32_t mb2_header[] = {
     0xE85250D6,  // magic
     0x0,         // architecture
-    24,          // header length
+    44,          // header length
     -(0xE85250D6 + 0 + 24),
+
+    // framebuffer request tag
+    5,          // type (framebuffer request)
+    20,         // size
+    1024,       // width (0 = any)
+    768,        // height (0 = any)
+    32,         // bpp
 
     0,           // end tag type (short, but padded)
     8            // end tag size
@@ -73,7 +81,7 @@ namespace bos {
         if (bpp != 32 || data[FB_TYPE_OFFSET] != FB_TYPE_RGB)
             return out;
 
-        out.addr = reinterpret_cast<uint32_t*>(addr);
+        out.addr = reinterpret_cast<volatile uint64_t*>(addr);
         out.width = width;
         out.height = height;
         out.pitch = pitch / 4;

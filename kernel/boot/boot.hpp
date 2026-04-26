@@ -1,3 +1,4 @@
+#include "../display/vga_text.hpp"
 #include <cstdint>
 #include <cstddef>
 
@@ -6,12 +7,10 @@ namespace bos {
     constexpr uint8_t FB_TYPE_RGB = 1;
     constexpr uint32_t FB_TYPE_OFFSET = 33;
 
-    namespace {
-        struct tag_header_t final {
-            uint32_t type;
-            uint32_t size;
-        };
-    }
+    struct tag_header_t final {
+        uint32_t type;
+        uint32_t size;
+    };
 
 
 
@@ -28,7 +27,7 @@ namespace bos {
 
     public:
         struct framebuffer_t final {
-            uint32_t* addr;
+            volatile uint64_t* addr;
             uint32_t width;
             uint32_t height;
             uint32_t pitch;
@@ -44,6 +43,9 @@ namespace bos {
         };
 
 
+        /**
+         * @brief Initialize framebuffer manager.
+         */
         inline static void init(const uint32_t magic, const void* info) noexcept {
             if (initialized)
                 return;
@@ -52,7 +54,7 @@ namespace bos {
             total = 0;
 
             if (magic != MULTIBOOT2_MAGIC)
-                for(;;);
+                for(;;); // Stucked here??
 
             base = reinterpret_cast<const uint8_t*>(info);
             total = *reinterpret_cast<const uint32_t*>(base);
@@ -66,6 +68,9 @@ namespace bos {
             initialized = true;
         }
 
+        /**
+         * @brief Retrieve a specific bootloader-given info.
+         */
         static const tag_header_t* find(const info_type type) noexcept;
 
         static framebuffer_t get_framebuffer() noexcept;

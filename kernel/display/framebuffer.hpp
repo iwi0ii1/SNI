@@ -19,11 +19,13 @@ namespace bos {
                 return;
 
             fb = info;
-
             initialized = true;
         }
 
-        inline static const decltype(fb)& fb_cref = fb; // Constant reference to framebuffer info
+        /**
+         * @brief Get framebuffer info
+         */
+        inline static decltype(fb) get_framebuffer() noexcept { return fb; }
 
         /**
          * @brief Set a specific pixel to a color (hexal)
@@ -31,17 +33,24 @@ namespace bos {
         inline static void put_pixel(const uint32_t x, const uint32_t y, const uint32_t color) noexcept {
             if (
                 !initialized
-                 || x >= fb_cref.width
-                 || y >= fb_cref.height
+                 || x >= get_framebuffer().width
+                 || y >= get_framebuffer().height
             ) return;
 
-            fb.addr[y * fb_cref.pitch + x] = color;
+            fb.addr[y * get_framebuffer().pitch + x] = color;
         }
 
         /**
          * @brief Fill the entire screen with a color (hexal)
          * @note Might be slow in some cases
          */
-        static void fill(const uint32_t color) noexcept;
+        inline static void fill(const uint32_t color) noexcept {
+            if (!initialized)
+                return;
+
+            for (uint32_t y = 0; y < get_framebuffer().height; y++)
+                for (uint32_t x = 0; x < get_framebuffer().width; x++)
+                    fb.addr[y * get_framebuffer().pitch + x] = color;
+        }
     };
 }
