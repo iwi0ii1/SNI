@@ -1,5 +1,5 @@
 #include <stdint.h>
-#include "../../debug/serial.hpp"
+//#include "../../debug/serial.hpp"
 
 __attribute__((section(".multiboot"), used))
 static const uint32_t multiboot_header[] = {
@@ -33,17 +33,41 @@ extern "C" {
 
     void main(const boot_info&) noexcept;
 
-    extern "C" [[noreturn]]
-    void _start() {
+    [[noreturn]] void _start() {
+        extern char stack_top;
+        
         asm volatile (
-            "mov $stack_top, %rsp"
+            "mov %0, %%rsp"
+            :
+            : "r"(&stack_top)
         );
 
-        serial_init();
-        serial_write_string("WhiteOS alive\n");
+        auto outb = [](uint16_t port, uint8_t val) {
+            asm volatile ("outb %0, %1" : : "a"(val), "Nd"(port));
+        };
+
+        auto inb = [](uint16_t port) -> uint8_t {
+            uint8_t ret;
+            asm volatile ("inb %1, %0" : "=a"(ret) : "Nd"(port));
+            return ret;
+        };
+
+        // init COM1
+        outb(0x3F8 + 3, 0x80);
+        outb(0x3F8 + 0, 0x03);
+        outb(0x3F8 + 1, 0x00);
+        outb(0x3F8 + 3, 0x03);
+        outb(0x3F8 + 2, 0xC7);
+        outb(0x3F8 + 4, 0x0B);
+
+        const char* msg = "WhiteOS alive\n";
+
+        for (int i = 0; msg[i]; i++) {
+            while (!(inb(0x3F8 + 5) & 0x20));
+            outb(0x3F8, msg[i]);
+        }
 
         for (;;)
             asm volatile("hlt");
     }
-
 }

@@ -14,9 +14,12 @@ SECTIONS {
     .stack (NOLOAD) : {
         . = ALIGN(16);
         stack_bottom = .;
-        . = . + 0x10000; /* 64 KB stack */
+        . = . + 0x10000;
         stack_top = .;
     }
+
+    PROVIDE(stack_top = stack_top);
+    PROVIDE(stack_bottom = stack_bottom);
 
     .text : {
         *(.text*)
