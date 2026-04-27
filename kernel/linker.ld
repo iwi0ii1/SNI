@@ -5,11 +5,18 @@ PHDRS {
 }
 
 SECTIONS {
-    . = 0x100000;
+    . = 1M;
 
     .multiboot ALIGN(8) : {
         KEEP(*(.multiboot*))
     } :text
+
+    .stack (NOLOAD) : {
+        . = ALIGN(16);
+        stack_bottom = .;
+        . = . + 0x10000; /* 64 KB stack */
+        stack_top = .;
+    }
 
     .text : {
         *(.text*)
