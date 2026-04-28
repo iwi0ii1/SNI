@@ -11,6 +11,10 @@ SECTIONS {
         KEEP(*(.multiboot*))
     } :text
 
+    .limine_requests ALIGN(8) : {
+        KEEP(*(.limine_requests))
+    }
+
     .stack (NOLOAD) : {
         . = ALIGN(16);
         stack_bottom = .;
