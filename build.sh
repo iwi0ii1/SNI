@@ -23,14 +23,14 @@ if [[ "$1" == "nocompile" ]]; then
 else
     echo "[+] Compiling all .cpp files..."
 
-    SOURCES=$(find "$KERNEL_DIR" -type f \( -name "*.cpp" -o -name "*.c" -o -name "*.asm" \))
+    SOURCES = $(find "$KERNEL_DIR" -type f \( -name "*.cpp" -o -name "*.c" -o -name "*.asm" \))
 
-    OBJS=()
+    OBJS = ()
 
-    while IFS= read -r file; do
-        rel="${file#$KERNEL_DIR/}"
-        obj="$BUILD_DIR/${rel}.o"
-        obj="${obj//\//_}"
+    while IFS = read -r file; do
+        rel = "${file#$KERNEL_DIR/}"
+        obj = "$BUILD_DIR/${rel}.o"
+        obj = "${obj//\//_}"
 
         echo "[+] $file -> $obj"
 
