@@ -27,9 +27,7 @@ stack_top:
 section .text
 bits 64
 _start:
-    /**
-     * Setup stack
-     */
+    ; Setup stack
     mov rsp, stack_top
     and rsp, -16
 
@@ -38,10 +36,8 @@ _start:
 
 
 
-    /**
-     * Zero page tables
-     * (required, otherwise garbage mappings)
-     */
+    ; Zero page tables
+    ; (required, otherwise garbage mappings)
     xor rax, rax
     lea rdi, [pml4_table]
     mov rcx, 4096/8
@@ -57,10 +53,8 @@ _start:
 
 
 
-    /**
-     * Build identity mapping
-     * (first 2MB using 2MB pages)
-     */
+    ; Build identity mapping
+    ; (first 2MB using 2MB pages)
     
     ; PML4[0] = PDPT
     lea rax, [pdpt_table]
@@ -78,17 +72,14 @@ _start:
 
 
 
-    /**
-     * Load page tables
-     */
+    ; Load page tables
     lea rax, [pml4_table]
     mov cr3, rax
 
 
 
-    /**
-     * Enable Long mode
-     */
+    
+    ; Enable Long mode
     mov rax, cr4
     or rax, (1 << 5)           ; PAE
     mov cr4, rax
@@ -105,9 +96,8 @@ _start:
 
 
 
-    /**
-     * Safe transition to kernel
-     */
+    
+    ; Safe transition to kernel
     xor rax, rax
     xor rbx, rbx
     xor rcx, rcx
