@@ -1,4 +1,4 @@
-#!bin/bash
+#!/bin/bash
 set -e
 
 rm -rf kernel/build
@@ -17,40 +17,41 @@ mkdir -p "$BUILD_DIR"
 
 if [[ "$1" == "nocompile" ]]; then
     OBJS=()
-    echo "[+] Linking kernel..."
+    printf "[+] Linking kernel...\n"
     ld -nostdlib -m elf_x86_64 -T "$KERNEL_DIR/linker.ld" -o "$OUT" "${OBJS[@]}"
 
 else
-    echo "[+] Compiling all .cpp files..."
+    printf "[+] Compiling all .cpp files..."
 
-    SOURCES = $(find "$KERNEL_DIR" -type f \( -name "*.cpp" -o -name "*.c" -o -name "*.asm" \))
+    SOURCES=$(find "$KERNEL_DIR" -type f \( -name "*.cpp" -o -name "*.c" -o -name "*.asm" \) -print)
 
-    OBJS = ()
+    OBJS=()
 
-    while IFS = read -r file; do
-        rel = "${file#$KERNEL_DIR/}"
-        obj = "$BUILD_DIR/${rel}.o"
-        obj = "${obj//\//_}"
+    while IFS= read -r file; do
+        obj="$(realpath --relative-to="$KERNEL_DIR" "$file")/${rel}.o"
+        obj="$BUILD_DIR/${obj//\//_}"
 
-        echo "[+] $file -> $obj"
 
         case "$file" in
             *.cpp)
-                g++ -ffreestanding -nostdlib -fno-exceptions -fno-rtti -O2 -m64 \
+                printf "\n[+] compiling: $file -> $obj"
+                g++ -ffreestanding -nostdlib -fno-exceptions -fno-rtti -O0 -m64 \
                     -c "$file" -o "$obj"
                 ;;
         
             *.c)
-                gcc -ffreestanding -nostdlib -O2 -m64 \
+                printf "\n[+] compiling: $file -> $obj"
+                gcc -ffreestanding -nostdlib -O0 -m64 \
                     -c "$file" -o "$obj"
                 ;;
         
             *.asm)
+                printf "\n[+] assembling: $file -> $obj"
                 nasm -f elf64 "$file" -o "$obj"
                 ;;
         
             *)
-                echo "[-] Unknown file type: $file"
+                printf "[-] Unknown file type: $file"
                 exit 1
                 ;;
         esac
@@ -58,15 +59,15 @@ else
         OBJS+=("$obj")
     done <<< "$SOURCES"
 
-    echo "[+] Linking kernel..."
+    printf "\n[+] Linking kernel...\n"
 
     ld -nostdlib -m elf_x86_64 -T "$KERNEL_DIR/linker.ld" -o "$OUT" "${OBJS[@]}"
 fi
 
-echo "[+] Copying to ISO..."
+printf "\n[+] Copying to ISO..."
 cp "$OUT" "$ISO_DIR/boot/kernel.elf"
 
-echo "[✓] Build complete"
+printf "\n[✓] Build complete"
 
 #endregion Build kernel
 
