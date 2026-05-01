@@ -1,15 +1,15 @@
+bits 64
 global _start
 extern main
 
 section .text
-bits 64
-
 _start:
     ; -----------------------------
     ; 1. Stack setup
     ; -----------------------------
     mov rsp, stack_top
     and rsp, -16
+    sub rsp, 8
 
     cli
     cld
