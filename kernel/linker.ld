@@ -20,7 +20,7 @@ SECTIONS {
         stack_bottom = .;
         . = . + 0x10000;
         stack_top = .;
-    }
+    } :text
 
     PROVIDE(stack_top = stack_top);
     PROVIDE(stack_bottom = stack_bottom);
