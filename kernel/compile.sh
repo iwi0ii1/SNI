@@ -18,7 +18,7 @@ if [[ $# -eq 0 ]]; then
         case "$file" in
             *.cpp)
                 printf "[+] Compiling $file -> $newpath\n"
-                g++ -ffreestanding -nostdlib -fno-exceptions -fno-rtti -O0 -m64 \
+                cc -ffreestanding -nostdlib -fno-exceptions -fno-rtti -O0 -m64 \
                     -c "$file" -o "$newpath"
                 ;;
         
@@ -50,24 +50,24 @@ else
 
     case "$1" in
         *.cpp)
-            printf "[+] Compiling $file -> $newpath\n"
+            printf "[+] Compiling $1 -> $newpath\n"
             g++ -ffreestanding -nostdlib -fno-exceptions -fno-rtti -O0 -m64 \
-                -c "$file" -o "$newpath"
+                -c "$1" -o "$newpath"
             ;;
         
         *.c)
-            printf "[+] compiling: $file -> $newpath\n"
+            printf "[+] compiling: $1 -> $newpath\n"
             gcc -ffreestanding -nostdlib -O0 -m64 \
-                -c "$file" -o "$newpath"
+                -c "$1" -o "$newpath"
             ;;
         
         *.asm)
-            printf "[+] assembling: $file -> $newpath\n"
-            nasm -f elf64 "$file" -o "$newpath"
+            printf "[+] assembling: $1 -> $newpath\n"
+            nasm -f elf64 "$1" -o "$newpath"
             ;;
         
         *)
-            printf "[-] Unknown file type: $file"
+            printf "[-] Unknown file type: $1"
             exit 1
             ;;
     esac

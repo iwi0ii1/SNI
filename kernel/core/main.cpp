@@ -21,9 +21,9 @@ extern "C" {
         VGA[12] = (0xF0 << 8) | '!';*/
 
         
-        char msg[] = "HELLO";
+        char msg[] = {'H','E','L','L','O',0};
 
-        for (int i = 0; msg[i]; ++i)
+        for (int i = 0; msg[i] != '\0'; ++i)
             VGA[i] = (0xF0 << 8) | msg[i];
     }
 }
