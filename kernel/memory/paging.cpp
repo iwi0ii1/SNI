@@ -26,8 +26,5 @@ void init_paging() noexcept {
     for (uint64_t i = 0; i < 512; i++)
         map(i * 0x1000, i * 0x1000);
 
-    /*for (uint64_t i = 0; i < 0x20000; i += 0x1000)
-        map(0x800000 + i, 0x800000 + i);*/
-
     asm volatile("mov %0, %%cr3" :: "r"(pml4));
 }

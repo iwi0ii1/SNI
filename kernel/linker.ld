@@ -16,7 +16,7 @@ SECTIONS {
     } :text
 
     .stack (NOLOAD) : {
-        . = 0x00300000;   /* fixed safe address */
+        . = 0x00300000;   /* fixed safe address: 3MB */
         stack_bottom = .;
         . = . + 0x10000;  /* 64 KB stack */
         stack_top = .;

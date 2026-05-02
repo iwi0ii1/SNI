@@ -23,5 +23,5 @@ printf "\n[✓] Build complete"
 grub-mkrescue -o whiteos.iso iso/
 
 if [[ "$1" == "run" ]]; then
-    qemu-system-x86_64 -cdrom whiteos.iso -display gtk
+    qemu-system-x86_64 -cdrom whiteos.iso -display gtk -d int -no-reboot
 fi
