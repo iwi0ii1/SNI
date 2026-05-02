@@ -1,29 +1,26 @@
 ENTRY(_start)
 
+MEMORY {
+    RAM (rwx) : ORIGIN = 1M, LENGTH = 512M
+}
+
 PHDRS {
     text PT_LOAD FLAGS(5);
 }
 
 SECTIONS {
-    . = 1M;
+    . = ORIGIN(RAM);
 
     .multiboot ALIGN(8) : {
         KEEP(*(.multiboot*))
     } :text
 
-    .limine_requests ALIGN(8) : {
-        KEEP(*(.limine_requests))
-    }
-
     .stack (NOLOAD) : {
-        . = ALIGN(16);
+        . = 0x00300000;   /* fixed safe address */
         stack_bottom = .;
-        . = . + 0x10000;
+        . = . + 0x10000;  /* 64 KB stack */
         stack_top = .;
-    } :text
-
-    PROVIDE(stack_top = stack_top);
-    PROVIDE(stack_bottom = stack_bottom);
+    }
 
     .text : {
         *(.text*)
