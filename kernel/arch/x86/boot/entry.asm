@@ -1,6 +1,9 @@
 bits 64
 global _start
 
+extern init_paging
+extern main
+
 section .text
 _start:
     mov rsp, stack_top
