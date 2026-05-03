@@ -1,26 +1,25 @@
 bits 64
 global _start
-
-extern init_paging
 extern main
+extern init_paging
 
 section .text
 _start:
-    mov rsp, stack_top
-    and rsp, -16
+    ; 1. Hardcode Stack to 3MB
+    mov rsp, 0x300000
+    and rsp, -16      ; Align for C ABI
 
     cli
     cld
 
+    ; 2. Pass Multiboot info to main (RDI = Pointer, RSI = Magic)
+    mov rdi, rbx      
+    mov rsi, rax
+
+    ; 3. Initial Paging & Kernel
     call init_paging
     call main
 
 .hang:
     hlt
     jmp .hang
-
-section .bss
-align 16
-stack_bottom:
-    resb 16384
-stack_top:
