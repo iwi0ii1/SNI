@@ -17,7 +17,7 @@ struct mb2_tag_framebuffer {
     uint16_t reserved;
 };
 
-void main(void* mb_addr, uint32_t magic) {
+void main(uint32_t magic, void* mb_addr) {
     struct mb2_tag* tag = (struct mb2_tag*)((uint8_t*)mb_addr + 8);
     uint32_t* lfb = 0;
     uint32_t width = 0;

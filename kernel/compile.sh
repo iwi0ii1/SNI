@@ -18,13 +18,13 @@ if [[ $# -eq 0 ]]; then
         case "$file" in
             *.cpp)
                 printf "[+] Compiling $file -> $newpath\n"
-                g++ -ffreestanding -nostdlib -fno-exceptions -fno-rtti -O0 -m64 -mno-red-zone -fno-stack-protector -fno-strict-aliasing -fno-omit-frame-pointer -fno-builtin -fno-stack-check -fno-pic \
+                g++ -ffreestanding -nostdlib -fno-exceptions -fno-rtti -O0 -g -m64 -mno-red-zone -fno-stack-protector -fno-strict-aliasing -fno-omit-frame-pointer -fno-builtin -fno-stack-check -fno-pic \
                     -c "$file" -o "$newpath"
                 ;;
         
             *.c)
                 printf "[+] compiling: $file -> $newpath\n"
-                gcc -ffreestanding -nostdlib -O0 -m64 -mno-red-zone -fno-stack-protector -fno-strict-aliasing -fno-omit-frame-pointer -fno-builtin -fno-stack-check -fno-pic \
+                gcc -ffreestanding -nostdlib -O0 -g -m64 -mno-red-zone -fno-stack-protector -fno-strict-aliasing -fno-omit-frame-pointer -fno-builtin -fno-stack-check -fno-pic \
                     -c "$file" -o "$newpath"
                 ;;
         

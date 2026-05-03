@@ -18,6 +18,9 @@ _start:
 
     ; 3. Initial Paging & Kernel
     call init_paging
+
+    mov edi, eax    ; 1st arg: magic
+    mov esi, ebx    ; 2nd arg: mb_addr
     call main
 
 .hang:
