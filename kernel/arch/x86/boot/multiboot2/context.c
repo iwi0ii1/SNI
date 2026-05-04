@@ -1,1 +1,1 @@
-// TODO: 
+// TODO: Extract infos to a struct
