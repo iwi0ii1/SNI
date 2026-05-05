@@ -30,7 +30,7 @@ if [[ $# -eq 0 ]]; then
         
             *.asm)
                 printf "[+] assembling: $file -> $newpath\n"
-                nasm -f elf64 "$file" -o "$newpath"
+                nasm -f elf64 "$file" -o "$newpath" -g -F dwarf
                 ;;
         
             *)
