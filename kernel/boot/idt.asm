@@ -17,12 +17,11 @@ idt_ptr:
 section .text
 idt_init:
     ; example: zero IDT first
-    mov rcx, 512
     lea rdi, [rel idt]
     xor rax, rax
-    rep stosq
+    mov rcx, 512
+    rep stosq           ; Call stosq 512 times (thx to rcx)
 
     lidt [idt_ptr]
 
-    sti
     ret

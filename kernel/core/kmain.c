@@ -1,6 +1,9 @@
 #include <stdint.h>
 
-void kmain(uint32_t magic, void* mb_addr) {
-    uint16_t* const VGA = 0xB8000;
-    VGA[0] = 0xF041;
+void main(void) {
+    volatile uint16_t* const VGA = (volatile uint16_t* const)0xB8000;
+    const char* const str = "Hello world!\0";
+
+    for (uint8_t i = 0; str[i]; ++i)
+        VGA[i] = 0xF000 | str[i];
 }

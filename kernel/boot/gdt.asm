@@ -25,7 +25,6 @@ gdt_init:
 
     mov ds, ax
     mov es, ax
-    ;mov ss, ax
     mov fs, ax
     mov gs, ax
 
