@@ -25,23 +25,11 @@ gdt_init:
 
     mov ds, ax
     mov es, ax
-    mov ss, ax
+    ;mov ss, ax
     mov fs, ax
     mov gs, ax
 
-    mov rax, .flush
-
-    cmp rax, 0x2
-    je .hng
-
-    push qword 0x08
-
-    push rax
-    jmp .flush
-
-.flush:
-    mov rax, 0xDEADC0DE
-    hlt
+    ret
 
 .hng:
     hlt
