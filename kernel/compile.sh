@@ -24,7 +24,7 @@ if [[ $# -eq 0 ]]; then
         
             *.c)
                 printf "[+] compiling: $file -> $newpath\n"
-                gcc -ffreestanding -nostdlib -O0 -g -m64 -mno-red-zone -fno-stack-protector -fno-strict-aliasing -fno-omit-frame-pointer -fno-builtin -fno-stack-check -fno-pic -std=c23 \
+                gcc -ffreestanding -nostdlib -O0 -g -m64 -mno-red-zone -fno-stack-protector -fno-strict-aliasing -fno-omit-frame-pointer -fno-builtin -fno-stack-check -fno-pic -std=c2x \
                     -c "$file" -o "$newpath"
                 ;;
         
