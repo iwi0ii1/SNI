@@ -3,15 +3,17 @@ global gdt_init
 global gdt_ptr
 
 section .data
-gdt_start:
+; The definition
+gdt_definition_start:
     dq 0x0000000000000000    ; null
-    dq 0x00af9a000000ffff    ; Standard 64-bit Code
-    dq 0x00af92000000ffff    ; Standard 64-bit Data
-gdt_end:
+    dq 0x002F9A000000FFFF    ; 64-bit Code (0x08)
+    dq 0x000092000000FFFF    ; 64-bit Data (0x10)
+gdt_definition_end:
 
 gdt_ptr:
-    dw gdt_end - gdt_start - 1
-    dq gdt_start
+    dw gdt_definition_end - gdt_definition_start - 1
+    dq gdt_definition_start
+    
 
 
 
@@ -19,23 +21,28 @@ section .text
 gdt_init:
     lgdt [gdt_ptr]
 
-    cmp rsp, 0x0
-    jz .hng
-
     mov ax, 0x10
-
-.hng
-    hlt
-    jmp .hng
 
     mov ds, ax
     mov es, ax
     mov ss, ax
+    mov fs, ax
+    mov gs, ax
+
+    mov rax, .flush
+
+    cmp rax, 0x2
+    je .hng
 
     push qword 0x08
-    lea rax, [rel .flush]
+
     push rax
-    retfq
+    jmp .flush
 
 .flush:
-    ret
+    mov rax, 0xDEADC0DE
+    hlt
+
+.hng:
+    hlt
+    jmp .hng
