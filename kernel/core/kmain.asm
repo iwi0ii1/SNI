@@ -20,16 +20,13 @@ kmain:
     mov ah, 0xF0
 
 .aloop:
-    lodsb           ; AL = [RSI], RSI++
+    lodsb
     test al, al
     jz .done
 
-    movzx rbx, al     ; expand safely
-    mov ax, bx        ; AX = 0x00?? (we fix next line)
-    mov al, bl
-    mov ah, 0x0F      ; reassert color (important)
+    mov ah, 0x0F      ; attribute (white on black)
+    stosw             ; write AX to VGA
 
-    stosw
     jmp .aloop
 
 .done:
