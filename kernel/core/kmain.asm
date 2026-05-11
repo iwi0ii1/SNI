@@ -2,7 +2,7 @@
 bits 64
 global kmain
 
-section .rodata
+section .data
 mystr: db "Say wallahi, bro. Say wallahi.", 0
 
 section .text

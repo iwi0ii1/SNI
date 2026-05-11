@@ -1,5 +1,6 @@
 bits 64
 global _start
+
 extern gdt_init
 extern idt_init
 extern paging_init
