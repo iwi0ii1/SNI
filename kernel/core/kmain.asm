@@ -2,32 +2,26 @@
 bits 64
 global kmain
 
-
-
 section .rodata
 mystr: db "Say wallahi, bro. Say wallahi.", 0
-mystr_len equ $ - mystr
-
-
 
 section .text
 kmain:
     cld
 
     mov rdi, 0xB8000
-    lea rsi, [rel mystr]
-
+    mov rsi, mystr
     mov ah, 0xF0
 
-.aloop:
-    lodsb
-    test al, al
-    jz .done
-
-    mov ah, 0x0F      ; attribute (white on black)
-    stosw             ; write AX to VGA
-
     jmp .aloop
-
-.done:
     ret
+
+.aloop:
+    mov al, [rsi]
+    mov word [rdi], ax
+
+    add rdi, 2
+    inc rsi
+
+    cmp byte [rsi], 0x0
+    jnz .aloop
