@@ -1,5 +1,5 @@
 bits 64
-global sul_entry
+global sul_init
 
 extern gdt_init
 extern idt_init
@@ -12,7 +12,7 @@ stack_bottom:       ; Lower address
 stack_top:          ; Higher address
 
 section .text
-sul_entry:
+sul_init:
     mov rsp, stack_top
     and rsp, -16
 

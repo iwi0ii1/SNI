@@ -2,17 +2,17 @@ bits 64
 global _start
 
 
-extern sul_entry
-extern hdl_entry
-extern hal_entry
-extern core_entry
+extern sul_init
+extern hdl_init
+extern hal_init
+extern core_init
 
 section .text
 _start:
-    call sul_entry
-    call hdl_entry
-    call hal_entry
-    call core_entry
+    call sul_init
+    call hdl_init
+    call hal_init
+    call core_init
 
 .hang:
     cli

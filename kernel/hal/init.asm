@@ -1,8 +1,7 @@
-.intel
 bits 64
-global hal_entry
+global hal_init
 
 section .text
-hal_entry:
+hal_init:
     ; Smth
     ret

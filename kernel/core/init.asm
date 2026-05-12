@@ -1,8 +1,8 @@
 bits 64
-global hdl_entry
+global core_init
 
 section .text
-hdl_entry:
+core_init:
     ; Smth
-
+    
     ret
