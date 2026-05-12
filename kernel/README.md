@@ -2,3 +2,5 @@
 ```
 Boot -> SUL -> HDL -> HAL -> Core
 ```
+
+And this kernel only supports `x86` architecture.
