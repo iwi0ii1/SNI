@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+$kernel_name = "sni"
+
 rm -rf kernel/build
 rm -rf iso/boot/kernel.elf
 
@@ -20,8 +22,8 @@ printf "\n[✓] Build complete"
 
 
 
-grub-mkrescue -o whiteos.iso iso/
+grub-mkrescue -o "$kernel_name.iso" iso/
 
 if [[ "$1" == "run" ]]; then
-    qemu-system-x86_64 -cdrom whiteos.iso -display gtk #-s -S
+    qemu-system-x86_64 -cdrom "$kernel_name.iso" -display gtk #-s -S
 fi
