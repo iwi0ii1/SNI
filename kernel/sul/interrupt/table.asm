@@ -1,6 +1,8 @@
+; A table that maps interrupts to different handlers...
+; Like `int 0xE (14)` -> calls `isr_page_fault`
+
 bits 64
 global idt_init
-global idt_fmt_ptr
 
 extern isr_page_fault
 
