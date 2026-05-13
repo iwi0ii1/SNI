@@ -1,3 +1,5 @@
+%ifdef BOOT_PROTOCOL_MB2
+
 section .multiboot
 align 8
 
@@ -18,3 +20,5 @@ mb2_start:
     dd 8
 
 mb2_end:
+
+%endif

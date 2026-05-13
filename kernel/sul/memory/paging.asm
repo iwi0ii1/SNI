@@ -16,7 +16,18 @@ pd:
 section .text
 
 paging_init:
-    ; link tables
+    ; identity map 1GB
+    mov rcx, 0
+.map:
+    mov rax, rcx
+    shl rax, 21
+    or rax, 0x83
+    mov [pd + rcx*8], rax
+
+    inc rcx
+    cmp rcx, 512
+    jne .map
+
     mov rax, pdpt
     or rax, 0x3
     mov [pml4], rax
@@ -25,20 +36,15 @@ paging_init:
     or rax, 0x3
     mov [pdpt], rax
 
-    ; identity map 1GB (2MB pages)
-    mov rcx, 0
-.map:
-    mov rax, rcx
-    shl rax, 21          ; *2MB
-    or rax, 0x83         ; present + writable + large page
-    mov [pd + rcx*8], rax
-
-    inc rcx
-    cmp rcx, 512
-    jne .map
-
-    ; load CR3
+    ; load CR3 LAST
     lea rax, [rel pml4]
+
+    mov rax, 0x2F
+    out 0xE9, al
+
     mov cr3, rax
+
+    mov rax, 0x4F
+    out 0xE9, al
 
     ret
