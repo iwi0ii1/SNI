@@ -12,15 +12,15 @@ isr_page_fault:
     mov rdi, 0xB8000
     mov ah, 0x0F
 
-.print:
+.print_loop:
     mov al, [rsi]
-    test al, al
+    test al, al        ; This checks if AL is 0... it is the same as cmp al, 0 but faster.
     jz .hang
 
     mov [rdi], ax
     add rdi, 2
     inc rsi
-    jmp .print
+    jmp .print_loop
 
 .hang:
     hlt
