@@ -21,6 +21,9 @@ section .text
 gdt_init:
     lgdt [gdt_ptr]
 
+    jmp 0x08:.next
+
+.next:
     mov ax, 0x10
 
     mov ds, ax
