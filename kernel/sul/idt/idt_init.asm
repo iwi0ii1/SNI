@@ -1,6 +1,6 @@
 bits 64
 global idt_init
-global idt_ptr
+global idt_fmt_ptr
 
 extern isr_page_fault
 
@@ -18,7 +18,9 @@ idt_fmt_ptr:            ; Just a fucking lidt format piece of shit
 
 section .text
 idt_init:
-    ; example: zero IDT first
+    cli
+
+    ; Zero all slots for handlers in table
     lea rdi, [rel idt_storage]
     xor rax, rax
     mov rcx, 512
@@ -29,7 +31,7 @@ idt_init:
     mov rbx, 14
     call idt_set_handler
 
-
+    ; Set IDT to this.
     lidt [idt_fmt_ptr]
 
     ret
@@ -38,7 +40,7 @@ idt_init:
 idt_set_handler:
     lea rdi, [idt_storage + rbx * 16]
 
-    mov word [rdi], 0x08
+    mov word [rdi], ax
     mov word [rdi + 2], 0x08
     mov byte [rdi + 4], 0
     mov byte [rdi + 5], 0x8E
