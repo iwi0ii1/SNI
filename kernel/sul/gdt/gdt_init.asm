@@ -21,14 +21,17 @@ section .text
 gdt_init:
     lgdt [gdt_ptr]
 
-    jmp 0x08:.next
+    jmp 0x08:.next        ; 0x08 refers to gdt_definition_start's second entry, which is the execution policy.
+                          ; CS still holds old policy, we need to change it to the new one.
 
 .next:
-    mov ax, 0x10
+    mov ax, 0x10          ; 0x10 refers to gdt_definition_start's third entry, which is the memory policy.
+                          ; These old segments still holds old policy, we need to change them for consistency.
 
     mov ds, ax
     mov es, ax
     mov fs, ax
     mov gs, ax
+    mov ss, ax
 
     ret
