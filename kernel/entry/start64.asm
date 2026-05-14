@@ -1,4 +1,4 @@
-; 64-bit equivalent of _start after SUL. After the CPU setup shits, we're finally in peace... or not?
+; _start but 64-bit. And definitely after sul_init jumped here.
 bits 64
 
 global _start64
