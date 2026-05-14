@@ -1,7 +1,7 @@
 ; Defines the CPU's execution and privilege rules (kernel/user code, system tasks, protected execution contexts).
 ; Example: kernel code can execute at Ring 0, user apps can only execute at Ring 3.
 
-bits 64
+bits 32
 global gdt_init
 global gdt_ptr
 

@@ -1,9 +1,10 @@
-bits 64
+bits 32
 global sul_init
+
+extern _start64
 
 extern gdt_init
 extern idt_init
-extern paging_init
 
 section .bss
 align 16
@@ -18,6 +19,7 @@ sul_init:
 
     call gdt_init
     call idt_init
-    call paging_init
 
-    ret
+    
+
+    jmp _start64

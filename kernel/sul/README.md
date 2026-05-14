@@ -33,6 +33,11 @@ This layer performs architecture-critical setup before entering the main kernel 
  - Enable SSE/SIMD features if required
 
 ### Early Hardware Initialization
-PIT/APIC timer setup
-Keyboard controller initialization
-Serial debug interface setup
+ - PIT/APIC timer setup
+ - Keyboard controller initialization
+ - Serial debug interface setup
+
+### Enable Long Mode
+ - ...
+
+After all of these, this layer will jump to `_start64` in **entry/start64.asm** as the 64-bit version of `_start`. The rest of the layers will be initialized there.

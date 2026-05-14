@@ -1,20 +1,10 @@
-bits 64
+; Where everything starts, but _start only jumps to sul_init which will do the setup including enabling long mode and jump to _start64.
+
+bits 32
 global _start
-
-
 extern sul_init
-extern hdl_init
-extern hal_init
-extern core_init
 
 section .text
 _start:
-    call sul_init
-    call hdl_init
-    call hal_init
-    call core_init
-
-.hang:
     cli
-    hlt
-    jmp .hang
+    jmp sul_init
