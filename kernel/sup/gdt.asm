@@ -9,9 +9,8 @@ section .data
 ; The table
 sup_gdt_table_start:
     dq 0x0 ; null (0x0, required by CPU)
-
-    dq 0x2F9A000000FFFF ; 64-bit Code (0x08, kernel code descriptor)
-    dq 0x92000000FFFF ; 64-bit Data (0x10, kernel memory descriptor)
+    dq 0x00209A0000000000   ; 64-bit code (L=1)
+    dq 0x0000920000000000   ; data
 sup_gdt_table_end:
 
 sup_gdt_ptr:
@@ -28,9 +27,9 @@ sup_gdt_init:
 
     ; The CPU executes according to the execution descriptor from CS.
     ; However, CS still holds old policy, we need to change it to the new one.
-    jmp 0x8:.next
+    jmp 0x8:.flush
 
-.next:
+.flush:
     ; These old segments still holds old data descriptor, we need to change them for consistency.
     mov ax, 0x10
 

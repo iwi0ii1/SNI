@@ -12,7 +12,7 @@ sup_idt_storage:
     resb 256 * 16       ; 256 slots for different kind of interrupts
 
 section .data
-sup_idt_fmt_ptr:            ; Just a fucking lsup_idt format piece of shit
+sup_idt_fmt_ptr:            ; Just a fucking lidt format piece of shit
     dw 256 * 16 - 1
     dq sup_idt_storage
 
@@ -34,7 +34,7 @@ sup_idt_init:
     call sup_idt_set_handler
 
     ; Set IDT to this.
-    lsup_idt [sup_idt_fmt_ptr]
+    lidt [sup_idt_fmt_ptr]
 
     ret
 

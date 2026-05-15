@@ -15,6 +15,8 @@ stack_top:          ; Higher address
 
 section .text
 _start:
+    cli
+
     mov esp, stack_top
     and esp, -16
 
