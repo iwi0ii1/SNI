@@ -16,9 +16,9 @@ _start64:
 
     sti
 
-    mov rax, cr0
-    bt rax, 31
-    jc .paging_on
+    ; NULL dereference for test, cuh.
+    mov rax, 0
+    mov [rax], 123
 
     ; Call the entrypoint of OS here
 
@@ -30,5 +30,8 @@ _start64:
     jmp .hang
 
 .paging_on:
-    mov word [0xB8000], 0x458F
+    cli
+
+    mov rax, 0xB8000
+    mov word [rax], 0x458F
     jmp .hang

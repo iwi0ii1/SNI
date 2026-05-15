@@ -8,22 +8,23 @@ section .text
 sup_isr_page_fault:
     cli
 
-    mov word [0xB8000], 0x458F
+    mov word [0xB8000], 0x0458
 
     mov rsi, error_msg
     mov rdi, 0xB8000
     mov ah, 0x0F
 
+    jmp .print_loop
+
 .print_loop:
     mov al, [rsi]
     test al, al        ; This checks if AL is 0... it is the same as cmp al, 0 but faster.
-    jz .hang
+    jz .done
 
     mov [rdi], ax
     add rdi, 2
     inc rsi
     jmp .print_loop
 
-.hang:
-    hlt
-    jmp .hang
+.done:
+    iretq
