@@ -1,4 +1,4 @@
-bits 64
+bits 32
 global sup_isr_page_fault
 
 section .rodata

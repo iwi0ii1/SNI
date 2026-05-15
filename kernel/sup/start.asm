@@ -3,12 +3,9 @@
 bits 32
 global _start
 
-extern hdp_init
-extern hap_init
-extern core_init
-
 extern sup_gdt_init
 extern sup_idt_init
+extern sup_paging_init
 
 section .bss
 align 16
@@ -18,18 +15,38 @@ stack_top:          ; Higher address
 
 section .text
 _start:
-    ; Prepare long mode
-    mov rsp, stack_top
-    and rsp, -16
+    mov esp, stack_top
+    and esp, -16
 
     call sup_gdt_init
+    
+    mov eax, cr4
+    or eax, (1 << 5)
+    mov cr4, eax
+
+    call sup_paging_init
+
+    mov ecx, 0xC0000080
+    rdmsr
+    or eax, (1 << 8)
+    wrmsr
+
+    mov eax, cr0
+    or eax, (1 << 31)
+    mov cr0, eax
+
+
+    jmp 0x8:_start64
+
+
+bits 64
+extern hdp_init
+extern hap_init
+extern core_init
+
+_start64:
     call sup_idt_init
 
-    
-    ; Jump to call the rest of the phases
-    jmp ._start64
-
-._start64:
     call hdp_init
     call hap_init
     call core_init

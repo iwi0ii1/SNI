@@ -11,12 +11,7 @@ This Phase performs architecture-critical setup before entering the main kernel 
  - Configure page directory structures
  - Activate virtual memory
 
-### Descriptor table setup
- - Initialize the Global Descriptor Table (GDT)
- - Load segment descriptors
- - Configure Task State Segment (TSS)
-
-### Descriptor Table Setup
+### Descriptor table Setup
  - Initialize the Global Descriptor Table (GDT)
  - Load segment descriptors
  - Configure Task State Segment (TSS)
