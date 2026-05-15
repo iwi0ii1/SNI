@@ -13,19 +13,21 @@ section .text
 sup_paging_init:
     ; zero tables (optional but recommended)
     mov edi, pml4
-    mov ecx, (4096 * 3 / 4)
+    mov ecx, (4096 * 3) / 4
     xor eax, eax
     rep stosd
 
     ; PML4[0] -> PDPT
     mov eax, pdpt
     or eax, 0x3          ; present + writable
-    mov [pml4], eax
+    mov dword [pml4], eax
+    mov dword [pml4 + 4], 0
 
     ; PDPT[0] -> PD
     mov eax, pd
     or eax, 0x3
-    mov [pdpt], eax
+    mov dword [pdpt], eax
+    mov dword [pdpt + 4], 0
 
     ; identity map first 2MB using 2MB pages
     mov ecx, 0           ; page index
@@ -33,9 +35,11 @@ sup_paging_init:
     mov eax, ecx
     shl eax, 21          ; 2MB * index
     or eax, 0x83         ; present + writable + huge page
-    mov [pd + ecx*8], eax
+    mov dword [pd + ecx * 8], eax
+    mov dword [(pd + ecx * 8) + 4], 0
+
     inc ecx
-    cmp ecx, 512
+    cmp ecx, 1           ; Only map 2MB
     jne .map_pd
 
     ; load CR3 (PML4 physical address)
