@@ -1,5 +1,5 @@
-# Boot layer
-The Boot Layer is the initial execution stage of the system, responsible for loading the kernel and preparing the minimal environment required to start kernel execution.
+# Boot phase
+The Boot Phase is the initial execution stage of the system, responsible for loading the kernel and preparing the minimal environment required to start kernel execution.
 
 It exists entirely outside the kernel proper.
 

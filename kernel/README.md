@@ -1,6 +1,8 @@
 # Kernel initialization and Execution flow:
 ```
-Boot -> SUL -> HDL -> HAL -> Core
+SUP -> HDP -> HAP-> Core
 ```
 
 And this kernel only supports `x64` architecture.
+
+`_start` is in **sup/** for enabling long mode and setting things up before the rest of the phases.

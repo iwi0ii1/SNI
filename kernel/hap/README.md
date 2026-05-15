@@ -1,5 +1,5 @@
-# Hardware Abstraction Layer (HAL)
-The HAL (Hardware Abstraction Layer) sits above HDL and provides a uniform API for hardware interaction, hiding architecture-specific and device-specific details.
+# Hardware Abstraction Phase (HAP)
+The HAP (Hardware Abstraction Phase) sits above HDP and provides a uniform API for hardware interaction, hiding architecture-specific and device-specific details.
 
 ## Responsibilities
 ### Unified Device Interfaces

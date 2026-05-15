@@ -2,29 +2,29 @@
 ; Example: kernel code can execute at Ring 0, user apps can only execute at Ring 3.
 
 bits 32
-global gdt_init
-global gdt_ptr
+global sup_gdt_init
+global sup_gdt_ptr
 
 section .data
 ; The table
-gdt_table_start:
+sup_gdt_table_start:
     dq 0x0 ; null (0x0, required by CPU)
     
     dq 0x2F9A000000FFFF ; 64-bit Code (0x08, kernel code descriptor)
     dq 0x92000000FFFF ; 64-bit Data (0x10, kernel memory descriptor)
-gdt_table_end:
+sup_gdt_table_end:
 
-gdt_ptr:
-    dw gdt_table_end - gdt_table_start - 1
-    dq gdt_table_start
+sup_gdt_ptr:
+    dw sup_gdt_table_end - sup_gdt_table_start - 1
+    dq sup_gdt_table_start
     
 
 
 
 section .text
-gdt_init:
+sup_gdt_init:
     ; Load descriptor table into CPU
-    lgdt [gdt_ptr]
+    lsup_gdt [sup_gdt_ptr]
 
     ; The CPU executes according to the execution descriptor from CS.
     ; However, CS still holds old policy, we need to change it to the new one.

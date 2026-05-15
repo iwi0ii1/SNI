@@ -1,5 +1,5 @@
-# Hardware Discovery Layer (HDL)
-The Hardware Discovery Layer (HDL) is responsible for detecting and identifying all available hardware devices during system initialization.
+# Hardware Discovery Phase (HDP)
+The Hardware Discovery Phase (HDP) is responsible for detecting and identifying all available hardware devices during system initialization.
 
 It does not control hardware deeply — it only finds and describes it.
 

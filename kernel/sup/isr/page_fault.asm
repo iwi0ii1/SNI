@@ -1,11 +1,11 @@
 bits 64
-global isr_page_fault
+global sup_isr_page_fault
 
 section .rodata
 error_msg: db "ISR Page fault reached!", 0
 
 section .text
-isr_page_fault:
+sup_isr_page_fault:
     cli
 
     mov rsi, error_msg

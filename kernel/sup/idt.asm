@@ -1,46 +1,46 @@
 ; A table that maps interrupts to different handlers...
-; Like `int 0xE (14)` -> calls `isr_page_fault`
+; Like `int 0xE (14)` -> calls `sup_isr_page_fault`
 
 bits 64
-global idt_init
+global sup_idt_init
 
-extern isr_page_fault
+extern sup_isr_page_fault
 
 section .bss
 align 16
-idt_storage:
+sup_idt_storage:
     resb 256 * 16       ; 256 slots for different kind of interrupts
 
 section .data
-idt_fmt_ptr:            ; Just a fucking lidt format piece of shit
+sup_idt_fmt_ptr:            ; Just a fucking lsup_idt format piece of shit
     dw 256 * 16 - 1
-    dq idt_storage
+    dq sup_idt_storage
 
 
 
 section .text
-idt_init:
+sup_idt_init:
     cli
 
     ; Zero all slots for handlers in table
-    lea rdi, [rel idt_storage]
+    lea rdi, [rel sup_idt_storage]
     xor rax, rax
     mov rcx, 512
     rep stosq           ; Call stosq 512 times (thx to rcx)
 
-    ; Assign `isr_page_fault` to vector 14 (Page Fault)
-    mov rax, isr_page_fault
+    ; Assign `sup_isr_page_fault` to vector 14 (Page Fault)
+    mov rax, sup_isr_page_fault
     mov rbx, 14
-    call idt_set_handler
+    call sup_idt_set_handler
 
     ; Set IDT to this.
-    lidt [idt_fmt_ptr]
+    lsup_idt [sup_idt_fmt_ptr]
 
     ret
 
 ; Set a handler for a specific vector (rax: handler, rbx: vector index)
-idt_set_handler:
-    lea rdi, [idt_storage + rbx * 16]
+sup_idt_set_handler:
+    lea rdi, [sup_idt_storage + rbx * 16]
 
     mov word [rdi], ax
     mov word [rdi + 2], 0x08

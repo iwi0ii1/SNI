@@ -50,7 +50,7 @@ Example:
 
 ## Design goal
 
-The architecture layer should be:
+The architecture phase should be:
 - as thin and low-level as possible
 - tightly bound to hardware specifics
 - isolated per CPU family

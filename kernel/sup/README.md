@@ -1,7 +1,7 @@
-# Set Up Layer (SUL)
-The **Set Up Layer (SUL)** is the early kernel initialization stage responsible for configuring the processor execution environment and enabling protected kernel operation.
+# Set Up Phase (SUP)
+The **Set Up Phase (SUP)** is the early kernel initialization stage responsible for configuring the processor execution environment and enabling protected kernel operation.
 
-This layer performs architecture-critical setup before entering the main kernel runtime.
+This Phase performs architecture-critical setup before entering the main kernel runtime.
 
 ## Core responsibilities
 
@@ -39,5 +39,3 @@ This layer performs architecture-critical setup before entering the main kernel 
 
 ### Enable Long Mode
  - ...
-
-After all of these, this layer will jump to `_start64` in **entry/start64.asm** as the 64-bit version of `_start`. The rest of the layers will be initialized there.
