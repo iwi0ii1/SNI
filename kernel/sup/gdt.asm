@@ -9,8 +9,8 @@ section .data
 ; The table
 sup_gdt_table_start:
     dq 0x0 ; null (0x0, required by CPU)
-    dq 0x00209A0000000000   ; 64-bit code (L=1)
-    dq 0x0000920000000000   ; data
+    dq 0xCF9A000000FFFF   ; 32-bit code
+    dq 0xCF92000000FFFF   ; 32-bit data
 sup_gdt_table_end:
 
 sup_gdt_ptr:

@@ -13,7 +13,7 @@ section .text
 sup_paging_init:
     ; zero tables (optional but recommended)
     mov edi, pml4
-    mov ecx, 4096*3/4
+    mov ecx, (4096 * 3 / 4)
     xor eax, eax
     rep stosd
 

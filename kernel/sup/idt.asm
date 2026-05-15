@@ -40,7 +40,9 @@ sup_idt_init:
 
 ; Set a handler for a specific vector (rax: handler, rbx: vector index)
 sup_idt_set_handler:
-    lea rdi, [sup_idt_storage + rbx * 16]
+    lea rdi, [rel sup_idt_storage]
+    shl rbx, 4          ; Multiply index by 16
+    add rdi, rbx
 
     mov word [rdi], ax
     mov word [rdi + 2], 0x08

@@ -7,6 +7,8 @@ extern sup_gdt_init
 extern sup_idt_init
 extern sup_paging_init
 
+extern _start64
+
 section .bss
 align 16
 stack_bottom:       ; Lower address
@@ -39,24 +41,3 @@ _start:
 
 
     jmp 0x8:_start64
-
-
-bits 64
-extern hdp_init
-extern hap_init
-extern core_init
-
-_start64:
-    call sup_idt_init
-
-    call hdp_init
-    call hap_init
-    call core_init
-
-    ; Call the entrypoint of OS here
-
-    jmp .hang
-
-.hang:
-    hlt
-    jmp .hang
