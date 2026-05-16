@@ -42,8 +42,8 @@ sup_gdt_table_start:
     GDT_ENTRY 0, 0xFFFFF, (ACC_CODE | RING0), FLAT_32, gdt_kernel_code ; kernel 32-bit code (ring 0)
     GDT_ENTRY 0, 0xFFFFF, (ACC_CODE | RING3), FLAT_32, gdt_user_code   ; user 32-bit code (ring 3)
     
-    GDT_ENTRY 0, 0xFFFFF, (ACC_DATA | RING3), 0, gdt_user_data   ; user data (ring 3)
     GDT_ENTRY 0, 0xFFFFF, (ACC_DATA | RING0), 0, gdt_kernel_data ; kernel data (ring 0)
+    GDT_ENTRY 0, 0xFFFFF, (ACC_DATA | RING3), 0, gdt_user_data   ; user data (ring 3)
 sup_gdt_table_end:
 
 sup_gdt_ptr:
@@ -63,13 +63,14 @@ sup_gdt_init:
     jmp 0x18:.flush
 
 .flush:
-    ; These old segments still holds old data descriptor, we need to change them for consistency.
-    mov ax, 0x10
+    mov ax, 0x28 ; 0x28 is `gdt_kernel_data` entry according to the table.
 
+    mov ss, ax
     mov ds, ax
     mov es, ax
     mov fs, ax
     mov gs, ax
-    mov ss, ax
+
+
 
     ret
