@@ -6,8 +6,19 @@ extern hdp_init
 extern hap_init
 extern core_init
 
+section .bss
+align 16
+stack_bottom:       ; Lower address
+    resb 4096 * 8   ; Stack capacity: 32KB
+stack_top:          ; Higher address
+
+
+
 section .text
 _start64:
+    mov rsp, stack_top
+    and rsp, -16
+
     call sup_idt_init
 
     call hdp_init
@@ -16,9 +27,10 @@ _start64:
 
     sti
 
-    ; NULL dereference for test, cuh.
-    mov rax, 0
-    mov [rax], 123
+    ; Testing #DE
+    mov rax, 1
+    xor rcx, rax
+    idiv rcx
 
     ; Call the entrypoint of OS here
 
@@ -27,11 +39,4 @@ _start64:
 
 .hang:
     hlt
-    jmp .hang
-
-.paging_on:
-    cli
-
-    mov rax, 0xB8000
-    mov word [rax], 0x458F
     jmp .hang

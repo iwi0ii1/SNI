@@ -4,6 +4,8 @@
 bits 64
 global sup_idt_init
 
+extern sup_isr_divide_by_zero
+extern sup_isr_general_protection_fault
 extern sup_isr_page_fault
 
 section .bss
@@ -28,10 +30,24 @@ sup_idt_init:
     mov rcx, 512
     rep stosq           ; Call stosq 512 times (thx to rcx)
 
-    ; Assign `sup_isr_page_fault` to vector 14 (Page Fault)
+
+
+    ; Assign `sup_isr_divide_by_zero` to vector 0 (#DE)
+    mov rax, sup_isr_divide_by_zero
+    mov rbx, 0
+    call sup_idt_set_handler
+
+    ; Assign `sup_isr_general_protection_fault` to vector 13 (#GP)
+    mov rax, sup_isr_general_protection_fault
+    mov rbx, 0
+    call sup_idt_set_handler
+
+    ; Assign `sup_isr_page_fault` to vector 14 (#PF)
     mov rax, sup_isr_page_fault
     mov rbx, 14
     call sup_idt_set_handler
+
+    
 
     ; Set IDT to this.
     lidt [sup_idt_fmt_ptr]

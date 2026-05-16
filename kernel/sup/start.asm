@@ -1,4 +1,4 @@
-; Prepare long mode. Then call other phases' init.
+; Prepare long mode. Then far jump to `_start64`
 
 bits 32
 global _start

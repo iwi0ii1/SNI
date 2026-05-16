@@ -8,8 +8,6 @@ section .text
 sup_isr_page_fault:
     cli
 
-    mov word [0xB8000], 0x0458
-
     mov rsi, error_msg
     mov rdi, 0xB8000
     mov ah, 0x0F
