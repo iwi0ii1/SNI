@@ -22,15 +22,12 @@ _start:
     mov esp, stack_top
     and esp, -16
 
-    ; Setup GDT
-    call sup_gdt_init
+    call sup_gdt_init ; Setup GDT
+    call sup_paging_init ; Setup page (fucking bullshit)
     
     mov eax, cr4
     or eax, (1 << 5)
     mov cr4, eax
-
-    ; Setup page
-    call sup_paging_init
 
     mov ecx, 0xC0000080
     rdmsr

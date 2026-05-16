@@ -14,7 +14,10 @@ pd: resb 4096
 
 section .text
 sup_paging_init:
-    ; zero tables (optional but recommended)
+    ; Zero tables
+    mov ax, 0x10
+    mov es, ax
+
     mov edi, pml4
     mov ecx, (4096 * 3) / 4
     xor eax, eax
@@ -32,7 +35,7 @@ sup_paging_init:
     mov dword [pdpt], eax
     mov dword [pdpt + 4], 0
 
-    ; identity map first 2MB using 2MB pages
+    ; Identity map first 2MB using 2MB pages
     mov ecx, 0           ; page index
     jmp .map_pd
 
