@@ -20,9 +20,9 @@
 %define RING0    00000000b
 %define RING3    01100000b
 
-; Flags (high nibble of limit + flags byte)
-%define FLAT_64  00100000b   ; L bit = 1 (64-bit)
-%define FLAT_32  01000000b   ; D bit = 1 (32-bit)
+%define FLAT_64  0010b        ; L=1
+%define FLAT_32  1100b        ; G=1, D=1
+%define FLAT_DATA 1000b       ; G=1
 
 
 
@@ -42,8 +42,8 @@ sup_gdt_table_start:
     GDT_ENTRY 0, 0xFFFFF, (ACC_CODE | RING0), FLAT_32, gdt_kernel_code ; kernel 32-bit code (ring 0)
     GDT_ENTRY 0, 0xFFFFF, (ACC_CODE | RING3), FLAT_32, gdt_user_code   ; user 32-bit code (ring 3)
     
-    GDT_ENTRY 0, 0xFFFFF, (ACC_DATA | RING0), 0, gdt_kernel_data ; kernel data (ring 0)
-    GDT_ENTRY 0, 0xFFFFF, (ACC_DATA | RING3), 0, gdt_user_data   ; user data (ring 3)
+    GDT_ENTRY 0, 0xFFFFF, (ACC_DATA | RING0), FLAT_DATA, gdt_kernel_data ; kernel data (ring 0)
+    GDT_ENTRY 0, 0xFFFFF, (ACC_DATA | RING3), FLAT_DATA, gdt_user_data   ; user data (ring 3)
 sup_gdt_table_end:
 
 sup_gdt_ptr:
