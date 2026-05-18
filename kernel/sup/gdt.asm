@@ -48,7 +48,7 @@ sup_gdt_table_end:
 
 sup_gdt_ptr:
     dw sup_gdt_table_end - sup_gdt_table_start - 1
-    dq sup_gdt_table_start
+    dd sup_gdt_table_start
     
 
 
@@ -65,7 +65,8 @@ sup_gdt_init:
 .flush:
     mov ax, 0x28 ; 0x28 is `gdt_kernel_data` entry according to the table.
 
-    mov ss, ax
+    ; Not ready to touch SS yet.
+    ; mov ss, ax
     mov ds, ax
     mov es, ax
     mov fs, ax

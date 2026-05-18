@@ -1,6 +1,6 @@
 # Kernel initialization and Execution flow:
 ```
-SUP -> HDP -> HAP-> Core
+SUP -> HDP -> HAP-> Runtime
 ```
 
 And this kernel only supports `x64` architecture.

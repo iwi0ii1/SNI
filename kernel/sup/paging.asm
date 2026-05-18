@@ -15,7 +15,7 @@ pd: resb 4096
 section .text
 sup_paging_init:
     ; Zero tables
-    mov ax, 0x10
+    mov ax, 0x28    ; Kernel data selector
     mov es, ax
 
     mov edi, pml4

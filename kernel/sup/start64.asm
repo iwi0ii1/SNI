@@ -4,7 +4,7 @@ global _start64
 extern sup_idt_init
 extern hdp_init
 extern hap_init
-extern core_init
+extern runtime_init
 
 section .bss
 align 16
@@ -23,14 +23,16 @@ _start64:
 
     call hdp_init
     call hap_init
-    call core_init
+    call runtime_init
 
     sti
 
+    mov word [0xB8000], 0xF041
+
     ; Testing #DE
-    mov rax, 1
-    xor rcx, rax
-    idiv rcx
+    ;mov rax, 1
+    ;xor rcx, rax
+    ;idiv rcx
 
     ; Call the entrypoint of OS here
 
