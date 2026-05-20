@@ -57,6 +57,7 @@ sup_idt_init:
 
 
 ; Set a handler for a specific vector (rax: handler, rbx: vector index)
+; Reminds: This label is being depended by `api/interrupts.asm` for a macro about registering ISR
 sup_idt_set_handler:
     lea rdi, [rel sup_idt_table]
     shl rbx, 4          ; Multiply index by 16

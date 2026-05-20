@@ -30,9 +30,9 @@ _start64:
     mov word [0xB8000], 0xF041
 
     ; Testing #DE
-    ;mov rax, 1
-    ;xor rcx, rax
-    ;idiv rcx
+    mov rax, 1
+    xor rcx, rax
+    idiv rcx
 
     ; Call the entrypoint of OS here
 

@@ -1,6 +1,6 @@
 ; Dependency file: gdt.asm
 
-; API: selector address
+; API: selectors address
 %define SUP_SELECTOR_KERNEL_CODE64 0x08
 %define SUP_SELECTOR_USER_CODE64 0x10
 

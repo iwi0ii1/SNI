@@ -32,7 +32,7 @@ global sup_gdt_init
 global sup_gdt_ptr
 
 section .data
-; The table
+; The table (updating this table signals changing api/selector.inc due to assumptions in order)
 sup_gdt_table_start:
     dq 0x0 ; null (0x0, required by CPU)
 
