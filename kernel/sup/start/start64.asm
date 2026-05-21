@@ -1,3 +1,5 @@
+; See `start.asm`to understand
+
 bits 64
 global _start64
 
@@ -27,12 +29,8 @@ _start64:
 
     sti
 
-    mov word [0xB8000], 0xF041
-
-    ; Testing #DE
-    mov rax, 1
-    xor rcx, rax
-    idiv rcx
+    ; Testing #DB
+    
 
     ; Call the entrypoint of OS here
 

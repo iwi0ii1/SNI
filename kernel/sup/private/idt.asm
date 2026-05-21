@@ -5,9 +5,15 @@ bits 64
 global sup_idt_init
 global sup_idt_set_handler
 
-extern sup_isr_divide_by_zero
-extern sup_isr_general_protection_fault
-extern sup_isr_page_fault
+extern sup_isr_de
+extern sup_isr_db
+extern sup_isr_nmi
+extern sup_isr_bp
+extern sup_isr_of
+extern sup_isr_ud
+extern sup_isr_df
+extern sup_isr_gp
+extern sup_isr_pf
 
 section .bss
 align 16
@@ -32,19 +38,48 @@ sup_idt_init:
     rep stosq           ; Call stosq 512 times (thx to rcx)
 
 
-
-    ; Assign `sup_isr_divide_by_zero` to vector 0 (#DE)
-    mov rax, sup_isr_divide_by_zero
+    ; #DE
+    mov rax, sup_isr_de
     mov rbx, 0
     call sup_idt_set_handler
 
-    ; Assign `sup_isr_general_protection_fault` to vector 13 (#GP)
-    mov rax, sup_isr_general_protection_fault
-    mov rbx, 0
+    ; #DB
+    mov rax, sup_isr_db
+    mov rbx, 1
     call sup_idt_set_handler
 
-    ; Assign `sup_isr_page_fault` to vector 14 (#PF)
-    mov rax, sup_isr_page_fault
+    ; NMI (Critical)
+    mov rax, sup_isr_nmi
+    call rbx, 2
+    call sup_idt_set_handler
+
+    ; #BP
+    mov rax, sup_isr_bp
+    mov rbx, 3
+    call sup_idt_set_handler
+
+    ; #OF
+    mov rax, sup_isr_of
+    mov rbx, 4
+    call sup_idt_set_handler
+
+    ; #UD
+    mov rax, sup_isr_ud
+    mov rbx, 5
+    call sup_idt_set_handler
+
+    ; #DF
+    mov rax, sup_isr_df
+    mov rbx, 6
+    call sup_idt_set_handler
+
+    ; #GP
+    mov rax, sup_isr_gp
+    mov rbx, 13
+    call sup_idt_set_handler
+
+    ; #PF
+    mov rax, sup_isr_pf
     mov rbx, 14
     call sup_idt_set_handler
 
