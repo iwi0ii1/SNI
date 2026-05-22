@@ -50,7 +50,7 @@ sup_idt_init:
 
     ; NMI (Critical)
     mov rax, sup_isr_nmi
-    call rbx, 2
+    mov rbx, 2
     call sup_idt_set_handler
 
     ; #BP

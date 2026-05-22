@@ -29,7 +29,7 @@ _start64:
 
     sti
 
-    ; Testing #DB
+    
     
 
     ; Call the entrypoint of OS here

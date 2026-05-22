@@ -21,6 +21,7 @@ if [[ $# -eq 0 ]]; then
                 g++ \
                     -ffreestanding \
                     -nostdlib \
+                    -nostartfiles \
                     -fno-exceptions \
                     -fno-rtti \
                     -O0 \
@@ -43,6 +44,7 @@ if [[ $# -eq 0 ]]; then
                 gcc \
                     -ffreestanding \
                     -nostdlib \
+                    -nostartfiles \
                     -O0 \
                     -g \
                     -m64 \
