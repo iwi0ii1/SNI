@@ -1,6 +1,6 @@
 #include "pci.h"
 
-static void scan_func(uint8_t bus, uint8_t device, uint8_t function) {
+static void scan_func(const uint8_t bus, const uint8_t device, const uint8_t function) {
     struct hdp_pci_device_t *dev;
     uint32_t classreg;
 
@@ -24,7 +24,7 @@ static void scan_func(uint8_t bus, uint8_t device, uint8_t function) {
     hdp_pci_store_device(dev);
 }
 
-void hdp_pci_scan_device(uint8_t bus, uint8_t device) {
+void hdp_pci_scan_device(const uint8_t bus, const uint8_t device) {
     uint8_t function;
 
     scan_func(bus, device, 0);
