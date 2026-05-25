@@ -13,7 +13,7 @@ if [[ $# -eq 0 ]]; then
     OBJS=()
 
     for file in "${SOURCES[@]}"; do
-        newpath="build/$(echo "$file" | sed 's/\//_/g')"
+        newpath="build/$(echo "${file#./}" | sed 's/\//_/g')"
 
         case "$file" in
             *.cpp)
@@ -36,7 +36,7 @@ if [[ $# -eq 0 ]]; then
                     -fno-pic \
                     -std=c++23 \
                     -D${1:-BOOT_PROTOCOL_MB2} \
-                    -c "$file" -o "$newpath"
+                    -c "${file#./}" -o "$newpath"
                 ;;
         
             *.c)
@@ -57,17 +57,17 @@ if [[ $# -eq 0 ]]; then
                     -fno-pic \
                     -std=c2x \
                     -D${1:-BOOT_PROTOCOL_MB2} \
-                    -c "$file" -o "$newpath"
+                    -c "${file#./}" -o "$newpath"
                 ;;
-        
+
             *.asm)
-                printf "[+] assembling: $file -> $newpath\n"
+                printf "[+] Assembling: $file -> $newpath\n"
                 nasm \
                 -f elf64 \
                 -g \
                 -F dwarf \
                 -D${1:-BOOT_PROTOCOL_MB2} \
-                "$file" -o "$newpath" \
+                "${file#./}" -o "$newpath" \
                 ;;
         
             *)

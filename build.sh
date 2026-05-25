@@ -10,6 +10,7 @@ rm -rf iso/boot/kernel.elf
 mkdir -p "kernel/build"
 
 cd kernel
+pwd
 bash compile.sh
 cd ..
 

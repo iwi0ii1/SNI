@@ -7,7 +7,7 @@ section .rodata
 error_msg: db "Kernel error: General Protection Fault!", 0
 
 section .text
-sup_isr_gp
+sup_isr_gp:
     cli
 
     mov rsi, error_msg
@@ -18,7 +18,7 @@ sup_isr_gp
 
 .print_loop:
     mov al, [rsi]
-    test al, al        ; This checks if AL is 0... it is the same as cmp al, 0 but faster.
+    test al, al        ; if AL == 0
     jz .done
 
     mov [rdi], ax

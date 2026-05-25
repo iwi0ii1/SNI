@@ -19,16 +19,16 @@ sup_isr_pf:
 .print_loop:
     mov al, [rsi]
     test al, al        ; This checks if AL is 0... it is the same as cmp al, 0 but faster.
-    jz .done
+    jz .hang
 
     mov [rdi], ax
     add rdi, 2
     inc rsi
     jmp .print_loop
 
-.done:
-    ;iretq
-
 .hang:
     hlt
     jmp .hang
+
+; Note: Cannot use `call` or anything stack related in ISR,
+; don't expect fault to not be related to stack, you don't know.
