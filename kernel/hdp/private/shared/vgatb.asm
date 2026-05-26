@@ -1,9 +1,9 @@
 bits 64
-global hdp_shared_puts
+global hdp_shared_putc
+global hdp_shared_aputs
 global hdp_shared_fill_vgatb
 global hdp_shared_reposition_cursor
 global hdp_shared_get_cursor_pos
-global hdp_shared_aputs
 
 section .data
 cursor_pos: dw 0
@@ -13,10 +13,36 @@ cursor_pos: dw 0
 
 
 section .text
-hdp_shared_puts:
-    mov al, [rdi]        ; get char
+hdp_shared_putc:
+    movzx rax, word [cursor_pos]
+    cmp rax, 2000
+    jae .end
+
+    mov al, dil          ; char directly in rdi
     test al, al
-    jz .end              ; al == 0
+    jz .end
+
+    movzx bx, sil
+    shl bx, 8
+    or bl, al
+
+    mov rcx, 0xB8000
+    movzx rax, word [cursor_pos]
+    shl rax, 1
+    add rcx, rax
+
+    mov word [rcx], bx
+    inc word [cursor_pos]
+
+.end:
+    ret
+
+
+
+hdp_shared_aputs:
+    mov al, [rdi]        ; get char
+    test al, al          ; al == 0
+    jz .end
 
     movzx bx, sil
     shl bx, 8
@@ -34,9 +60,30 @@ hdp_shared_puts:
 
     movzx rax, word [cursor_pos]
     cmp rax, 2000
-    jae .end
+    jb hdp_shared_aputs
 
-    jmp hdp_shared_puts
+    mov word [cursor_pos], 0
+    call .scroll        ; Only reachable if RAX is greater than 2000
+
+    jmp hdp_shared_aputs
+
+.scroll:
+    ; Set RCX to VGATB address according to `cursor_pos`
+    mov rcx, 0xB8000
+    movzx rax, word [cursor_pos]
+    shl rax, 1              ; Don't use IMUL, better to use left shift
+    add rcx, rax
+
+    mov ax, [rcx + 160]     ; This is allowed as x86 has complex addressing mode
+    mov word [rcx], ax
+
+    inc word [cursor_pos]
+
+    movzx rax, word [cursor_pos]
+    cmp rax, 1920
+    jae .end
+    
+    jmp .scroll
 
 .end:
     ret
@@ -103,55 +150,4 @@ hdp_shared_reposition_cursor:
 
     mov word [cursor_pos], ax
 
-    ret
-
-
-
-hdp_shared_aputs:
-    mov al, [rdi]        ; get char
-    test al, al          ; al == 0
-    jz .end
-
-    movzx bx, sil
-    shl bx, 8
-    or bl, al            ; better than mov bl, al
-
-    mov rcx, 0xB8000
-    movzx rax, word [cursor_pos]
-    shl rax, 1           ; Don't use IMUL, better to use left shift
-    add rcx, rax
-
-    mov word [rcx], bx
-
-    inc rdi
-    inc word [cursor_pos]
-
-    movzx rax, word [cursor_pos]
-    cmp rax, 2000
-    jb hdp_shared_aputs
-
-    mov word [cursor_pos], 0
-    call .scroll        ; Only reachable if RAX is greater than 2000
-
-    jmp hdp_shared_aputs
-
-.scroll:
-    ; Set RCX to VGATB address according to `cursor_pos`
-    mov rcx, 0xB8000
-    movzx rax, word [cursor_pos]
-    shl rax, 1              ; Don't use IMUL, better to use left shift
-    add rcx, rax
-
-    mov ax, [rcx + 160]     ; This is allowed as x86 has complex addressing mode
-    mov word [rcx], ax
-
-    inc word [cursor_pos]
-
-    movzx rax, word [cursor_pos]
-    cmp rax, 1920
-    jae .end
-    
-    jmp .scroll
-
-.end:
     ret
