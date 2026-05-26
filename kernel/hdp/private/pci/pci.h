@@ -124,10 +124,11 @@ static inline uint8_t hdp_pci_get_capabilities_ptr8(
 ) { return hdp_pci_read8(bus, device, function, 0x34); }
 
 
-extern void hdp_pci_store_device(const struct hdp_pci_device_t* const);     // Store what's found to the list, cuh
-extern struct hdp_pci_device_t* const hdp_pci_next_device_slot(void);       // Get the next device slot, cuh
+extern void hdp_pci_store_device(const struct hdp_pci_device_t* const);   // Store what's found to the list, cuh
+extern struct hdp_pci_device_t* const hdp_pci_next_device_slot(void);     // Get next device slot. Returns NULL if limit reached
+extern const struct hdp_pci_device_t* const hdp_pci_get_device_slot(const uint16_t idx); // Get a device slot (0 based). Returns NULL if out-of-bounds.
 
-extern void hdp_pci_scan_device(const uint8_t bus, const uint8_t device);   // Scan devices through PCI, cuh
+extern void hdp_pci_scan_device(const uint8_t bus, const uint8_t device); // Scan devices through PCI, cuh
 extern void hdp_pci_scan_bus(void);     // Scan the PCI bus, cuh
 extern void hdp_pci_init(void);     // PCI shits, fam
 

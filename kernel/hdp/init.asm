@@ -7,28 +7,24 @@ extern hdp_acpi_init
 extern hdp_pci_init
 
 section .rodata
-mstr: db "It works!!"
+mstr: db "It doesn't works!!"
 
 section .text
 hdp_init:
     xor dil, dil
     call hdp_shared_fill_vgatb
 
-    mov rax, 1
-    call .hdp_test_plooper
-
-    call hdp_acpi_init
-    call hdp_pci_init
-
-    ret
-
-.hdp_test_plooper:
-    mov rdi, rax
+    mov rdi, mstr
     mov sil, 0x0F
-    call hdp_shared_putc
-    inc rax
+    call hdp_shared_aputs
 
-    cmp rax, 255
-    jb .hdp_test_plooper
+    call hdp_shared_newline_cursor
+
+    mov rdi, mstr
+    mov sil, 0x0F
+    call hdp_shared_aputs
+
+    ;call hdp_acpi_init
+    ;call hdp_pci_init
 
     ret

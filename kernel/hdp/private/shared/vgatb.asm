@@ -2,8 +2,9 @@ bits 64
 global hdp_shared_putc
 global hdp_shared_aputs
 global hdp_shared_fill_vgatb
-global hdp_shared_reposition_cursor
 global hdp_shared_get_cursor_pos
+global hdp_shared_reposition_cursor
+global hdp_shared_newline_cursor
 
 section .data
 cursor_pos: dw 0
@@ -13,6 +14,33 @@ cursor_pos: dw 0
 
 
 section .text
+hdp_shared_internal_scroll:
+    mov rsi, 0xB8000 + 160        ; source = row 1
+    mov rdi, 0xB8000              ; dest   = row 0
+    mov ecx, 24 * 80              ; 24 rows * 80 chars
+    rep movsw                     ; copy words upward
+
+    ; clear last row
+    mov ecx, 80
+    mov ax, 0x0720                ; ' ' with attribute
+
+.clear_loop:
+    stosw
+    loop .clear_loop
+
+    movzx eax, word [cursor_pos]
+    cmp eax, 80
+    jb .clamp                     ; if cursor_pos < 80, then set to 0
+
+    sub word [cursor_pos], 80
+    ret
+
+.clamp:
+    mov word [cursor_pos], 0
+    ret
+
+
+
 hdp_shared_putc:
     movzx rax, word [cursor_pos]
     cmp rax, 2000
@@ -63,27 +91,9 @@ hdp_shared_aputs:
     jb hdp_shared_aputs
 
     mov word [cursor_pos], 0
-    call .scroll        ; Only reachable if RAX is greater than 2000
+    call hdp_shared_internal_scroll        ; Only reachable if RAX is greater than 2000
 
     jmp hdp_shared_aputs
-
-.scroll:
-    ; Set RCX to VGATB address according to `cursor_pos`
-    mov rcx, 0xB8000
-    movzx rax, word [cursor_pos]
-    shl rax, 1              ; Don't use IMUL, better to use left shift
-    add rcx, rax
-
-    mov ax, [rcx + 160]     ; This is allowed as x86 has complex addressing mode
-    mov word [rcx], ax
-
-    inc word [cursor_pos]
-
-    movzx rax, word [cursor_pos]
-    cmp rax, 1920
-    jae .end
-    
-    jmp .scroll
 
 .end:
     ret
@@ -130,7 +140,7 @@ hdp_shared_get_cursor_pos:
     ; AX: y (max 25)
     ; DX: x (max 80)
 
-    shl ax, 8
+    shl dx, 8
     or ax, dx
 
     ret
@@ -150,4 +160,41 @@ hdp_shared_reposition_cursor:
 
     mov word [cursor_pos], ax
 
+    ret
+
+
+
+hdp_shared_newline_cursor:
+    mov ax, word [cursor_pos]
+    cmp ax, 1920
+    jb .no_scroll       ; cursor_pos < 1920 means not at last row
+    jmp .scroll
+
+.scroll:
+    call hdp_shared_internal_scroll
+
+    xor di, di
+    mov si, 24
+    call hdp_shared_reposition_cursor
+
+    ret
+
+.no_scroll:
+    call hdp_shared_get_cursor_pos   ; AH=x, AL=y
+
+    xor ah, ah        ; reset x = 0
+    inc al            ; y++
+
+    ; --- unpack row/col ---
+    movzx di, ah      ; x = 0
+    movzx si, al      ; y = row
+
+    ; --- update cursor_pos ---
+    mov ax, si
+    imul ax, 80
+    add ax, di
+    mov [cursor_pos], ax
+
+    ; --- reposition ---
+    call hdp_shared_reposition_cursor
     ret

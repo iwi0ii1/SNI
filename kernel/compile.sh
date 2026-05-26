@@ -13,7 +13,8 @@ if [[ $# -eq 0 ]]; then
     OBJS=()
 
     for file in "${SOURCES[@]}"; do
-        newpath="build/$(echo "${file#./}" | sed 's/\//_/g')"
+        file="${file#./}"
+        newpath="build/$(echo "$file" | sed 's/\//_/g')"
 
         case "$file" in
             *.cpp)
