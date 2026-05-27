@@ -14,17 +14,7 @@ hdp_init:
     xor dil, dil
     call hdp_shared_fill_vgatb
 
-    mov rdi, mstr
-    mov sil, 0x0F
-    call hdp_shared_aputs
-
-    call hdp_shared_newline_cursor
-
-    mov rdi, mstr
-    mov sil, 0x0F
-    call hdp_shared_aputs
-
-    ;call hdp_acpi_init
-    ;call hdp_pci_init
+    call hdp_acpi_init
+    call hdp_pci_init
 
     ret

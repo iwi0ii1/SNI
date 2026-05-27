@@ -1,17 +1,67 @@
 #include "pci.h"
 
+
 extern void hdp_shared_aputs(char*, uint8_t);
 extern void hdp_shared_newline_cursor(void);
 
+/// @brief Unsigned to ASCII
+static const char* const utoa(uint32_t v) {
+    static const char* const num_str;
+
+    char* p = num_str;
+    char* start = num_str;
+
+    do {
+        *p++ = '0' + (v % 10);
+        v /= 10;
+    } while (v);
+
+    *p = '\0';
+
+    // reverse
+    char* end = p - 1;
+    while (start < end) {
+        char tmp = *start;
+        *start++ = *end;
+        *end-- = tmp;
+    }
+
+    return num_str;
+}
+
+/// @brief Concatenate two strings (both must be null-terminated)
+static char* strcat(char* dst, const char* src) {
+    char* p = dst;
+
+    while (*p) p++;        // find end of dst
+
+    while (*src) {         // copy src
+        *p++ = *src++;
+    }
+
+    *p = '\0';
+    return dst;
+}
+
+
+
 void hdp_pci_init(void) {
-    if (hdp_pci_ecam_base_address == 0)
+    if (hdp_pci_ecam_base_address == 0) {
+        hdp_shared_aputs("Well, hdp_pci_ecam_base_address is 0... can't scan buses without it.", 0x0F);
         return;
+    }
 
     hdp_pci_scan_bus();
     
     for (uint16_t i = 0; i < 512; ++i) {
         const struct hdp_pci_device_t* const dev_slot = hdp_pci_get_device_slot(i);
-        hdp_shared_aputs("", 0x0F);
+
+        hdp_shared_aputs(strcat("- Bus: ", utoa(dev_slot->bus)), 0x0F);
+        hdp_shared_aputs(strcat(", Dev: ", utoa(dev_slot->dev)), 0x0F);
+        hdp_shared_aputs(strcat(", Func: ", utoa(dev_slot->func)), 0x0F);
+        hdp_shared_aputs(strcat(", Vendor: ", utoa(dev_slot->vendor)), 0x0F);
+        //hdp_shared_aputs(strcat(", Dev"))
+
         hdp_shared_newline_cursor();
     }
 }
