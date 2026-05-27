@@ -5,8 +5,8 @@ extern void hdp_shared_aputs(char*, uint8_t);
 extern void hdp_shared_newline_cursor(void);
 
 /// @brief Unsigned to ASCII
-static const char* const utoa(uint32_t v) {
-    static const char* const num_str;
+static char* utoa(uint32_t v) {
+    static char num_str[11]; // 4.2 billion only has 10 digits, and last one for null-terminator
 
     char* p = num_str;
     char* start = num_str;
