@@ -16,7 +16,12 @@ struct hdp_pci_device_t {
     uint8_t subclass;
 };
 
-extern uint64_t hdp_pci_ecam_base_address;
+struct hdp_pci_ecam_region {
+    uintptr_t base;
+    uint16_t segment;
+    uint8_t start_bus;
+    uint8_t end_bus;
+};
 
 extern uint8_t hdp_pci_read8(const uint8_t bus, const uint8_t device, const uint8_t function, const uint16_t offset);   // Get a byte stored in an offset
 extern uint16_t hdp_pci_read16(const uint8_t bus, const uint8_t device, const uint8_t function, const uint16_t offset); // Get 2 bytes stored in an offset
