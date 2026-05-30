@@ -1,4 +1,5 @@
 #include "pci.h"
+#include "../acpi/acpi.h"
 
 
 extern void hdp_shared_aputs(char*, uint8_t);
@@ -46,7 +47,7 @@ static char* strcat(char* dst, const char* src) {
 
 
 void hdp_pci_init(void) {
-    if (hdp_pci_ecam_base_address == 0) {
+    if (hdp_acpi_get_ecam_base() == 0) {
         hdp_shared_aputs("Well, hdp_pci_ecam_base_address is 0... can't scan buses without it.", 0x0F);
         return;
     }

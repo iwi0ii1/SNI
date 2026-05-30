@@ -1,8 +1,7 @@
 // Reading 
 
 #include "pci.h"
-
-extern uintptr_t hdp_acpi_get_ecam_base(void);
+#include "../acpi/acpi.h"
 
 uint32_t hdp_pci_read32(const uint8_t bus, const uint8_t device, const uint8_t function, const uint16_t offset) {
     uint64_t address;
