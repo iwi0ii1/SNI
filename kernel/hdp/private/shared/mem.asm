@@ -5,27 +5,28 @@ section .text
 hdp_shared_memcmp:
     push rbp
     mov rbp, rsp
+
     mov rcx, rdx        ; n
-    mov rsi, rdi        ; s1
-    mov rdi, rsi        ; s2
+    mov rsi, rdi        ; s1 (WRONG in your code!)
 
 .lup:
-    cmp rcx, 0
+    test rcx, rcx
     je .equal
-    mov al, [rsi]
-    mov bl, [rdi]
+    mov al, [rdi]       ; load from s1
+    mov bl, [rsi]       ; load from s2
     cmp al, bl
     jne .diff
-    inc rsi
     inc rdi
+    inc rsi
     dec rcx
     jmp .lup
 
 .equal:
-    xor eax, eax
+    xor eax, eax        ; return 0
     pop rbp
     ret
 
 .diff:
-    mov eax, 1
-    pop rbp    
+    mov eax, 1          ; return nonzero
+    pop rbp
+    ret

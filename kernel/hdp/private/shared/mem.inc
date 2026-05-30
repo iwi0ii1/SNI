@@ -3,6 +3,6 @@
 ; Compare string of bytes
 ; Parameter: RDI for first string (ptr)
 ; Parameter: RSI for second string (ptr)
-; Parameter: EDX for bytes to compare
+; Parameter: EDX for bytes count to compare
 ; Return: EAX of 0 for same, else different
 extern hdp_shared_memcmp

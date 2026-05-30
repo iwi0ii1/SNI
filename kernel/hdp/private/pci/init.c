@@ -2,7 +2,7 @@
 #include "../acpi/acpi.h"
 
 
-extern void hdp_shared_aputs(char*, uint8_t);
+extern void hdp_shared_aputs(const char* const, const uint8_t);
 extern void hdp_shared_newline_cursor(void);
 
 /// @brief Unsigned to ASCII
@@ -49,6 +49,9 @@ static char* strcat(char* dst, const char* src) {
 void hdp_pci_init(void) {
     if (hdp_acpi_get_ecam_base() == 0) {
         hdp_shared_aputs("Well, hdp_pci_ecam_base_address is 0... can't scan buses without it.", 0x0F);
+        while (1)
+            __asm__("hlt");
+
         return;
     }
 

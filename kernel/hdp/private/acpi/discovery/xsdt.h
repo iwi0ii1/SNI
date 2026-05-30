@@ -8,12 +8,13 @@
 #include <stdint.h>
 #include <stddef.h>
 
-/// @brief XSDT header
+/// @brief XSDT header (v2+)
 struct hdp_acpi_xsdt_header_t {
     char signature[4];       // "XSDT"
     uint32_t length;         // total length of the table
     uint8_t revision;
     uint8_t checksum;
+
     char oem_id[6];
     char oem_table_id[8];
     uint32_t oem_revision;

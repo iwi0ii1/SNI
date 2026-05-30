@@ -18,3 +18,6 @@
 
 5. ## Execution pipeline
   - **Init-style pipeline**: Each phase follows an init‑style execution pipeline. The order is documented implicitly in `init.asm`, making execution predictable and self‑documenting.
+
+6. ## Debugging
+  - **Halt in error condition**: Always prefer to halt in an infinite loop to avoid continuation of farther crashes.
