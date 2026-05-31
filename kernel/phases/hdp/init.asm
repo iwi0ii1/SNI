@@ -11,8 +11,9 @@ mstr: db "It doesn't works!!"
 
 section .text
 hdp_init:
-    xor dil, dil
-    call hdp_shared_fill_vgatb
+    mov dil, ' '
+    xor sil, sil
+    call shared_vgatb_fill_char
 
     call hdp_acpi_init
     call hdp_pci_init

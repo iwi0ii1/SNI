@@ -6,7 +6,7 @@ bits 64
 extern sup_idt_set_handler
 
 %macro SUP_API_REGISTER_ISR 2
-    mov rax, %1      ; handler
-    mov rbx, %2      ; vector
+    mov rdi, %1      ; handler
+    mov si, %2      ; vector
     call sup_idt_set_handler
 %endmacro

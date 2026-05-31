@@ -7,7 +7,7 @@
  * @param ch Character to print
  * @param attr Color Attribute
  */
-extern void hdp_shared_vgatb_putc(const unsigned char ch, const uint8_t attr);
+extern void shared_vgatb_putc(const unsigned char ch, const uint8_t attr);
 
 /**
  * @brief Print string but automatically scrolls and relative to the current cursor position
@@ -15,13 +15,14 @@ extern void hdp_shared_vgatb_putc(const unsigned char ch, const uint8_t attr);
  * @param attr Color attribute
  * @note String MUST be null-terminated, else expect hitting #PF (assume such ISR implemented)
  */
-extern void hdp_shared_vgatb_aputs(const unsigned char* ch_ptr, const uint8_t attr);
+extern void shared_vgatb_aputs(const unsigned char* const ch_ptr, const uint8_t attr);
 
 /**
  * @brief Fill VGATGB with a color
+ * @param ch Character to fill
  * @param attr Color attribute
  */
-extern void hdp_shared_vgatb_fill(const uint8_t attr);
+extern void shared_vgatb_fill_char(const unsigned char ch, const uint8_t attr);
 
 /**
  * @brief Reposition internal cursor
@@ -29,18 +30,19 @@ extern void hdp_shared_vgatb_fill(const uint8_t attr);
  * @param y_coord Y coordination
  * @note Starts with 0 index, not 1
  */
-extern void hdp_shared_vgatb_reposition_cursor(const uint16_t x_coord, const uint16_t y_coord);
+extern void shared_vgatb_reposition_cursor(const uint8_t x_coord, const uint8_t y_coord);
 
 /**
  * @brief Get cursor position
- * @return Upper 8 bits -> X coordination
- * @return Lower 8 bits -> Y coordination
+ * @return - Upper 8 bits -> X coordination
+ * @return - Lower 8 bits -> Y coordination
  * @note Starts with 0 index, not 1
  */
-extern void hdp_shared_vgatb_get_cursor_pos(void);
+extern uint16_t shared_vgatb_get_cursor_pos(void);
 
 /**
  * @brief Newline cursor
+ * @param rep Repetitions
  * @note Will scroll if reached the bottom
  */
-extern void hdp_shared_vgatb_newline_cursor(void);
+extern void shared_vgatb_newline_cursor(const uint8_t rep);

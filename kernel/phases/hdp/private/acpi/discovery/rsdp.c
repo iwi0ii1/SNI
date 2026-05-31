@@ -2,6 +2,7 @@
 
 // A header that tells where the "table of ptrs to other firmware tables (XSDT)" is.
 #include "phases/hdp/private/acpi/discovery/rsdp.h"
+#include "shared/vgatb.h"
 #include "shared/mem.h"
 
 #define RSDP_SIGNATURE "RSD PTR "
@@ -36,16 +37,16 @@ struct hdp_acpi_rsdp_descriptor_t* hdp_acpi_find_rsdp(const uint32_t start, cons
 
         struct hdp_acpi_rsdp_descriptor_t* rsdp = (struct hdp_acpi_rsdp_descriptor_t*)addr;
 
-        if (rsdp->signature[0] != 'R') hdp_shared_aputs("0", 0x0F);
-        if (rsdp->signature[1] != 'S') hdp_shared_aputs("1", 0x0F);
-        if (rsdp->signature[2] != 'D') hdp_shared_aputs("2", 0x0F);
-        if (rsdp->signature[3] != ' ') hdp_shared_aputs("3", 0x0F);
-        if (rsdp->signature[4] != 'P') hdp_shared_aputs("4", 0x0F);
-        if (rsdp->signature[5] != 'T') hdp_shared_aputs("5", 0x0F);
-        if (rsdp->signature[6] != 'R') hdp_shared_aputs("6", 0x0F);
-        if (rsdp->signature[7] != ' ') hdp_shared_aputs("7", 0x0F);
+        if (rsdp->signature[0] != 'R') shared_vgatb_aputs("0", 0x0F);
+        if (rsdp->signature[1] != 'S') shared_vgatb_aputs("1", 0x0F);
+        if (rsdp->signature[2] != 'D') shared_vgatb_aputs("2", 0x0F);
+        if (rsdp->signature[3] != ' ') shared_vgatb_aputs("3", 0x0F);
+        if (rsdp->signature[4] != 'P') shared_vgatb_aputs("4", 0x0F);
+        if (rsdp->signature[5] != 'T') shared_vgatb_aputs("5", 0x0F);
+        if (rsdp->signature[6] != 'R') shared_vgatb_aputs("6", 0x0F);
+        if (rsdp->signature[7] != ' ') shared_vgatb_aputs("7", 0x0F);
 
-        if (hdp_shared_memcmp(rsdp->signature, RSDP_SIGNATURE, 8) != 0 || !checksum_valid(rsdp))
+        if (shared_mem_cmp(rsdp->signature, RSDP_SIGNATURE, 8) != 0 || !checksum_valid(rsdp))
             continue;
 
         return rsdp;

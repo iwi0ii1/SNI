@@ -1,8 +1,8 @@
 bits 64
-global runtime_init
+global rtp_init
 
 section .text
-runtime_init:
+rtp_init:
     ; Smth
     
     ret

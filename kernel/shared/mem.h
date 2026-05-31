@@ -9,4 +9,4 @@
  * @param b_count Bytes count to compare
  * @return 0 for same, else different
  */
-extern _Bool hdp_shared_memcmp(const void* const b_ptr1, const void* const b_ptr2, const uint32_t b_count);
+extern uint8_t shared_mem_cmp(const void* const b_ptr1, const void* const b_ptr2, const uint32_t b_count);

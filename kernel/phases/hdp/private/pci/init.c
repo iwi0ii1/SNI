@@ -46,7 +46,7 @@ static char* strcat(char* dst, const char* src) {
 
 void hdp_pci_init(void) {
     if (hdp_acpi_get_ecam_base() == 0) {
-        hdp_shared_aputs("Well, hdp_pci_ecam_base_address is 0... can't scan buses without it.", 0x0F);
+        shared_vgatb_aputs("Well, hdp_pci_ecam_base_address is 0... can't scan buses without it.", 0x0F);
         while (1)
             __asm__("hlt");
 
@@ -58,12 +58,12 @@ void hdp_pci_init(void) {
     for (uint16_t i = 0; i < 512; ++i) {
         const struct hdp_pci_device_t* const dev_slot = hdp_pci_get_device_slot(i);
 
-        hdp_shared_aputs(strcat("- Bus: ", utoa(dev_slot->bus)), 0x0F);
-        hdp_shared_aputs(strcat(", Dev: ", utoa(dev_slot->dev)), 0x0F);
-        hdp_shared_aputs(strcat(", Func: ", utoa(dev_slot->func)), 0x0F);
-        hdp_shared_aputs(strcat(", Vendor: ", utoa(dev_slot->vendor)), 0x0F);
-        //hdp_shared_aputs(strcat(", Dev"))
+        shared_vgatb_aputs(strcat("- Bus: ", utoa(dev_slot->bus)), 0x0F);
+        shared_vgatb_aputs(strcat(", Dev: ", utoa(dev_slot->dev)), 0x0F);
+        shared_vgatb_aputs(strcat(", Func: ", utoa(dev_slot->func)), 0x0F);
+        shared_vgatb_aputs(strcat(", Vendor: ", utoa(dev_slot->vendor)), 0x0F);
+        //shared_vgatb_aputs(strcat(", Dev"))
 
-        hdp_shared_newline_cursor();
+        shared_vgatb_newline_cursor(1);
     }
 }

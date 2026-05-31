@@ -39,48 +39,48 @@ sup_idt_init:
 
 
     ; #DE
-    mov rax, sup_isr_de
-    mov rbx, 0
+    mov rdi, sup_isr_de
+    mov si, 0
     call sup_idt_set_handler
 
     ; #DB
-    mov rax, sup_isr_db
-    mov rbx, 1
+    mov rdi, sup_isr_db
+    mov si, 1
     call sup_idt_set_handler
 
     ; NMI (Critical)
-    mov rax, sup_isr_nmi
-    mov rbx, 2
+    mov rdi, sup_isr_nmi
+    mov si, 2
     call sup_idt_set_handler
 
     ; #BP
-    mov rax, sup_isr_bp
-    mov rbx, 3
+    mov rdi, sup_isr_bp
+    mov si, 3
     call sup_idt_set_handler
 
     ; #OF
-    mov rax, sup_isr_of
-    mov rbx, 4
+    mov rdi, sup_isr_of
+    mov si, 4
     call sup_idt_set_handler
 
     ; #UD
-    mov rax, sup_isr_ud
-    mov rbx, 5
+    mov rdi, sup_isr_ud
+    mov si, 5
     call sup_idt_set_handler
 
     ; #DF
-    mov rax, sup_isr_df
-    mov rbx, 6
+    mov rdi, sup_isr_df
+    mov si, 6
     call sup_idt_set_handler
 
     ; #GP
-    mov rax, sup_isr_gp
-    mov rbx, 13
+    mov rdi, sup_isr_gp
+    mov si, 13
     call sup_idt_set_handler
 
     ; #PF
-    mov rax, sup_isr_pf
-    mov rbx, 14
+    mov rdi, sup_isr_pf
+    mov si, 14
     call sup_idt_set_handler
 
     
@@ -91,22 +91,23 @@ sup_idt_init:
     ret
 
 
-; Set a handler for a specific vector (rax: handler, rbx: vector index)
+; Set a handler for a specific vector (rdi: handler address, si: vector index)
 ; Reminds: This label is being depended by `api/interrupts.asm` for a macro about registering ISR
 sup_idt_set_handler:
-    lea rdi, [rel sup_idt_table]
-    shl rbx, 4          ; Multiply index by 16
-    add rdi, rbx
+    lea rdx, [rel sup_idt_table]
+    shl si, 4          ; Multiply index by 16
+    movzx rsi, si      ; Zero-extend SI
+    add rdx, rsi
 
-    mov word [rdi], ax
-    mov word [rdi + 2], 0x08
-    mov byte [rdi + 4], 0
-    mov byte [rdi + 5], 0x8E
+    mov word [rdx], di
+    mov word [rdx + 2], 0x08
+    mov byte [rdx + 4], 0
+    mov byte [rdx + 5], 0x8E
 
-    shr rax, 16
-    mov word [rdi + 6], ax
-    shr rax, 16
-    mov dword [rdi + 8], eax
-    mov dword [rdi + 12], 0
+    shr rdi, 16
+    mov word [rdx + 6], di
+    shr rdi, 16
+    mov dword [rdx + 8], edi
+    mov dword [rdx + 12], 0
 
     ret

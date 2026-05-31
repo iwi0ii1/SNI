@@ -14,7 +14,7 @@ if [[ $# -eq 0 ]]; then
 
     for file in "${SOURCES[@]}"; do
         file="${file#./}"
-        newpath="build/$(echo "$file" | sed 's/\//_/g')"
+        newpath="build/$(echo "$file" | sed 's/\//_/g' | sed 's/\.[^.]*$/.o/')"
 
         case "$file" in
             *.cpp)
@@ -37,7 +37,7 @@ if [[ $# -eq 0 ]]; then
                     -fno-pic \
                     -std=c++23 \
                     -D${1:-BOOT_PROTOCOL_MB2} \
-                    -I .                                # So u include starting from kernel/
+                    -I . \
                     -c "${file#./}" -o "$newpath"
                 ;;
         
@@ -59,7 +59,7 @@ if [[ $# -eq 0 ]]; then
                     -fno-pic \
                     -std=c2x \
                     -D${1:-BOOT_PROTOCOL_MB2} \
-                    -I .                                # So u include starting from kernel/
+                    -I . \
                     -c "${file#./}" -o "$newpath"
                 ;;
 
@@ -70,7 +70,7 @@ if [[ $# -eq 0 ]]; then
                 -g \
                 -F dwarf \
                 -D${1:-BOOT_PROTOCOL_MB2} \
-                -I .                                # So u include starting from kernel/
+                -I . \
                 "${file#./}" -o "$newpath" \
                 ;;
         

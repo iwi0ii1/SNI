@@ -6,7 +6,7 @@ global _start64
 extern sup_idt_init
 extern hdp_init
 extern hap_init
-extern runtime_init
+extern rtp_init
 
 section .bss
 align 16
@@ -25,7 +25,7 @@ _start64:
 
     call hdp_init
     call hap_init
-    call runtime_init
+    call rtp_init
 
     sti
 

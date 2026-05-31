@@ -10,7 +10,7 @@ void* hdp_acpi_find_table(const struct hdp_acpi_xsdt_header_t* const xsdt, const
 
     for (int i = 0; i < entries_count; i++) {
         struct hdp_acpi_xsdt_header_t* hdr = (struct hdp_acpi_xsdt_header_t*)table_ptrs[i];
-        if (hdp_shared_memcmp(hdr->signature, signature, 4) == 0)
+        if (shared_mem_cmp(hdr->signature, signature, 4) == 0)
             return hdr;
     }
     return NULL;
@@ -24,13 +24,13 @@ struct hdp_acpi_table_t hdp_acpi_cache_tables(const struct hdp_acpi_xsdt_header_
 
     for (int i = 0; i < entries_count; i++) {
         struct hdp_acpi_xsdt_header_t* hdr = (struct hdp_acpi_xsdt_header_t*)table_ptrs[i];
-        if (hdp_shared_memcmp(hdr->signature, "MCFG", 4) == 0)
+        if (shared_mem_cmp(hdr->signature, "MCFG", 4) == 0)
             tmp_acpi_table.mcfg = hdr;
-        else if (hdp_shared_memcmp(hdr->signature, "APIC", 4) == 0)
+        else if (shared_mem_cmp(hdr->signature, "APIC", 4) == 0)
             tmp_acpi_table.madt = hdr;
-        else if (hdp_shared_memcmp(hdr->signature, "FACP", 4) == 0)
+        else if (shared_mem_cmp(hdr->signature, "FACP", 4) == 0)
             tmp_acpi_table.fadt = hdr;
-        else if (hdp_shared_memcmp(hdr->signature, "HPET", 4) == 0)
+        else if (shared_mem_cmp(hdr->signature, "HPET", 4) == 0)
             tmp_acpi_table.hpet = hdr;
     }
 
