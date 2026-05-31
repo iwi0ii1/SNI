@@ -37,6 +37,7 @@ if [[ $# -eq 0 ]]; then
                     -fno-pic \
                     -std=c++23 \
                     -D${1:-BOOT_PROTOCOL_MB2} \
+                    -I .                                # So u include starting from kernel/
                     -c "${file#./}" -o "$newpath"
                 ;;
         
@@ -58,6 +59,7 @@ if [[ $# -eq 0 ]]; then
                     -fno-pic \
                     -std=c2x \
                     -D${1:-BOOT_PROTOCOL_MB2} \
+                    -I .                                # So u include starting from kernel/
                     -c "${file#./}" -o "$newpath"
                 ;;
 
@@ -68,6 +70,7 @@ if [[ $# -eq 0 ]]; then
                 -g \
                 -F dwarf \
                 -D${1:-BOOT_PROTOCOL_MB2} \
+                -I .                                # So u include starting from kernel/
                 "${file#./}" -o "$newpath" \
                 ;;
         

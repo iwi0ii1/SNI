@@ -21,3 +21,6 @@
 
 6. ## Debugging
   - **Halt in error condition**: Always prefer to halt in an infinite loop to avoid continuation of farther crashes.
+
+7. ## Naming
+  - **Phase-domain-action**: Always have that naming convention. For example, for a function that initializes the **GDT** in **Set Up Phase**, it will be named `sup_gdt_init` (which is a real function in `sup/private/gdt.asm`)
