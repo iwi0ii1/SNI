@@ -7,7 +7,7 @@ extern hdp_acpi_init
 extern hdp_pci_init
 
 section .rodata
-mstr: db "It doesn't works!!"
+mstr: db "It doesn't works!!", 0
 
 section .text
 hdp_init:

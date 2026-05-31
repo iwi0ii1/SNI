@@ -10,8 +10,6 @@ static struct hdp_acpi_table_t hdp_acpi_table = {0};
 const struct hdp_acpi_table_t* const hdp_api_get_acpi_table(void) { return &hdp_acpi_table; }
 
 void hdp_acpi_init(void) {
-    shared_vgatb_aputs("Entering hdp_acpi_init.", 0x0F);
-
     const struct hdp_acpi_rsdp_descriptor_t* const rsdp = hdp_acpi_find_rsdp(0x000E0000, 0x00100000);
     if (!rsdp) {
         shared_vgatb_aputs("Somehow, in hdp/private/acpi/init.c, rsdp is being NULL", 0x0F);

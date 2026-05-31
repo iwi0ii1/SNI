@@ -28,13 +28,13 @@ static void shared_vgatb_internal_scroll(const uint8_t rep) {
     for (uint32_t row = VGA_HEIGHT - rep; row < VGA_HEIGHT; ++row)
         for (uint32_t col = 0; col < VGA_WIDTH; ++col)
             vga[row * VGA_WIDTH + col] = blank;
+
+    cursor_pos -= VGA_WIDTH * rep;
 }
 
 void shared_vgatb_putc(const unsigned char ch, const uint8_t attr) {
-    if (cursor_pos >= CURSOR_END) {
-        cursor_pos -= 80;
+    if (cursor_pos >= CURSOR_END)
         shared_vgatb_internal_scroll(1);
-    }
 
     volatile uint16_t* const vga_tb = (volatile uint16_t*)(uintptr_t)0xB8000; // GCC locked-in on this one
     vga_tb[cursor_pos] = ((uint16_t)attr << 8) | ch;
@@ -60,15 +60,16 @@ void shared_vgatb_reposition_cursor(const uint8_t x_coord, const uint8_t y_coord
 }
 
 uint16_t shared_vgatb_get_cursor_pos(void) {
-    return ((cursor_pos % 80) << 8) | (cursor_pos / 80);
+    return ((cursor_pos % VGA_HEIGHT) << 8) | (cursor_pos / VGA_HEIGHT);
 }
 
 void shared_vgatb_newline_cursor(const uint8_t rep) {
-    if (cursor_pos >= CURSOR_END) {
-        cursor_pos -= 80;
-        shared_vgatb_internal_scroll(1);
-    }
-
     const uint16_t pos = shared_vgatb_get_cursor_pos();
-    shared_vgatb_reposition_cursor((uint8_t)(pos >> 8), (uint8_t)(pos & 0xFF)); // AND there is to preserve bits
+    const uint8_t x = (const uint8_t)(pos >> 8);
+    const uint8_t y = (const uint8_t)(pos & 0xFF);
+
+    if (y + rep >= VGA_HEIGHT)
+        shared_vgatb_internal_scroll(rep);
+
+    shared_vgatb_reposition_cursor((uint8_t)0, y + rep); // AND there to preserve bits
 }

@@ -7,6 +7,6 @@
  * @param b_ptr1 First string (ptr)
  * @param b_ptr2 Second string (ptr)
  * @param b_count Bytes count to compare
- * @return 0 for same, else different
+ * @return 0 for same, 1 for different
  */
 extern uint8_t shared_mem_cmp(const void* const b_ptr1, const void* const b_ptr2, const uint32_t b_count);
