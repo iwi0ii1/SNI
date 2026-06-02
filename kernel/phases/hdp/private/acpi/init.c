@@ -11,8 +11,8 @@ const struct hdp_acpi_table_t* const hdp_api_get_acpi_table(void) { return &hdp_
 
 void hdp_acpi_init(void) {
     const struct hdp_acpi_rsdp_descriptor_t* const rsdp = hdp_acpi_find_rsdp(0x000E0000, 0x00100000);
-    if (!rsdp) {
-        shared_vgatb_aputs("Somehow, in hdp/private/acpi/init.c, rsdp is being NULL", 0x0F);
+    if (rsdp->revision == 0) {
+        shared_vgatb_aputs("Somehow, we're using APCI 1, not 2+...", 0x0F);
         while (1)
             __asm__("hlt");
     }

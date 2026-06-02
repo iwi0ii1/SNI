@@ -3,9 +3,6 @@
 bits 32
 global sup_paging_init
 
-; Map how many bytes?
-%define map_n_bytes 1_000_000_000
-
 section .bss
 align 4096
 pml4: resb 4096
@@ -35,19 +32,19 @@ sup_paging_init:
     mov dword [pdpt], eax
     mov dword [pdpt + 4], 0
 
-    ; Identity map first 2MB using 2MB pages
+    ; Identity map first 2MiB using 2MiB pages
     mov ecx, 0           ; page index
     jmp .map_pd
 
 .map_pd:
     mov eax, ecx
-    shl eax, 21          ; 2MB * index
+    shl eax, 21          ; 2MiB * index
     or eax, 0x83         ; present + writable + huge page
     mov dword [pd + ecx * 8], eax
     mov dword [(pd + ecx * 8) + 4], 0
 
     inc ecx
-    cmp ecx, (map_n_bytes / 2_000_000)
+    cmp ecx, 512         ; 2MiB * 512 == 1GiB
     jne .map_pd
 
     ; load CR3 (PML4 physical address)
