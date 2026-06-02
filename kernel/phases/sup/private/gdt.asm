@@ -36,14 +36,14 @@ section .data
 sup_gdt_table_start:
     dq 0x0 ; null (0x0, required by CPU)
 
-    GDT_ENTRY 0, 0xFFFFF, (ACC_CODE | RING0), FLAT_64, gdt_kernel_code64 ; kernel 64-bit code (ring 0)
-    GDT_ENTRY 0, 0xFFFFF, (ACC_CODE | RING3), FLAT_64, gdt_user_code64   ; user 64-bit code (ring 3)
+    GDT_ENTRY 0, 0xFFFFF, (ACC_CODE | RING0), FLAT_64, gdt_kernel_code64 ; kernel 64-bit code (0x8)
+    GDT_ENTRY 0, 0xFFFFF, (ACC_CODE | RING3), FLAT_64, gdt_user_code64   ; user 64-bit code (0x10)
 
-    GDT_ENTRY 0, 0xFFFFF, (ACC_CODE | RING0), FLAT_32, gdt_kernel_code ; kernel 32-bit code (ring 0)
-    GDT_ENTRY 0, 0xFFFFF, (ACC_CODE | RING3), FLAT_32, gdt_user_code   ; user 32-bit code (ring 3)
+    GDT_ENTRY 0, 0xFFFFF, (ACC_CODE | RING0), FLAT_32, gdt_kernel_code ; kernel 32-bit code (0x18)
+    GDT_ENTRY 0, 0xFFFFF, (ACC_CODE | RING3), FLAT_32, gdt_user_code   ; user 32-bit code (0x20)
     
-    GDT_ENTRY 0, 0xFFFFF, (ACC_DATA | RING0), FLAT_DATA, gdt_kernel_data ; kernel data (ring 0)
-    GDT_ENTRY 0, 0xFFFFF, (ACC_DATA | RING3), FLAT_DATA, gdt_user_data   ; user data (ring 3)
+    GDT_ENTRY 0, 0xFFFFF, (ACC_DATA | RING0), FLAT_DATA, gdt_kernel_data ; kernel data (0x28)
+    GDT_ENTRY 0, 0xFFFFF, (ACC_DATA | RING3), FLAT_DATA, gdt_user_data   ; user data (0x30)
 sup_gdt_table_end:
 
 sup_gdt_ptr:

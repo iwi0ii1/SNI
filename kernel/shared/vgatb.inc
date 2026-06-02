@@ -29,5 +29,6 @@ extern shared_vgatb_reposition_cursor
 extern shared_vgatb_get_cursor_pos
 
 ; Newline cursor
+; Parameter: DIL for repetitions
 ; Note: Will scroll if reached bottom
 extern shared_vgatb_newline_cursor

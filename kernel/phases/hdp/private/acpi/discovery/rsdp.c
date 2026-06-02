@@ -32,27 +32,35 @@ static int checksum_valid(const struct hdp_acpi_rsdp_descriptor_t* const rsdp) {
     return 1;
 }
 
-struct hdp_acpi_rsdp_descriptor_t* hdp_acpi_find_rsdp(const uint32_t start, const uint32_t end) {
+/*const struct hdp_acpi_rsdp_descriptor_t* const hdp_acpi_find_rsdp(const uint32_t start, const uint32_t end) {
     for (uintptr_t addr = start; addr < end; addr += 16) {
 
-        struct hdp_acpi_rsdp_descriptor_t* rsdp = (struct hdp_acpi_rsdp_descriptor_t*)addr;
-
-        _Bool any_sig_different = 0;
-
-        for (uint8_t i = 0; i < 8; ++i) {
-            if (rsdp->signature[i] != RSDP_SIGNATURE[i]) {
-                shared_vgatb_putc(i + '0', 0x0F);
-                any_sig_different = 1;
-            }
-        }
-
-        if (any_sig_different)
-            shared_vgatb_newline_cursor(1);
+        const struct hdp_acpi_rsdp_descriptor_t* const rsdp = (struct hdp_acpi_rsdp_descriptor_t*)addr;
 
         if (shared_mem_cmp(rsdp->signature, RSDP_SIGNATURE, 8) != 0 || !checksum_valid(rsdp))
             continue;
 
         return rsdp;
     }
+    return NULL;
+}*/
+
+const struct hdp_acpi_rsdp_descriptor_t* const hdp_acpi_find_rsdp(const uint32_t start, const uint32_t end) {
+    for (uintptr_t addr = start; addr < end; addr += 16) {
+
+        uint8_t* p = (uint8_t*)addr;
+
+        if (shared_mem_cmp(p, RSDP_SIGNATURE, 8) != 0)
+            continue;
+
+        struct hdp_acpi_rsdp_descriptor_t* rsdp =
+            (struct hdp_acpi_rsdp_descriptor_t*)p;
+
+        if (!checksum_valid(rsdp))
+            continue;
+
+        return rsdp;
+    }
+
     return NULL;
 }

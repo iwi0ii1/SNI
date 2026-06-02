@@ -22,4 +22,4 @@ struct __attribute__((packed)) hdp_acpi_rsdp_descriptor_t {
  * @brief Find a valid RSDP
  * @warning Returns NULL if failed to find a valid ones
  */
-extern struct hdp_acpi_rsdp_descriptor_t* hdp_acpi_find_rsdp(const uint32_t start, const uint32_t end);
+const struct hdp_acpi_rsdp_descriptor_t* const hdp_acpi_find_rsdp(const uint32_t start, const uint32_t end);
