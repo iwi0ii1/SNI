@@ -1,4 +1,5 @@
 ; ISR of #GP (General Protection)
+%include "shared/vgatb.inc"
 
 bits 64
 global sup_isr_gp
@@ -10,24 +11,18 @@ section .text
 sup_isr_gp:
     cli
 
-    mov rsi, error_msg
-    mov rdi, 0xB8000
-    mov ah, 0x0F
+    push rax
+    push rdi
+    push rsi
 
-    jmp .print_loop
-
-.print_loop:
-    mov al, [rsi]
-    test al, al        ; if AL == 0
-    jz .done
-
-    mov [rdi], ax
-    add rdi, 2
-    inc rsi
-    jmp .print_loop
+    mov rdi, error_msg
+    mov sil, 0x0F
+    call shared_vgatb_aputs
 
 .done:
-    ;iretq
+    pop rsi
+    pop rdi
+    pop rax
 
 .hang:
     hlt

@@ -16,6 +16,7 @@ static _Bool checksum_valid(const uint8_t* const data, const size_t len) {
     return sum == 0;
 }
 
+[[nodiscard]]
 const struct hdp_acpi_rsdp_descriptor_t* const hdp_acpi_find_rsdp(const uint32_t start, const uint32_t end) {
     for (uintptr_t addr = start; addr < end; addr += 16) {
 

@@ -1,4 +1,5 @@
 ; Everything related to VGATB
+bits 64
 
 ; Print character relative to the current cursor position
 ; Parameter: DIL for character (not ptr)

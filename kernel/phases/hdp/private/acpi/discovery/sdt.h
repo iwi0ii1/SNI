@@ -7,24 +7,32 @@
 #include <stdint.h>
 #include <stddef.h>
 
-/// @brief XSDT header (v2+)
-struct hdp_acpi_xsdt_header_t {
-    char signature[4];       // "XSDT"
-    uint32_t length;         // total length of the table
+/**
+ * @brief SDT header
+ */
+struct __attribute__((packed)) hdp_acpi_sdt_header_t { 
+    char signature[4];
+    uint32_t length;
     uint8_t revision;
     uint8_t checksum;
-
-    unsigned char oem_id[6];
-    unsigned char oem_table_id[8];
+    char oem_id[6];
+    char oem_table_id[8];
     uint32_t oem_revision;
     uint32_t creator_id;
     uint32_t creator_revision;
-
-    uintptr_t entries[];      // flexible array of table addresses
 };
 
-/**
- * @brief Find a firmware table (like MCFG, MADT, FADT, etc)
- * @warning Returns NULL if failed to find valid ones
- */
-extern void* hdp_acpi_find_table(const struct hdp_acpi_xsdt_header_t* const xsdt, const char* const signature);
+
+
+/// @brief RSDT header (v1)
+struct __attribute__((packed)) hdp_acpi_rsdt_header_t {
+    const struct hdp_acpi_sdt_header_t header;
+    uint32_t entries[]; // array of 32-bit ptr to firmware tables
+};
+
+
+/// @brief XSDT header (v2+)
+struct __attribute__((packed)) hdp_acpi_xsdt_header_t {
+    const struct hdp_acpi_sdt_header_t header;
+    uint64_t entries[]; // array of 64-bit ptr to firmware tables
+};

@@ -1,4 +1,5 @@
 ; Everything related to memory. Such as comparing bytes, perform a specific operation on bytes.
+bits 64
 
 ; Compare string of bytes
 ; Parameter: RDI for first string (ptr)
