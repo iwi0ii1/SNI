@@ -12,6 +12,7 @@ struct __attribute__((packed)) hdp_acpi_rsdp_descriptor_t {
     uint8_t revision;
     uint32_t rsdt_address;
 
+    // ACPI v2+ things
     uint32_t length;
     uint64_t xsdt_address;
     uint8_t extended_checksum;

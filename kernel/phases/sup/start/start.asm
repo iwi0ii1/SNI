@@ -25,24 +25,24 @@ _start:
     call sup_gdt_init    ; Setup GDT (Ensures sup_gdt_ptr is 'dd', flushes CS)
     call sup_paging_init ; Setup page tables (Ensures ES is 0x28, returns PML4 address in EAX)
     
-    ; 1. Enable PAE FIRST. This prepares the CPU for 4-level/64-bit tables.
+    ; Enable CR4.PAE, prepares CPU for 4-level/64-bit tables
     mov edx, cr4
     or edx, (1 << 5)     ; PAE bit
     mov cr4, edx
 
-    ; 2. NOW safely load CR3 with the PML4 table address returned in EAX
+    ; Load CR3 with the PML4 table address returned in EAX
     mov cr3, eax
 
-    ; 3. Enable Long Mode Enable (LME) in the EFER MSR
+    ; Enable "Long Mode Enable" (LME) in the EFER MSR
     mov ecx, 0xC0000080
-    rdmsr
+    rdmsr ; Read MSR
     or eax, (1 << 8)     ; LME bit
-    wrmsr
+    wrmsr ; Write MSR
 
-    ; 4. Enable Paging. The moment this completes, Long Mode Active (LMA) engages.
+    ; Enable Paging. The moment this completes, Long Mode Active (LMA) engages.
     mov eax, cr0
     or eax, (1 << 31)    ; PG bit
     mov cr0, eax
 
-    ; 5. Clear the runway and make the jump to 64-bit space!
+    ; Clear the runway and make the jump to 64-bit space!
     jmp 0x8:_start64

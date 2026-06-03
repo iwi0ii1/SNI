@@ -1,4 +1,5 @@
-; Repage memory since entering 64-bit requires that to happen even when MB2 already did it for us in 32-bit mode. FUCK!!!!
+; Repage memory since entering 64-bit requires that to happen.
+; Sets EAX to address of PML4
 
 bits 32
 global sup_paging_init

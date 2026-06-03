@@ -6,7 +6,6 @@
 
 #include <stdint.h>
 #include <stddef.h>
-#include "phases/hdp/private/acpi/acpi.h"
 
 /// @brief XSDT header (v2+)
 struct hdp_acpi_xsdt_header_t {
@@ -15,8 +14,8 @@ struct hdp_acpi_xsdt_header_t {
     uint8_t revision;
     uint8_t checksum;
 
-    char oem_id[6];
-    char oem_table_id[8];
+    unsigned char oem_id[6];
+    unsigned char oem_table_id[8];
     uint32_t oem_revision;
     uint32_t creator_id;
     uint32_t creator_revision;
@@ -29,8 +28,3 @@ struct hdp_acpi_xsdt_header_t {
  * @warning Returns NULL if failed to find valid ones
  */
 extern void* hdp_acpi_find_table(const struct hdp_acpi_xsdt_header_t* const xsdt, const char* const signature);
-
-/**
- * @brief Loop over given XSDT table and return a newly made ACPI table
- */
-extern struct hdp_acpi_table_t hdp_acpi_cache_tables(const struct hdp_acpi_xsdt_header_t* const xsdt);

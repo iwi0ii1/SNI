@@ -24,10 +24,10 @@ const struct hdp_acpi_rsdp_descriptor_t* const hdp_acpi_find_rsdp(const uint32_t
         if (shared_mem_cmp(p, RSDP_SIGNATURE, 8) != 0)
             continue;
 
-        if (!checksum_valid(p, 20))
-            continue;
-
         const struct hdp_acpi_rsdp_descriptor_t* const rsdp = (struct hdp_acpi_rsdp_descriptor_t*)p;
+
+        if (!checksum_valid(p, rsdp->length))
+            continue;
 
         return rsdp;
     }
