@@ -28,6 +28,7 @@ sup_idt_fmt_ptr:            ; Just a fucking lidt format piece of shit
 
 
 section .text
+; Install IDT so interrupts work.
 sup_idt_init:
     cli
 
@@ -91,23 +92,28 @@ sup_idt_init:
     ret
 
 
-; Set a handler for a specific vector (rdi: handler address, si: vector index)
+; Set a handler for a specific vector (RDI: handler address, SI: vector index)
 ; Reminds: This label is being depended by `api/interrupts.asm` for a macro about registering ISR
 sup_idt_set_handler:
     lea rdx, [rel sup_idt_table]
-    shl si, 4          ; Multiply index by 16
-    movzx rsi, si      ; Zero-extend SI
+
+    mov rax, rdi        ; copy handler
+
+    shl si, 4
+    movzx rsi, si
     add rdx, rsi
 
-    mov word [rdx], di
+    mov word [rdx], ax
     mov word [rdx + 2], 0x08
     mov byte [rdx + 4], 0
     mov byte [rdx + 5], 0x8E
 
-    shr rdi, 16
-    mov word [rdx + 6], di
-    shr rdi, 16
-    mov dword [rdx + 8], edi
-    mov dword [rdx + 12], 0
+    mov rbx, rax
+    shr rbx, 16
+    mov word [rdx + 6], bx
 
+    shr rbx, 16
+    mov dword [rdx + 8], ebx
+
+    mov dword [rdx + 12], 0
     ret

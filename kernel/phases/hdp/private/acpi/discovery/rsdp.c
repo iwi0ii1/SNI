@@ -19,7 +19,6 @@ static _Bool checksum_valid(const uint8_t* const data, const size_t len) {
 [[nodiscard]]
 const struct hdp_acpi_rsdp_descriptor_t* const hdp_acpi_find_rsdp(const uint32_t start, const uint32_t end) {
     for (uintptr_t addr = start; addr < end; addr += 16) {
-
         const uint8_t* const p = (uint8_t*)addr;
 
         if (shared_mem_cmp(p, RSDP_SIGNATURE, 8) != 0)
@@ -27,8 +26,13 @@ const struct hdp_acpi_rsdp_descriptor_t* const hdp_acpi_find_rsdp(const uint32_t
 
         const struct hdp_acpi_rsdp_descriptor_t* const rsdp = (struct hdp_acpi_rsdp_descriptor_t*)p;
 
-        if (!checksum_valid(p, rsdp->length))
-            continue;
+        if (rsdp->revision == 0) {
+            if (!checksum_valid(p, 20))
+                continue;
+        } else {
+            if (!checksum_valid(p, rsdp->length))
+                continue;
+        }
 
         return rsdp;
     }

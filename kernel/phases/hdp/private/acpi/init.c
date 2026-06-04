@@ -14,11 +14,13 @@ const struct hdp_acpi_table_t* const hdp_api_get_acpi_table(void) { return &hdp_
 void hdp_acpi_init(void) {
     const struct hdp_acpi_rsdp_descriptor_t* const rsdp = hdp_acpi_find_rsdp(0x0E0000, 0x100000);
 
+    #ifdef DEBUG_FORM
     if (!rsdp) {
         shared_vgatb_aputs("rsdp is being NULL, again!!", 0x0F);
         while (1)
             __asm__("hlt");
     }
+    #endif
 
     // Cache ACPI table by given SDT address (from RSDP)
     if (rsdp->revision == 0 && rsdp->rsdt_address) {
@@ -30,7 +32,9 @@ void hdp_acpi_init(void) {
         shared_vgatb_newline_cursor(1);
         hdp_acpi_table = hdp_acpi_cache_tables_xsdt((struct hdp_acpi_xsdt_header_t*)rsdp->xsdt_address);
     } else { // For debugging purpose
+        #ifdef DEBUG_FORM
         shared_vgatb_aputs("Neither inside ACPI v1 nor v2+... hdp_acpi_find_rsdp(0x0E0000, 0x100000) could've been wrong.", 0x0F);
+        #endif
         while (1)
             __asm__("hlt");
     }

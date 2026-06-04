@@ -1,10 +1,19 @@
 // ACPI related shits. Implementing things inside `acpi.h`
 #include "phases/hdp/private/acpi/acpi.h"
+#include "shared/vgatb.h"
 #include "shared/mem.h"
 
 [[nodiscard]]
 struct hdp_acpi_table_t hdp_acpi_cache_tables_rsdt(const struct hdp_acpi_rsdt_header_t* const rsdt) {
-    struct hdp_acpi_table_t table = {0};
+    #ifdef DEBUG_FORM
+    if (!rsdt) {
+        shared_vgatb_aputs("hdp_acpi_cache_tables_rsdt: parameter (rsdt) is passed as NULL, type const struct hdp_acpi_rsdt_header_t* const...", 0x0F);
+        while (1)
+            __asm__("hlt");
+    }
+    #endif
+
+    struct hdp_acpi_table_t table = {0}; // For some random reason, if we zero this thing (like = {0}), it will #DF
 
     const uint32_t entries = (rsdt->header.length - sizeof(struct hdp_acpi_sdt_header_t)) / 4;
 
@@ -28,6 +37,14 @@ struct hdp_acpi_table_t hdp_acpi_cache_tables_rsdt(const struct hdp_acpi_rsdt_he
 
 [[nodiscard]]
 struct hdp_acpi_table_t hdp_acpi_cache_tables_xsdt(const struct hdp_acpi_xsdt_header_t* const xsdt) {
+    #ifdef DEBUG_FORM
+    if (!xsdt) {
+        shared_vgatb_aputs("hdp_acpi_cache_tables_xsdt: parameter (xsdt) is passed as NULL, type const struct hdp_acpi_xsdt_header_t* const...", 0x0F);
+        while (1)
+            __asm__("hlt");
+    }
+    #endif
+
     struct hdp_acpi_table_t table = {0};
 
     const uint32_t entries = (xsdt->header.length - sizeof(struct hdp_acpi_sdt_header_t)) / 8;

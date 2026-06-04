@@ -21,6 +21,15 @@ _start64:
     mov rsp, stack_top
     and rsp, -16
 
+    %ifdef DEBUG_FORM
+    ; Stack test
+    mov rax, 0x1122334455667788
+    mov [rsp], rax
+    mov rax, [rsp]
+    cmp rax, 0x1122334455667788
+    jne .hang
+    %endif
+
     call sup_idt_init
 
     call hdp_init

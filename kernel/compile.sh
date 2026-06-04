@@ -36,7 +36,7 @@ if [[ $# -eq 0 ]]; then
                     -fno-stack-check \
                     -fno-pic \
                     -std=c++23 \
-                    -D${1:-BOOT_PROTOCOL_MB2} \
+                    -DBOOT_PROTOCOL_MB2 -DDEBUG_FORM \
                     -I . \
                     -c "${file#./}" -o "$newpath"
                 ;;
@@ -58,7 +58,7 @@ if [[ $# -eq 0 ]]; then
                     -fno-stack-check \
                     -fno-pic \
                     -std=c2x \
-                    -D${1:-BOOT_PROTOCOL_MB2} \
+                    -DBOOT_PROTOCOL_MB2 -DDEBUG_FORM \
                     -I . \
                     -c "${file#./}" -o "$newpath"
                 ;;
@@ -69,7 +69,7 @@ if [[ $# -eq 0 ]]; then
                 -f elf64 \
                 -g \
                 -F dwarf \
-                -D${1:-BOOT_PROTOCOL_MB2} \
+                -DBOOT_PROTOCOL_MB2 -DDEBUG_FORM \
                 -I . \
                 "${file#./}" -o "$newpath" \
                 ;;
