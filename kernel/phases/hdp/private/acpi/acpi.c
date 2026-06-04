@@ -4,7 +4,7 @@
 #include "shared/mem.h"
 
 [[nodiscard]]
-struct hdp_acpi_table_t hdp_acpi_cache_tables_rsdt(const struct hdp_acpi_rsdt_header_t* const rsdt) {
+struct hdp_acpi_table_t hdp_acpi_cache_tables_rsdt(const struct hdp_acpi_rsdt_header_t* const rsdt) {    
     #ifdef DEBUG_FORM
     if (!rsdt) {
         shared_vgatb_aputs("hdp_acpi_cache_tables_rsdt: parameter (rsdt) is passed as NULL, type const struct hdp_acpi_rsdt_header_t* const...", 0x0F);
@@ -12,11 +12,11 @@ struct hdp_acpi_table_t hdp_acpi_cache_tables_rsdt(const struct hdp_acpi_rsdt_he
             __asm__("hlt");
     }
     #endif
+    
+    struct hdp_acpi_table_t table = {0};
 
     const uint32_t entries = (rsdt->header.length - sizeof(struct hdp_acpi_sdt_header_t)) / 4;
     const uint32_t* const ptrs = (const uint32_t*)((const uint8_t*)rsdt + sizeof(struct hdp_acpi_sdt_header_t));
-    
-    struct hdp_acpi_table_t table = {0};
 
     for (uint32_t i = 0; i < entries; i++) {
         const struct hdp_acpi_sdt_header_t* hdr = (const struct hdp_acpi_sdt_header_t*)(uintptr_t)ptrs[i];
@@ -32,7 +32,7 @@ struct hdp_acpi_table_t hdp_acpi_cache_tables_rsdt(const struct hdp_acpi_rsdt_he
     }
 
     return table;
-} //g commit -m "Just realized that i spent fucking 3 days for nothing. Tho they claimed that the things i debugged earlier will actually saved my later days. Anyway, the core problem is that the initialization itself is not wrong, but everything after it. the for
+}
 
 [[nodiscard]]
 struct hdp_acpi_table_t hdp_acpi_cache_tables_xsdt(const struct hdp_acpi_xsdt_header_t* const xsdt) {
