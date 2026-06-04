@@ -13,11 +13,10 @@ struct hdp_acpi_table_t hdp_acpi_cache_tables_rsdt(const struct hdp_acpi_rsdt_he
     }
     #endif
 
-    struct hdp_acpi_table_t table = {0}; // For some random reason, if we zero this thing (like = {0}), it will #DF
-
     const uint32_t entries = (rsdt->header.length - sizeof(struct hdp_acpi_sdt_header_t)) / 4;
-
     const uint32_t* const ptrs = (const uint32_t*)((const uint8_t*)rsdt + sizeof(struct hdp_acpi_sdt_header_t));
+    
+    struct hdp_acpi_table_t table = {0};
 
     for (uint32_t i = 0; i < entries; i++) {
         const struct hdp_acpi_sdt_header_t* hdr = (const struct hdp_acpi_sdt_header_t*)(uintptr_t)ptrs[i];
@@ -33,7 +32,7 @@ struct hdp_acpi_table_t hdp_acpi_cache_tables_rsdt(const struct hdp_acpi_rsdt_he
     }
 
     return table;
-}
+} //g commit -m "Just realized that i spent fucking 3 days for nothing. Tho they claimed that the things i debugged earlier will actually saved my later days. Anyway, the core problem is that the initialization itself is not wrong, but everything after it. the for
 
 [[nodiscard]]
 struct hdp_acpi_table_t hdp_acpi_cache_tables_xsdt(const struct hdp_acpi_xsdt_header_t* const xsdt) {
@@ -45,11 +44,10 @@ struct hdp_acpi_table_t hdp_acpi_cache_tables_xsdt(const struct hdp_acpi_xsdt_he
     }
     #endif
 
-    struct hdp_acpi_table_t table = {0};
-
     const uint32_t entries = (xsdt->header.length - sizeof(struct hdp_acpi_sdt_header_t)) / 8;
-
     const uint64_t* ptrs = (const uint64_t*)((const uint8_t*)xsdt + sizeof(struct hdp_acpi_sdt_header_t));
+
+    struct hdp_acpi_table_t table = {0};
 
     for (uint32_t i = 0; i < entries; i++) {
         const struct hdp_acpi_sdt_header_t* hdr = (const struct hdp_acpi_sdt_header_t*)ptrs[i];

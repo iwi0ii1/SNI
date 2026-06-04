@@ -84,8 +84,6 @@ sup_idt_init:
     mov si, 14
     call sup_idt_set_handler
 
-    
-
     ; Set IDT to this.
     lidt [sup_idt_fmt_ptr]
 
@@ -97,23 +95,66 @@ sup_idt_init:
 sup_idt_set_handler:
     lea rdx, [rel sup_idt_table]
 
-    mov rax, rdi        ; copy handler
-
+    mov rax, rdi
     shl si, 4
     movzx rsi, si
     add rdx, rsi
 
-    mov word [rdx], ax
+    mov rcx, rax        ; keep original safe copy
+
+    ; offset 0..15
+    mov word [rdx + 0], cx
+
+    ; selector
     mov word [rdx + 2], 0x08
+
+    ; flags
     mov byte [rdx + 4], 0
     mov byte [rdx + 5], 0x8E
 
-    mov rbx, rax
-    shr rbx, 16
-    mov word [rdx + 6], bx
+    ; offset 16..31
+    mov rax, rcx
+    shr rax, 16
+    mov word [rdx + 6], ax
 
-    shr rbx, 16
-    mov dword [rdx + 8], ebx
+    ; offset 32..63 (FIXED: clean extraction, not chained shifts)
+    mov rax, rcx
+    shr rax, 32
+    mov dword [rdx + 8], eax
 
+    ; reserved
     mov dword [rdx + 12], 0
     ret
+
+
+
+probe_idt_pf:
+    lea rsi, [rel sup_idt_table + 14 * 16]
+
+    ; rebuild handler address from IDT entry
+    xor rax, rax
+
+    mov ax, [rsi + 0]      ; offset 0..15
+    mov dx, [rsi + 6]      ; offset 16..31
+
+    shl rdx, 16
+    or rax, rdx
+
+    mov edx, [rsi + 8]     ; offset 32..63
+    shl rdx, 32
+    or rax, rdx
+
+    ; now RAX = handler from IDT
+
+    mov rbx, sup_isr_pf    ; expected handler
+
+    cmp rax, rbx
+    je .ok
+
+.bad:
+    mov byte [0xB8000], 'X'
+    hlt
+
+.ok:
+    mov byte [0xB8000], 'O'
+    hlt

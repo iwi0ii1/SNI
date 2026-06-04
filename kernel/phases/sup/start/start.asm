@@ -11,16 +11,37 @@ extern _start64
 
 section .bss
 align 16
-stack_bottom:       ; Lower address
+stack_bottom:       ; Lower address (LAST PLATE)
     resb 4096 * 8   ; Stack capacity: 32KB
-stack_top:          ; Higher address
+stack_top:          ; Higher address (NOT FIRST PLATE, BUT THE COVER OF THE PLATES SET)
+
+
 
 section .text
 _start:
+    cld ; Clear Direction Flag (so things don't go backwards)
     cli
 
     mov esp, stack_top
     and esp, -16
+
+    %ifdef DEBUG_FORM
+    ; Stack test (passed)
+    mov eax, 0x11223344
+    sub esp, 8
+    mov [esp], eax
+    mov eax, [esp]
+    cmp eax, 0x11223344
+    jne .hang
+
+    ; ===== REP STOS TEST =====
+
+    mov edi, esp        ; destination = stack
+    mov ecx, 512        ; write 512 words (2KB total)
+    xor eax, eax        ; value = 0
+
+    rep stosw           ; THIS is what `{0}` uses
+    %endif
 
     call sup_gdt_init    ; Setup GDT (Ensures sup_gdt_ptr is 'dd', flushes CS)
     call sup_paging_init ; Setup page tables (Ensures ES is 0x28, returns PML4 address in EAX)
@@ -46,3 +67,7 @@ _start:
 
     ; Clear the runway and make the jump to 64-bit space!
     jmp 0x8:_start64
+
+.hang:
+    hlt
+    jmp .hang

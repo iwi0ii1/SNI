@@ -34,7 +34,7 @@ sup_paging_init:
     mov dword [pdpt + 4], 0
 
     ; Identity map first 2MiB using 2MiB pages
-    mov ecx, 0           ; page index
+    mov ecx, 0           ; start paging from 0x0 - 0x1FFFFF
     jmp .map_pd
 
 .map_pd:

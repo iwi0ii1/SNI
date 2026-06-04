@@ -10,24 +10,40 @@ extern rtp_init
 
 section .bss
 align 16
-stack_bottom:       ; Lower address
+stack_bottom:       ; Lower address (LAST PLATE)
     resb 4096 * 8   ; Stack capacity: 32KB
-stack_top:          ; Higher address
+stack_top:          ; Higher address (NOT THE FIRST PLATE, BUT THE COVER OF THE PLATES SET)
 
 
 
 section .text
 _start64:
+    cld ; Clear Direction Flag (so things don't go backwards)
+
     mov rsp, stack_top
     and rsp, -16
 
     %ifdef DEBUG_FORM
-    ; Stack test
+    mov rax, stack_top
+    cmp rax, 0x40000000
+    jg .hang
+
+    ; Stack test (passed)
     mov rax, 0x1122334455667788
+    sub rsp, 8
     mov [rsp], rax
+    mov rcx, 0x1122334455667788
     mov rax, [rsp]
-    cmp rax, 0x1122334455667788
+    cmp rax, rcx ; Somehow CMP doesn't take 64-bit immediate
     jne .hang
+
+    ; ===== REP STOS TEST =====
+
+    mov rdi, rsp        ; destination = stack
+    mov rcx, 512        ; write 512 qwords (4KB total)
+    xor rax, rax        ; value = 0
+
+    rep stosq           ; THIS is what `{0}` uses
     %endif
 
     call sup_idt_init
