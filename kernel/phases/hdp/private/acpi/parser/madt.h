@@ -1,1 +1,0 @@
-// MADT related things exposed through header

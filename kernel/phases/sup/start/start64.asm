@@ -79,7 +79,6 @@ _start64:
     pxor xmm13, xmm13
     pxor xmm14, xmm14
     pxor xmm15, xmm15
-    pxor xmm16, xmm16
 
     call hdp_init
     call hap_init

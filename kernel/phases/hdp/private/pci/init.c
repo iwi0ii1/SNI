@@ -45,8 +45,8 @@ static char* strcat(char* dst, const char* src) {
 
 
 void hdp_pci_init(void) {
-    if (hdp_acpi_get_ecam_base() == 0) {
-        shared_vgatb_aputs("Well, hdp_pci_ecam_base_address is 0... can't scan buses with it.", 0x0F);
+    if (1) {
+        shared_vgatb_aputs("Well, ECAM Base address is 0... can't scan buses with it.", 0x0F);
         while (1)
             __asm__("hlt");
 

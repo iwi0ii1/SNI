@@ -6,7 +6,7 @@
 uint32_t hdp_pci_read32(const uint8_t bus, const uint8_t device, const uint8_t function, const uint16_t offset) {
     uint64_t address;
 
-    address = hdp_acpi_get_ecam_base() +
+    address = 0 +
         ((uint64_t)bus << 20) +
         ((uint64_t)device << 15) +
         ((uint64_t)function << 12) +
