@@ -29,7 +29,6 @@ if [[ $# -eq 0 ]]; then
                     -g \
                     -m64 \
                     -mno-red-zone \
-                    -mno-sse -mno-mmx \
                     -msoft-float \
                     -fno-stack-protector \
                     -fno-strict-aliasing \
@@ -53,7 +52,6 @@ if [[ $# -eq 0 ]]; then
                     -g \
                     -m64 \
                     -mno-red-zone \
-                    -mno-sse -mno-mmx \
                     -msoft-float \
                     -fno-stack-protector \
                     -fno-strict-aliasing \

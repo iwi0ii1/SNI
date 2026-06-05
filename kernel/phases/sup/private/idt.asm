@@ -8,6 +8,7 @@ global sup_idt_set_handler
 extern sup_isr_de
 extern sup_isr_db
 extern sup_isr_nmi
+extern sup_isr_nm
 extern sup_isr_bp
 extern sup_isr_of
 extern sup_isr_ud
@@ -72,6 +73,11 @@ sup_idt_init:
     ; #DF
     mov rdi, sup_isr_df
     mov si, 6
+    call sup_idt_set_handler
+
+    ; #NM
+    mov rdi, sup_isr_nm
+    mov si, 7
     call sup_idt_set_handler
 
     ; #GP
