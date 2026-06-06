@@ -1,7 +1,7 @@
 ; Everything related to memory. Such as comparing bytes, perform a specific operation on bytes.
 bits 64
 
-; Compare string of bytes
+; Compare 2 strings of bytes
 ; Parameter: RDI for first string (ptr)
 ; Parameter: RSI for second string (ptr)
 ; Parameter: EDX for bytes count to compare
@@ -18,3 +18,9 @@ extern shared_mem_cmp
 ; Parameter: RSI for the unsigned 64-bit integer
 ; Parameter: DL for base to represent in string (binary, octal, decimal, hexal)
 extern shared_mem_u64_to_str
+
+; Concatenate 2 strings of bytes
+; Parameter: RDI for destination (ptr)
+; Parameter: RSI for first string (ptr)
+; Parameter: RDX for second string (ptr)
+extern shared_mem_cat

@@ -46,7 +46,7 @@ static inline struct hdp_acpi_table_t hdp_acpi_cache_tables_xsdt(const struct hd
     }
     #endif
 
-    const uint32_t entries = (xsdt->header.length - sizeof(struct hdp_acpi_sdt_header_t)) / 8;
+    const uint64_t entries = (xsdt->header.length - sizeof(struct hdp_acpi_sdt_header_t)) / 8;
     const uint64_t* ptrs = (const uint64_t*)((const uint8_t*)xsdt + sizeof(struct hdp_acpi_sdt_header_t));
 
     struct hdp_acpi_table_t table = {0};

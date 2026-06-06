@@ -1,5 +1,4 @@
 ; A table that maps interrupts to different handlers...
-; Like `int 0xE (14)` -> calls `sup_isr_page_fault`
 
 bits 64
 global sup_idt_init

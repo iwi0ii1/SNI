@@ -15,8 +15,9 @@ uint8_t shared_mem_cmp(const void* const b_ptr1, const void* const b_ptr2, const
 
 
 
-void shared_mem_u64_to_str(unsigned char* const dest, const uint64_t src, const uint8_t base) {
+void shared_mem_u64_to_str(void* const dest, const uint64_t src, const uint8_t base) {
     static const char digits[] = "0123456789ABCDEF";
+    unsigned char* const dst = (unsigned char*)dest; // Interpret as BYTE
 
     switch (base) {
         case SHARED_MEM_BIN_TAG:
@@ -24,8 +25,8 @@ void shared_mem_u64_to_str(unsigned char* const dest, const uint64_t src, const 
         case SHARED_MEM_DEC_TAG:
         case SHARED_MEM_HEX_TAG: {
             if (src == 0) { // Exception: zero
-                dest[0] = '0';
-                dest[1] = '\0';
+                dst[0] = '0';
+                dst[1] = '\0';
                 return;
             }
 
@@ -41,16 +42,22 @@ void shared_mem_u64_to_str(unsigned char* const dest, const uint64_t src, const 
             }
 
             for (uint32_t j = 0; j < i; ++j)
-                dest[j] = tmp[i - j - 1];
+                dst[j] = tmp[i - j - 1];
 
-            dest[i] = '\0'; // Null-terminate
+            dst[i] = '\0'; // Null-terminate
 
             break;
         }
 
         default: {
-            *dest = '\0';
+            *dst = '\0';
             break;
         }
     }
+}
+
+
+
+void shared_mem_cat(void* const dest, const void* const b_ptr1, const void* const b_ptr2) {
+    
 }
