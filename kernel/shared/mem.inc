@@ -1,7 +1,7 @@
 ; Everything related to memory. Such as comparing bytes, perform a specific operation on bytes.
 bits 64
 
-; Compare 2 strings of bytes
+; Compare 2 null-terminated strings of bytes
 ; Parameter: RDI for first string (ptr)
 ; Parameter: RSI for second string (ptr)
 ; Parameter: EDX for bytes count to compare
@@ -16,11 +16,17 @@ extern shared_mem_cmp
 ; Convert unsigned 64-bit integer to string
 ; Parameter: RDI for destination (ptr)
 ; Parameter: RSI for the unsigned 64-bit integer
-; Parameter: DL for base to represent in string (binary, octal, decimal, hexal)
+; Parameter: DIL for base to represent in string (binary, octal, decimal, hexal)
 extern shared_mem_u64_to_str
 
-; Concatenate 2 strings of bytes
+; Concatenate 2 null-terminated strings of bytes
 ; Parameter: RDI for destination (ptr)
 ; Parameter: RSI for first string (ptr)
 ; Parameter: RDX for second string (ptr)
 extern shared_mem_cat
+
+; Calculate the length of 2 null-terminated strings of bytes
+; Parameter: RDI for first string (ptr)
+; Parameter: RSI for unit (how many bytes to count as one, can be 1 2 4 8 16)
+; Return: AX for rounded length, but 65,535 for invalid unit
+extern shared_mem_len

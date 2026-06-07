@@ -6,4 +6,4 @@ global sup_tss_init
 
 section .text
 sup_tss_init:
-    ; ...
+    

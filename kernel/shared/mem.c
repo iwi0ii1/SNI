@@ -2,7 +2,7 @@
 
 #include "shared/mem.h"
 
-uint8_t shared_mem_cmp(const void* const b_ptr1, const void* const b_ptr2, const uint32_t b_count) {
+byte_t shared_mem_cmp(const void* const b_ptr1, const void* const b_ptr2, const dword_t b_count) {
     const uint8_t* const ptr1 = b_ptr1;
     const uint8_t* const ptr2 = b_ptr2;
 
@@ -15,7 +15,7 @@ uint8_t shared_mem_cmp(const void* const b_ptr1, const void* const b_ptr2, const
 
 
 
-void shared_mem_u64_to_str(void* const dest, const uint64_t src, const uint8_t base) {
+void shared_mem_u64_to_str(void* const dest, const qword_t src, const byte_t base) {
     static const char digits[] = "0123456789ABCDEF";
     unsigned char* const dst = (unsigned char*)dest; // Interpret as BYTE
 
@@ -59,5 +59,30 @@ void shared_mem_u64_to_str(void* const dest, const uint64_t src, const uint8_t b
 
 
 void shared_mem_cat(void* const dest, const void* const b_ptr1, const void* const b_ptr2) {
-    
+    unsigned char* d = (unsigned char*)dest;
+    const unsigned char* s1 = (unsigned char*)b_ptr1;
+    const unsigned char* s2 = (unsigned char*)b_ptr2;
+
+    while (*s1)
+        *d++ = *s1++;
+
+    while (*s2)
+        *d++ = *s2++;
+
+    *d = '\0';
+}
+
+
+
+word_t shared_mem_len(const void* const b_ptr, const byte_t unit) {
+    if (unit == 0 || unit & (unit - 1) != 0) // Can only be power of two.
+        return (word_t)-1;
+
+    word_t len = 0;
+    const byte_t* const bytes = (const byte_t*)b_ptr;
+
+    while (bytes[len] != '\0')
+        ++len;
+
+    return (len + unit - 1) / unit; // Round up final value. Like len=5 unit=4, should be 2 not 1
 }
