@@ -31,6 +31,9 @@ bits 32
 global sup_gdt_init
 global sup_gdt_ptr
 
+section .bss
+sup_gdt_tss: resq 26
+
 section .data
 ; The table (updating this table signals changing api/selector.inc due to assumptions in order)
 sup_gdt_table_start:
@@ -44,6 +47,9 @@ sup_gdt_table_start:
     
     GDT_ENTRY 0, 0xFFFFF, (ACC_DATA | RING0), FLAT_DATA, gdt_kernel_data ; kernel data (0x28)
     GDT_ENTRY 0, 0xFFFFF, (ACC_DATA | RING3), FLAT_DATA, gdt_user_data   ; user data (0x30)
+
+gdt_tss:
+    dq 0, 0
 sup_gdt_table_end:
 
 sup_gdt_ptr:
@@ -72,6 +78,33 @@ sup_gdt_init:
     mov fs, ax
     mov gs, ax
 
+
+    ; load GDT base from pseudo-descriptor
+    mov eax, [sup_gdt_ptr + 2]
+    lea ebx, [eax + gdt_tss - sup_gdt_table_start]
+
+    ; -------- fill TSS base --------
+    mov edx, sup_gdt_tss
+    mov word [ebx + 2], dx
+    shr edx, 16
+    mov byte [ebx + 4], dl
+    mov byte [ebx + 7], dh
+
+    mov eax, sup_gdt_tss ; load full 32-bit base address (low half)
+    shr eax, 32          ; shift to get the high 32 bits
+    mov [ebx + 8], eax   ; store into descriptor
+
+    ; -------- limit + type --------
+    mov word [ebx + 0], 104-1
+    mov byte [ebx + 5], 10001001b        ; TSS type
+
+    ; -------- set RSP0 (later in 64-bit) --------
+    ; In 32-bit, you’d set ESP0 at offset 4 in the TSS structure
+    ; mov dword [sup_gdt_tss + 4], stack_top
+
+    ; -------- load selector --------
+    mov ax, gdt_tss - sup_gdt_table_start
+    ltr ax
 
 
     ret

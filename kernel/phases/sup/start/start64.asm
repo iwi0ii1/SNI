@@ -4,6 +4,7 @@ bits 64
 global _start64
 
 extern sup_idt_init
+
 extern hdp_init
 extern hap_init
 extern rtp_init

@@ -25,11 +25,4 @@ SECTIONS {
         *(.bss*) 
         *(COMMON) 
     }
-
-    /* 5. THE STACK: Explicitly isolated at the absolute safe end of the memory map */
-    /*.stack (NOLOAD) : ALIGN(4096) {
-        stack_bottom = .;
-        . = . + 0x8000; // 32KB space allocation
-        stack_top = .;
-    }*/
 }
