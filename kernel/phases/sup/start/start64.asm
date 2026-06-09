@@ -47,6 +47,18 @@ _start64:
     rep stosq           ; THIS is what `{0}` uses
     %endif
 
+    ; Reload ALL data segment registers for 64-bit mode rules
+    mov ax, 0x28        ; 0x28 is your gdt_kernel_data selector
+    mov ds, ax
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
+    mov ss, ax          ; Safely lock down the 64-bit Stack Segment
+
+    ; Immediately force the CPU cache into 16-byte 64-bit TSS rules
+    mov ax, 0x38        ; 0x38 is your gdt_tss selector
+    ltr ax              ; The hardware re-reads the full 16-byte layout cleanly
+
     call sup_idt_init
 
     ; Enable SSE/MMX
