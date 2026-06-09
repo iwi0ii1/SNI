@@ -90,9 +90,7 @@ sup_gdt_init:
     mov byte [ebx + 4], dl
     mov byte [ebx + 7], dh
 
-    mov eax, sup_gdt_tss ; load full 32-bit base address (low half)
-    shr eax, 32          ; shift to get the high 32 bits
-    mov [ebx + 8], eax   ; store into descriptor
+    mov dword [ebx + 8], 0   ; First 4 bytes of gdt_tss set to 0
 
     ; -------- limit + type --------
     mov word [ebx + 0], 104-1
