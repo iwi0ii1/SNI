@@ -60,26 +60,47 @@ sup_gdt_ptr:
 
 
 section .text
+section .text
 sup_gdt_init:
-    ; Load descriptor table into CPU
     lgdt [sup_gdt_ptr]
-
-    ; The CPU executes according to the execution descriptor from CS.
-    ; However, CS still holds old policy, we need to change it to the new one.
     jmp 0x18:.flush
 
 .flush:
-    mov ax, 0x28 ; 0x28 is `gdt_kernel_data` entry according to the table.
-
-    ; Not ready to touch SS yet.
-    ; mov ss, ax
+    mov ax, 0x28 
     mov ds, ax
     mov es, ax
     mov fs, ax
     mov gs, ax
 
+    mov eax, [sup_gdt_ptr + 2]
+    lea ebx, [eax + gdt_tss - sup_gdt_table_start]
 
-    ; load GDT base from pseudo-descriptor
+    ; -------- Fix: Safe TSS Base Extraction --------
+    mov edx, sup_gdt_tss
+    mov word [ebx + 2], dx   ; Base Bits 0-15  -> Byte 2 and 3
+    
+    mov eax, edx
+    shr eax, 16
+    mov byte [ebx + 4], al   ; Base Bits 16-23 -> Byte 4
+    
+    mov eax, edx
+    shr eax, 24
+    mov byte [ebx + 7], al   ; Base Bits 24-31 -> Byte 7
+
+    ; -------- Clear High 32-bits for the 64-bit slot --------
+    mov dword [ebx + 8], 0   
+
+    ; -------- Fix: Setup Size Limit and Attribute Bytes --------
+    mov word [ebx + 0], 104-1
+    mov byte [ebx + 6], 00000000b ; Clear byte 6 cleanly
+    mov byte [ebx + 5], 10001001b ; Type: Available 32/64 TSS
+
+    ; -------- Load Task Register --------
+    mov ax, gdt_tss - sup_gdt_table_start
+    ltr ax
+
+    ret
+ pseudo-descriptor
     mov eax, [sup_gdt_ptr + 2]
     lea ebx, [eax + gdt_tss - sup_gdt_table_start]
 
