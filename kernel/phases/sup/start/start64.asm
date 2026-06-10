@@ -21,6 +21,16 @@ section .text
 _start64:
     cld ; Clear Direction Flag (so things don't go backwards)
 
+.reload_segment_regs:
+    ; Reload ALL data segment registers for 64-bit mode rules
+    mov ax, 0x28        ; 0x28 is gdt_kernel_data selector
+    mov ds, ax
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
+    mov ss, ax          ; Safely lock down the 64-bit Stack Segment
+
+.set_stack:
     mov rsp, stack_top
     and rsp, -16
 
@@ -29,7 +39,7 @@ _start64:
     cmp rax, 0x40000000
     jg .hang
 
-    ; Stack test (passed)
+    ; Stack test
     mov rax, 0x1122334455667788
     sub rsp, 8
     mov [rsp], rax
@@ -47,20 +57,15 @@ _start64:
     rep stosq           ; THIS is what `{0}` uses
     %endif
 
-    ; Reload ALL data segment registers for 64-bit mode rules
-    mov ax, 0x28        ; 0x28 is your gdt_kernel_data selector
-    mov ds, ax
-    mov es, ax
-    mov fs, ax
-    mov gs, ax
-    mov ss, ax          ; Safely lock down the 64-bit Stack Segment
-
+.tss_shit:
     ; Immediately force the CPU cache into 16-byte 64-bit TSS rules
-    mov ax, 0x38        ; 0x38 is your gdt_tss selector
+    mov ax, 0x38        ; 0x38 is your selector
     ltr ax              ; The hardware re-reads the full 16-byte layout cleanly
 
+.init_idt:
     call sup_idt_init
 
+.enable_sse_mmx:
     ; Enable SSE/MMX
     mov rax, cr0
     and rax, ~(1 << 2)   ; clear EM (bit 2)
@@ -92,7 +97,24 @@ _start64:
     pxor xmm13, xmm13
     pxor xmm14, xmm14
     pxor xmm15, xmm15
+    ;pxor xmm16, xmm16
+    ;pxor xmm17, xmm17
+    ;pxor xmm18, xmm18
+    ;pxor xmm19, xmm19
+    ;pxor xmm20, xmm20
+    ;pxor xmm21, xmm21
+    ;pxor xmm22, xmm22
+    ;pxor xmm23, xmm23
+    ;pxor xmm24, xmm24
+    ;pxor xmm25, xmm25
+    ;pxor xmm26, xmm26
+    ;pxor xmm27, xmm27
+    ;pxor xmm28, xmm28
+    ;pxor xmm29, xmm29
+    ;pxor xmm30, xmm30
+    ;pxor xmm31, xmm31
 
+.init_phases:
     call hdp_init
     call hap_init
     call rtp_init
@@ -100,9 +122,7 @@ _start64:
     sti
 
     
-    
-
-    ; Call the entrypoint of OS here
+    ; Spawn init (PID 1) here.
 
     cli
     jmp .hang

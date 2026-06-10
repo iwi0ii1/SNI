@@ -3,8 +3,10 @@
 #include <stdint.h>
 #include <stddef.h>
 
+#include "shared/gcc_attr.h"
+
 /// @brief SDT header
-struct __attribute__((packed)) hdp_acpi_sdt_header_t { 
+struct ATTR_PACKED hdp_acpi_sdt_header_t { 
     char signature[4];
     uint32_t length;
     uint8_t revision;
@@ -19,13 +21,13 @@ struct __attribute__((packed)) hdp_acpi_sdt_header_t {
 
 
 /// @brief RSDT firmware root table (v1)
-struct __attribute__((packed)) hdp_acpi_rsdt_t {
+struct ATTR_PACKED hdp_acpi_rsdt_t {
     struct hdp_acpi_sdt_header_t header;
     uint32_t entries[]; // array of 32-bit ptr to other firmware tables
 };
 
 /// @brief XSDT firmware root table (v2+)
-struct __attribute__((packed)) hdp_acpi_xsdt_t {
+struct ATTR_PACKED hdp_acpi_xsdt_t {
     struct hdp_acpi_sdt_header_t header;
     uint64_t entries[]; // array of 64-bit ptr to other firmware tables
 };
@@ -33,7 +35,7 @@ struct __attribute__((packed)) hdp_acpi_xsdt_t {
 
 
 // HPET table
-struct __attribute__((packed)) hdp_acpi_hpet_t {
+struct ATTR_PACKED hdp_acpi_hpet_t {
     struct hdp_acpi_sdt_header_t header;
     uint32_t event_block_id;
     struct {
@@ -51,7 +53,7 @@ struct __attribute__((packed)) hdp_acpi_hpet_t {
 
 
 // MCFG table
-struct __attribute__((packed)) hdp_acpi_mcfg_entry_t {
+struct ATTR_PACKED hdp_acpi_mcfg_entry_t {
     uint64_t base_address;
     uint16_t segment_group;
     uint8_t  start_bus;
@@ -59,7 +61,7 @@ struct __attribute__((packed)) hdp_acpi_mcfg_entry_t {
     uint32_t reserved;
 };
 
-struct __attribute__((packed)) hdp_acpi_mcfg_t {
+struct ATTR_PACKED hdp_acpi_mcfg_t {
     struct hdp_acpi_sdt_header_t header;
     uint64_t reserved;
     struct hdp_acpi_mcfg_entry_t entries[];
@@ -68,7 +70,7 @@ struct __attribute__((packed)) hdp_acpi_mcfg_t {
 
 
 // MADT table
-struct __attribute__((packed)) hdp_acpi_madt_t {
+struct ATTR_PACKED hdp_acpi_madt_t {
     struct hdp_acpi_sdt_header_t header;
     uint32_t lapic_address;
     uint32_t flags;
@@ -78,7 +80,7 @@ struct __attribute__((packed)) hdp_acpi_madt_t {
 
 
 // FADT table (simplified core fields)
-struct __attribute__((packed)) hdp_acpi_fadt_t {
+struct ATTR_PACKED hdp_acpi_fadt_t {
     struct hdp_acpi_sdt_header_t header;
     uint32_t firmware_ctrl;
     uint32_t dsdt;
@@ -107,7 +109,7 @@ struct __attribute__((packed)) hdp_acpi_fadt_t {
 /**
  * @brief Entire ACPI table
  */
-struct __attribute__((packed)) hdp_acpi_table_t {
+struct ATTR_PACKED hdp_acpi_table_t {
     const struct hdp_acpi_mcfg_t* mcfg;
     const struct hdp_acpi_madt_t* madt;
     const struct hdp_acpi_fadt_t* fadt;

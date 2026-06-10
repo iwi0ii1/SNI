@@ -26,6 +26,7 @@ _start:
     and esp, -16
 
     %ifdef DEBUG_FORM
+.stack_test:
     ; Stack test (passed)
     mov eax, 0x11223344
     sub esp, 8
@@ -43,9 +44,11 @@ _start:
     rep stosw           ; THIS is what `{0}` uses
     %endif
 
+.init_gdt_and_paging:
     call sup_gdt_init    ; Setup GDT (Ensures sup_gdt_ptr is 'dd', flushes CS)
     call sup_paging_init ; Setup page tables (Ensures ES is 0x28, returns PML4 address in EAX)
     
+.enable_long_mode:
     ; Enable CR4.PAE, prepares CPU for 4-level/64-bit tables
     mov edx, cr4
     or edx, (1 << 5)     ; PAE bit

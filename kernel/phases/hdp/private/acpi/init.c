@@ -27,10 +27,10 @@ void hdp_acpi_init(void) {
 
     // Cache ACPI table by given SDT address (from RSDP)
     if (rsdp->revision == 0 && rsdp->rsdt_address) {
-        shared_vgatb_aputs("Inside ACPI v1, ", 0x0F);
+        shared_vgatb_aputs("Inside ACPI v1. ", 0x0F);
         hdp_acpi_table = hdp_acpi_cache_tables_rsdt((struct hdp_acpi_rsdt_t*)(uintptr_t)rsdp->rsdt_address);
     } else if (rsdp->revision != 0 && rsdp->xsdt_address) {
-        shared_vgatb_aputs("Inside ACPI v2+, ", 0x0F);
+        shared_vgatb_aputs("Inside ACPI v2+. ", 0x0F);
         hdp_acpi_table = hdp_acpi_cache_tables_xsdt((struct hdp_acpi_xsdt_t*)rsdp->xsdt_address);
     } else { // For debugging purpose
         #ifdef DEBUG_FORM

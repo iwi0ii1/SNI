@@ -30,6 +30,8 @@ if [[ $# -eq 0 ]]; then
                     -m64 \
                     -mno-red-zone \
                     -msoft-float \
+                    -mno-avx \
+                    -mno-avx2 \
                     -fno-stack-protector \
                     -fno-strict-aliasing \
                     -fno-omit-frame-pointer \
@@ -45,23 +47,17 @@ if [[ $# -eq 0 ]]; then
             *.c)
                 printf "[+] Compiling: $file -> $newpath\n"
                 gcc \
-                    -ffreestanding \
-                    -nostdlib \
-                    -nostartfiles \
-                    -O0 \
-                    -g \
-                    -m64 \
+                    -ffreestanding -nostdlib -nostartfiles \
+                    -O0 -m64 \
                     -mno-red-zone \
                     -msoft-float \
-                    -fno-stack-protector \
-                    -fno-strict-aliasing \
-                    -fno-omit-frame-pointer \
-                    -fno-builtin \
-                    -fno-stack-check \
-                    -fno-pic \
+                    -mno-avx -mno-avx2 \
+                    -fno-stack-protector -fno-stack-check -fno-strict-aliasing \
+                    -fno-omit-frame-pointer -fno-builtin -fno-pic \
                     -std=c2x \
                     -DBOOT_PROTOCOL_MB2 -DDEBUG_FORM \
                     -I . \
+                    -g \
                     -c "${file#./}" -o "$newpath"
                 ;;
 

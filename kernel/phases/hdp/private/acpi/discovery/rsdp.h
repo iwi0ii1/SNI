@@ -4,8 +4,10 @@
 #include <stdint.h>
 #include <stddef.h>
 
+#include "shared/gcc_attr.h"
+
 /// @brief RSDP descriptor type (v2+)
-struct __attribute__((packed)) hdp_acpi_rsdp_descriptor_t {
+struct ATTR_PACKED hdp_acpi_rsdp_descriptor_t {
     char signature[8];
     uint8_t checksum;
     char oem_id[6];
