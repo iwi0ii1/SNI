@@ -4,16 +4,16 @@ bits 64
 global sup_idt_init
 global sup_idt_set_handler
 
-extern sup_isr_de
-extern sup_isr_db
-extern sup_isr_nmi
-extern sup_isr_nm
-extern sup_isr_bp
-extern sup_isr_of
-extern sup_isr_ud
-extern sup_isr_df
-extern sup_isr_gp
-extern sup_isr_pf
+extern sup_default_isr_de
+extern sup_default_isr_db
+extern sup_default_isr_nmi
+extern sup_default_isr_nm
+extern sup_default_isr_bp
+extern sup_default_isr_of
+extern sup_default_isr_ud
+extern sup_default_isr_df
+extern sup_default_isr_gp
+extern sup_default_isr_pf
 
 section .bss
 align 16
@@ -40,52 +40,52 @@ sup_idt_init:
 
 
     ; #DE
-    mov rdi, sup_isr_de
+    mov rdi, sup_default_isr_de
     mov si, 0
     call sup_idt_set_handler
 
     ; #DB
-    mov rdi, sup_isr_db
+    mov rdi, sup_default_isr_db
     mov si, 1
     call sup_idt_set_handler
 
     ; NMI (Critical)
-    mov rdi, sup_isr_nmi
+    mov rdi, sup_default_isr_nmi
     mov si, 2
     call sup_idt_set_handler
 
     ; #BP
-    mov rdi, sup_isr_bp
+    mov rdi, sup_default_isr_bp
     mov si, 3
     call sup_idt_set_handler
 
     ; #OF
-    mov rdi, sup_isr_of
+    mov rdi, sup_default_isr_of
     mov si, 4
     call sup_idt_set_handler
 
     ; #UD
-    mov rdi, sup_isr_ud
+    mov rdi, sup_default_isr_ud
     mov si, 5
     call sup_idt_set_handler
 
     ; #DF
-    mov rdi, sup_isr_df
+    mov rdi, sup_default_isr_df
     mov si, 6
     call sup_idt_set_handler
 
     ; #NM
-    mov rdi, sup_isr_nm
+    mov rdi, sup_default_isr_nm
     mov si, 7
     call sup_idt_set_handler
 
     ; #GP
-    mov rdi, sup_isr_gp
+    mov rdi, sup_default_isr_gp
     mov si, 13
     call sup_idt_set_handler
 
     ; #PF
-    mov rdi, sup_isr_pf
+    mov rdi, sup_default_isr_pf
     mov si, 14
     call sup_idt_set_handler
 
@@ -151,7 +151,7 @@ probe_idt_pf:
 
     ; now RAX = handler from IDT
 
-    mov rbx, sup_isr_pf    ; expected handler
+    mov rbx, sup_default_isr_pf    ; expected handler
 
     cmp rax, rbx
     je .ok

@@ -97,22 +97,6 @@ _start64:
     pxor xmm13, xmm13
     pxor xmm14, xmm14
     pxor xmm15, xmm15
-    ;pxor xmm16, xmm16
-    ;pxor xmm17, xmm17
-    ;pxor xmm18, xmm18
-    ;pxor xmm19, xmm19
-    ;pxor xmm20, xmm20
-    ;pxor xmm21, xmm21
-    ;pxor xmm22, xmm22
-    ;pxor xmm23, xmm23
-    ;pxor xmm24, xmm24
-    ;pxor xmm25, xmm25
-    ;pxor xmm26, xmm26
-    ;pxor xmm27, xmm27
-    ;pxor xmm28, xmm28
-    ;pxor xmm29, xmm29
-    ;pxor xmm30, xmm30
-    ;pxor xmm31, xmm31
 
 .init_phases:
     call hdp_init
