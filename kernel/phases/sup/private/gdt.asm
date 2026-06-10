@@ -24,9 +24,6 @@
 %define FLAT_32  1100b        ; G=1, D=1
 %define FLAT_DATA 1000b       ; G=1
 
-
-
-
 bits 32
 global sup_gdt_init
 global sup_gdt_ptr
@@ -55,11 +52,7 @@ sup_gdt_table_end:
 sup_gdt_ptr:
     dw sup_gdt_table_end - sup_gdt_table_start - 1
     dd sup_gdt_table_start
-    
 
-
-
-section .text
 section .text
 sup_gdt_init:
     lgdt [sup_gdt_ptr]
@@ -75,7 +68,7 @@ sup_gdt_init:
     mov eax, [sup_gdt_ptr + 2]
     lea ebx, [eax + gdt_tss - sup_gdt_table_start]
 
-    ; -------- Fix: Safe TSS Base Extraction --------
+    ; -------- Safe TSS Base Extraction --------
     mov edx, sup_gdt_tss
     mov word [ebx + 2], dx   ; Base Bits 0-15  -> Byte 2 and 3
     
@@ -90,40 +83,9 @@ sup_gdt_init:
     ; -------- Clear High 32-bits for the 64-bit slot --------
     mov dword [ebx + 8], 0   
 
-    ; -------- Fix: Setup Size Limit and Attribute Bytes --------
+    ; -------- Setup Size Limit and Attribute Bytes --------
     mov word [ebx + 0], 104-1
     mov byte [ebx + 6], 00000000b ; Clear byte 6 cleanly
     mov byte [ebx + 5], 10001001b ; Type: Available 32/64 TSS
-
-    ; -------- Load Task Register --------
-    mov ax, gdt_tss - sup_gdt_table_start
-    ltr ax
-
-    ret
- pseudo-descriptor
-    mov eax, [sup_gdt_ptr + 2]
-    lea ebx, [eax + gdt_tss - sup_gdt_table_start]
-
-    ; -------- fill TSS base --------
-    mov edx, sup_gdt_tss
-    mov word [ebx + 2], dx
-    shr edx, 16
-    mov byte [ebx + 4], dl
-    mov byte [ebx + 7], dh
-
-    mov dword [ebx + 8], 0   ; First 4 bytes of gdt_tss set to 0
-
-    ; -------- limit + type --------
-    mov word [ebx + 0], 104-1
-    mov byte [ebx + 5], 10001001b        ; TSS type
-
-    ; -------- set RSP0 (later in 64-bit) --------
-    ; In 32-bit, you’d set ESP0 at offset 4 in the TSS structure
-    ; mov dword [sup_gdt_tss + 4], stack_top
-
-    ; -------- load selector --------
-    mov ax, gdt_tss - sup_gdt_table_start
-    ltr ax
-
 
     ret
