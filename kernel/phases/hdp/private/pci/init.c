@@ -1,5 +1,6 @@
-#include "phases/hdp/private/pci/pci.h"
 #include "phases/hdp/private/acpi/acpi.h"
+
+#include "phases/hdp/private/pci/scan.h"
 
 #include "shared/vgatb.h"
 #include "shared/mem.h"
@@ -33,7 +34,7 @@ uint8_t utoa(uint32_t v, char* buf) {
 void hdp_pci_init(void) {
     const uint64_t ba = hdp_acpi_get_table()->mcfg->entries->base_address;
     if (!ba) {
-        shared_vgatb_aputs("Well, ECAM Base address is 0... can't scan buses with it.", 0x0F);
+        shared_vgatb_aputs("Well, hdp_acpi_get_table()->mcfg->entries->base_address is NULL... can't scan buses with it.", 0x0F);
         while (1)
             __asm__("hlt");
 
