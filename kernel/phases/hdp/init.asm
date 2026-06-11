@@ -18,4 +18,6 @@ hdp_init:
     call hdp_acpi_init
     call hdp_pci_init
 
+    hlt
+
     ret

@@ -83,5 +83,5 @@ if [[ $# -eq 0 ]]; then
 
     printf "\n[+] Linking kernel...\n"
 
-    ld -nostdlib -m elf_x86_64 -T "linker.ld" -o "build/kernel.elf" "${OBJS[@]}"
+    ld -nostdlib -m elf_x86_64 -T "linker.ld" -o "build/kernel.elf" "${OBJS[@]}" -z noexecstack # Don't assume stack is executable
 fi

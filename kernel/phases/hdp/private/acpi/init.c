@@ -10,8 +10,8 @@
 
 static struct hdp_acpi_table_t hdp_acpi_table = {0}; // Core ACPI table
 
-const struct hdp_acpi_table_t* const hdp_acpi_get_table(void) { &hdp_acpi_table; }
-const struct hdp_acpi_table_t* const hdp_api_get_acpi_table(void) { &hdp_acpi_table; }
+const struct hdp_acpi_table_t* const hdp_acpi_get_table(void) { return &hdp_acpi_table; }
+const struct hdp_acpi_table_t* const hdp_api_get_acpi_table(void) { return &hdp_acpi_table; }
 
 
 void hdp_acpi_init(void) {
