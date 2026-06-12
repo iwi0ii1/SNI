@@ -7,12 +7,6 @@ global _start
 
 extern _start64
 
-section .bss
-align 16
-stack_bottom:       ; Lower address (LAST PLATE)
-    resb 4096 * 8   ; Stack capacity: 32KB
-stack_top:          ; Higher address (NOT FIRST PLATE, BUT THE COVER OF THE PLATES SET)
-
 
 
 section .text
@@ -20,7 +14,7 @@ _start:
     cld ; Clear Direction Flag (so things don't go backwards)
     cli
 
-    mov esp, stack_top
+    mov esp, stack32_top
     and esp, -16
 
     %ifdef DEBUG_FORM
