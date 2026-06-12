@@ -3,10 +3,6 @@
 ; API: register handler for interrupt vector
 bits 64
 
-extern sup_idt_set_handler
-
-%macro SUP_API_REGISTER_ISR 2
-    mov rdi, %1      ; handler
-    mov si, %2      ; vector
-    call sup_idt_set_handler
-%endmacro
+; Basically an ISR installer. But in the computer term, it is known as `gate`.
+; Parameter: DIL: vector number, RSI: ISR ptr
+extern ecp_interrupts_set_gate

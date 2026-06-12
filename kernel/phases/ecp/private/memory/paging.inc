@@ -1,2 +1,0 @@
-bits 32
-extern ecp_paging_init

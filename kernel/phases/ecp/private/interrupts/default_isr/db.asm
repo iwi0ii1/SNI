@@ -1,15 +1,11 @@
-; Default ISR of #DB (Debug)
-%include "phases/ecp/private/interrupts/default_isr/shared.inc"
-
 bits 64
-global ecp_default_isr_db
-
-section .rodata
-alert_msg: db "Kernel alert: Debug event triggered!", 0
+global ecp_interrupts_default_isr_db
 
 section .text
-ecp_default_isr_db:
-    mov rdi, alert_msg
-    mov sil, 0x0F
 
-    jmp ecp_default_isr_shared_print_and_hang
+align 16
+ecp_interrupts_default_isr_db:
+
+.hang:
+    hlt
+    jmp .hang

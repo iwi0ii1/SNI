@@ -1,4 +1,4 @@
-; Dependency file: gdt.asm
+; Dependency file: private/segments/gdt.asm
 
 ; API: selectors address
 %define SUP_SELECTOR_KERNEL_CODE64 0x08
