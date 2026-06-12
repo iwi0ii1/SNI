@@ -1,10 +1,8 @@
+%include "phases/hdp/private/exposed.inc"
 %include "shared/vgatb.inc"         ; Somehow NASM includes by the assembling point (which is kernel/)
 
 bits 64
 global hdp_init
-
-extern hdp_acpi_init
-extern hdp_pci_init
 
 section .rodata
 mstr: db "It doesn't works!!", 0

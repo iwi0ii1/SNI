@@ -1,2 +1,2 @@
-# The purpose of SUP (Start Up Phase)
- - To transition the kernel into **long mode**, set **descriptor tables** and **page memory**.
+# The purpose of ECP (Environment Compliance Phase)
+  - To set up and manage the environment for later phases to work.

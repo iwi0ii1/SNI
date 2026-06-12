@@ -1,8 +1,6 @@
 # Source code rules:
- - Each phase should have `api/` (for other phases, cannot have helper functions), `private/` (smaller domains of a phase)
- - Only `private/*domain*/*domain.h*` can be included by other domains, kinda like an API between domains but not an explicit `api/`
- - No relative includes, always starts from `kernel/`
- - Always `const` unless mutability is forced.
- - Never define global variables across translation units (exclude `static` variables)
- - Naming convention: **phase-domain-action**, example: `sup_gdt_init` (except scoped identifiers)
- - Do init-style execution pipeline
+ - A domain can expose things to other domains through `domain/domain.h,inc`
+ - A `private/` can expose things to anything outside it but within such phase through `private/exposed.h,inc`
+ - An `api/` can only declare functions of resposibility belong to a phase, never define.
+ - Any domain is expected to have an init function, else cannot be considered a domain and should be moved to somewhere else.
+ - Naming convention: **phase_domain_action**
