@@ -4,5 +4,5 @@
 This kernel runs in phases while each phase will have their own responsibitilies, and the result will persist.
 **ECP (Environment Compliance Phase)** is responsible for setting up and managing the environment for later phases to work. Nothing else.
 **HDP (Hardware Discovery Phase)** is responsible for discovering hardwares through buses like PCI/PCIe, SATA/IDE, USB, PS/2, SPI, etc.
-**HAP (Hardware Abstraction Phase)** is responsible for providing drivers for later phases to use and manage hardware easier.
+**HIP (Hardware Interface Phase)** is responsible for providing interfaces for later phases to use and manage hardware easier.
 **RTP (RunTime Phase)** is basically where the real kernel work lives. Responsible for providing syscalls, managing almost anything u can think of.
