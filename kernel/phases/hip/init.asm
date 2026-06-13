@@ -4,7 +4,7 @@ global hip_init
 
 section .text
 hip_init:
-    ; Firmware -> Buses -> Memory -> Storage -> Display -> Timer -> Input -> Audio -> Network
+    ; Firmware -> Buses -> Controllers
     
 
     ret
