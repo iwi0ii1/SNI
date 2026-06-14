@@ -1,1 +1,6 @@
-; Nothing to expose
+bits 64
+
+extern ecp_modes_init
+extern ecp_memory_init
+extern ecp_segments_init
+extern ecp_exceptions_init

@@ -1,0 +1,6 @@
+bits 64
+
+extern hip_firmware_init
+extern hip_buses_init
+extern hip_devices_init
+extern hip_interfaces_init

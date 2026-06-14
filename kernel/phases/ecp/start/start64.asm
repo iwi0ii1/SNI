@@ -1,10 +1,7 @@
+%include "phases/ecp/private/exposed.inc"
+
 bits 64
 global _start64
-
-extern ecp_modes_init
-extern ecp_memory_init
-extern ecp_segments_init
-extern ecp_interrupts_init
 
 extern hip_init
 extern rtp_init
@@ -27,7 +24,10 @@ _start64:
     call ecp_modes_init
     call ecp_memory_init
     call ecp_segments_init
-    call ecp_interrupts_init
+    call ecp_exceptions_init
+
+    mov word [0xB8000], 0xF041
+    hlt
 
     call hip_init
     call rtp_init

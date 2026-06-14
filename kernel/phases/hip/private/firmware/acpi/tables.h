@@ -6,7 +6,7 @@
 #include "shared/gcc_attr.h"
 
 /// @brief SDT header
-struct ATTR_PACKED hdp_acpi_sdt_header_t { 
+struct ATTR_PACKED hip_firmware_acpi_sdt_header_t { 
     char signature[4];
     uint32_t length;
     uint8_t revision;
@@ -21,22 +21,22 @@ struct ATTR_PACKED hdp_acpi_sdt_header_t {
 
 
 /// @brief RSDT firmware root table (v1)
-struct ATTR_PACKED hdp_acpi_rsdt_t {
-    struct hdp_acpi_sdt_header_t header;
+struct ATTR_PACKED hip_firmware_acpi_rsdt_t {
+    struct hip_firmware_acpi_sdt_header_t header;
     uint32_t entries[]; // array of 32-bit ptr to other firmware tables
 };
 
 /// @brief XSDT firmware root table (v2+)
-struct ATTR_PACKED hdp_acpi_xsdt_t {
-    struct hdp_acpi_sdt_header_t header;
+struct ATTR_PACKED hip_firmware_acpi_xsdt_t {
+    struct hip_firmware_acpi_sdt_header_t header;
     uint64_t entries[]; // array of 64-bit ptr to other firmware tables
 };
 
 
 
 // HPET table
-struct ATTR_PACKED hdp_acpi_hpet_t {
-    struct hdp_acpi_sdt_header_t header;
+struct ATTR_PACKED hip_firmware_acpi_hpet_t {
+    struct hip_firmware_acpi_sdt_header_t header;
     uint32_t event_block_id;
     struct {
         uint8_t address_space_id;
@@ -53,7 +53,7 @@ struct ATTR_PACKED hdp_acpi_hpet_t {
 
 
 // MCFG table
-struct ATTR_PACKED hdp_acpi_mcfg_entry_t {
+struct ATTR_PACKED hip_firmware_acpi_mcfg_entry_t {
     uint64_t base_address;
     uint16_t segment_group;
     uint8_t  start_bus;
@@ -61,17 +61,17 @@ struct ATTR_PACKED hdp_acpi_mcfg_entry_t {
     uint32_t reserved;
 };
 
-struct ATTR_PACKED hdp_acpi_mcfg_t {
-    struct hdp_acpi_sdt_header_t header;
+struct ATTR_PACKED hip_firmware_acpi_mcfg_t {
+    struct hip_firmware_acpi_sdt_header_t header;
     uint64_t reserved;
-    struct hdp_acpi_mcfg_entry_t entries[];
+    struct hip_firmware_acpi_mcfg_entry_t entries[];
 };
 
 
 
 // MADT table
-struct ATTR_PACKED hdp_acpi_madt_t {
-    struct hdp_acpi_sdt_header_t header;
+struct ATTR_PACKED hip_firmware_acpi_madt_t {
+    struct hip_firmware_acpi_sdt_header_t header;
     uint32_t lapic_address;
     uint32_t flags;
     uint8_t  entries[]; // variable-length subtables (APIC structures)
@@ -80,8 +80,8 @@ struct ATTR_PACKED hdp_acpi_madt_t {
 
 
 // FADT table (simplified core fields)
-struct ATTR_PACKED hdp_acpi_fadt_t {
-    struct hdp_acpi_sdt_header_t header;
+struct ATTR_PACKED hip_firmware_acpi_fadt_t {
+    struct hip_firmware_acpi_sdt_header_t header;
     uint32_t firmware_ctrl;
     uint32_t dsdt;
     uint8_t  reserved;
@@ -109,9 +109,9 @@ struct ATTR_PACKED hdp_acpi_fadt_t {
 /**
  * @brief Entire ACPI table
  */
-struct ATTR_PACKED hdp_acpi_table_t {
-    const struct hdp_acpi_mcfg_t* mcfg;
-    const struct hdp_acpi_madt_t* madt;
-    const struct hdp_acpi_fadt_t* fadt;
-    const struct hdp_acpi_hpet_t* hpet;
+struct ATTR_PACKED hip_firmware_acpi_table_t {
+    const struct hip_firmware_acpi_mcfg_t* mcfg;
+    const struct hip_firmware_acpi_madt_t* madt;
+    const struct hip_firmware_acpi_fadt_t* fadt;
+    const struct hip_firmware_acpi_hpet_t* hpet;
 };

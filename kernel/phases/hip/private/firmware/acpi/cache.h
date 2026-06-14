@@ -1,6 +1,6 @@
 // ACPI table cachers (RSDT/XSDT variants)
 #pragma once
-#include "phases/hdp/private/acpi/tables.h"
+#include "phases/hip/private/firmware/acpi/tables.h"
 
 #include "shared/gcc_attr.h"
 #include "shared/vgatb.h"
@@ -8,8 +8,8 @@
 
 [[nodiscard]]
 ATTR_NO_SSE // Don't use SSE or MMX for this function
-extern struct hdp_acpi_table_t hdp_acpi_cache_tables_rsdt(const struct hdp_acpi_rsdt_t* const rsdt);
+extern struct hip_firmware_acpi_table_t hip_firmware_acpi_cache_tables_rsdt(const struct hip_firmware_acpi_rsdt_t* const rsdt);
 
 [[nodiscard]]
 ATTR_NO_SSE // Don't use SSE or MMX for this function
-extern struct hdp_acpi_table_t hdp_acpi_cache_tables_xsdt(const struct hdp_acpi_xsdt_t* const xsdt);
+extern struct hip_firmware_acpi_table_t hip_firmware_acpi_cache_tables_xsdt(const struct hip_firmware_acpi_xsdt_t* const xsdt);

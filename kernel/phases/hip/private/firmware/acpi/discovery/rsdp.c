@@ -1,7 +1,7 @@
 // RSDP things
 
 // A header that tells where the "table of ptrs to other firmware tables (XSDT)" is.
-#include "phases/hdp/private/acpi/discovery/rsdp.h"
+#include "phases/hip/private/firmware/acpi/discovery/rsdp.h"
 #include "shared/vgatb.h"
 #include "shared/mem.h"
 
@@ -17,14 +17,14 @@ static _Bool checksum_valid(const uint8_t* const data, const size_t len) {
 }
 
 [[nodiscard]]
-const struct hdp_acpi_rsdp_descriptor_t* const hdp_acpi_find_rsdp(const uint32_t start, const uint32_t end) {
+const struct hip_firmware_acpi_rsdp_descriptor_t* const hip_firmware_acpi_find_rsdp(const uint32_t start, const uint32_t end) {
     for (uintptr_t addr = start; addr < end; addr += 16) {
         const uint8_t* const p = (uint8_t*)addr;
 
         if (shared_mem_cmp(p, RSDP_SIGNATURE, 8) != 0)
             continue;
 
-        const struct hdp_acpi_rsdp_descriptor_t* const rsdp = (struct hdp_acpi_rsdp_descriptor_t*)p;
+        const struct hip_firmware_acpi_rsdp_descriptor_t* const rsdp = (struct hip_firmware_acpi_rsdp_descriptor_t*)p;
 
         if (rsdp->revision == 0) {
             if (!checksum_valid(p, 20))

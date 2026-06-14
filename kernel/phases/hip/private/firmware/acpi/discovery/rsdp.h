@@ -7,7 +7,7 @@
 #include "shared/gcc_attr.h"
 
 /// @brief RSDP descriptor type (v2+)
-struct ATTR_PACKED hdp_acpi_rsdp_descriptor_t {
+struct ATTR_PACKED hip_firmware_acpi_rsdp_descriptor_t {
     char signature[8];
     uint8_t checksum;
     char oem_id[6];
@@ -26,4 +26,4 @@ struct ATTR_PACKED hdp_acpi_rsdp_descriptor_t {
  * @warning Returns NULL if failed to find a valid ones
  */
 [[nodiscard]]
-const struct hdp_acpi_rsdp_descriptor_t* const hdp_acpi_find_rsdp(const uint32_t start, const uint32_t end);
+const struct hip_firmware_acpi_rsdp_descriptor_t* const hip_firmware_acpi_find_rsdp(const uint32_t start, const uint32_t end);
