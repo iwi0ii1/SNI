@@ -1,5 +1,5 @@
-#include "shared/gcc_attr.h"
+// Initialize interfaces info
 
-void ecp_interfaces_init(void) {
+void hip_interfaces_init(void) {
     
 }
