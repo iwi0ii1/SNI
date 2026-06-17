@@ -1,4 +1,4 @@
-%include "phases/hdp/private/exposed.inc"
+%include "hdp/private/exposed.inc"
 %include "shared/vgatb.inc"         ; Somehow NASM includes by the assembling point (which is kernel/)
 
 bits 64

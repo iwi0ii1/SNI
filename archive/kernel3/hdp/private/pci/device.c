@@ -1,6 +1,6 @@
 // Device storage related things.
 
-#include "phases/hdp/private/pci/device.h"
+#include "hdp/private/pci/device.h"
 
 #define HDP_PCI_MAX_DEVICES 512
 

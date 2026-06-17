@@ -1,6 +1,6 @@
-#include "phases/hdp/private/acpi/acpi.h"
+#include "hdp/private/acpi/acpi.h"
 
-#include "phases/hdp/private/pci/scan.h"
+#include "hdp/private/pci/scan.h"
 
 #include "shared/vgatb.h"
 #include "shared/mem.h"

@@ -1,4 +1,0 @@
-bits 64
-extern ecp_modes_enable_mmx
-extern ecp_modes_enable_sse
-extern ecp_modes_enable_avx

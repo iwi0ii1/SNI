@@ -1,2 +1,0 @@
-bits 64
-extern ecp_modes_enable_wp

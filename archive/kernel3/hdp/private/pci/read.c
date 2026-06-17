@@ -1,7 +1,7 @@
 // Reading 
 
-#include "phases/hdp/private/pci/pci.h"
-#include "phases/hdp/private/acpi/acpi.h"
+#include "hdp/private/pci/pci.h"
+#include "hdp/private/acpi/acpi.h"
 
 uint32_t hdp_pci_read32(const uint8_t bus, const uint8_t device, const uint8_t function, const uint16_t offset) {
     uint64_t address;
