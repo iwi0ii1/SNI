@@ -8,6 +8,7 @@ section .text
 hwd_init:
     call hwd_firmware_init
     call hwd_buses_init
-    call hwd_devices_init
+    call hwd_controllers_init
+    call hwd_cpu_init
 
     ret

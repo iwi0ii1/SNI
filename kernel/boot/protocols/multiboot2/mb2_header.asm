@@ -1,5 +1,4 @@
 %ifdef BOOT_PROTOCOL_MB2
-
 section .multiboot
 align 8
 

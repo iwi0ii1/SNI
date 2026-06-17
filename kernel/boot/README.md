@@ -1,1 +1,0 @@
-# Attention: This directory is not part of the phase execution pipeline, it is only for giving bootloaders headers such as MB2 header for Multiboot2 and GRUB, etc.

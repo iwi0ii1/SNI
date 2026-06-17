@@ -1,7 +1,9 @@
 #!/bin/bash
 set -e
 
+kernel_name="sni"
 
+printf "compile.sh: $(pwd)\n"
 
 if [[ $# -eq 0 ]]; then
     args=("$@")
@@ -83,7 +85,7 @@ if [[ $# -eq 0 ]]; then
 
     printf "\n[+] Linking kernel...\n"
 
-    ld -nostdlib -m elf_x86_64 -T "linker.ld" -o "build/kernel.elf" "${OBJS[@]}" -z noexecstack # Don't assume stack is executable
+    ld -nostdlib -m elf_x86_64 -T "linker.ld" -o "build/$kernel_name.elf" "${OBJS[@]}" -z noexecstack # Don't assume stack is executable
 
     printf "\n"
 fi

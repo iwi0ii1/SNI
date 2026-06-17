@@ -6,7 +6,7 @@ SECTIONS {
 
     /* 1. CODE: Explicit ordering prevents 32-bit / 64-bit interleaving */
     .text : ALIGN(4096) {
-        KEEP(*(.multiboot_header))
+        KEEP(*(.multiboot))
         
         /* Force the 32-bit entry code to sit exactly at the front */
         KEEP(*(.text.boot))
