@@ -30,4 +30,4 @@ _start16:
 times 510-($-$$) db 0 
 
 ; The "Magic Number" that the BIOS looks for to confirm it's bootable
-dw 0xaa55
+dw 0xAA55
