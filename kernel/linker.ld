@@ -1,4 +1,5 @@
-ENTRY(_start)
+OUTPUT_FORMAT("binary") /* Raw binary, not ELF or PE */
+ENTRY(_start16)
 
 SECTIONS {
     /* Bootloader drops kernel at the 1MB physical boundary */
@@ -6,8 +7,6 @@ SECTIONS {
 
     /* 1. CODE: Explicit ordering prevents 32-bit / 64-bit interleaving */
     .text : ALIGN(4096) {
-        KEEP(*(.multiboot))
-        
         /* Force the 32-bit entry code to sit exactly at the front */
         KEEP(*(.text.boot))
         

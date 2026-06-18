@@ -8,7 +8,8 @@ printf "compile.sh: $(pwd)\n"
 if [[ $# -eq 0 ]]; then
     args=("$@")
 
-    mkdir -p build
+    rm -rf ../build
+    mkdir ../build
     
     mapfile -t SOURCES < <(find . -type f \( -name "*.cpp" -o -name "*.c" -o -name "*.asm" -o -name "*.s" \))
     
@@ -16,33 +17,25 @@ if [[ $# -eq 0 ]]; then
 
     for file in "${SOURCES[@]}"; do
         file="${file#./}"
-        newpath="build/$(echo "$file" | sed 's/\//_/g' | sed 's/\.[^.]*$/.o/')"
+        newpath="../build/$(echo "$file" | sed 's/\//_/g' | sed 's/\.[^.]*$/.o/')"
 
         case "$file" in
             *.cpp)
                 printf "[+] Compiling $file -> $newpath\n"
                 g++ \
-                    -ffreestanding \
-                    -nostdlib \
-                    -nostartfiles \
-                    -fno-exceptions \
-                    -fno-rtti \
-                    -O0 \
-                    -g \
-                    -m64 \
+                    -ffreestanding -nostdlib -nostartfiles \
+                    -O0 -m64 \
                     -mno-red-zone \
                     -msoft-float \
-                    -mno-avx \
-                    -mno-avx2 \
-                    -fno-stack-protector \
-                    -fno-strict-aliasing \
-                    -fno-omit-frame-pointer \
-                    -fno-builtin \
-                    -fno-stack-check \
-                    -fno-pic \
+                    -mno-avx -mno-avx2 \
+                    -fno-stack-protector -fno-stack-check -fno-strict-aliasing \
+                    -fno-omit-frame-pointer -fno-builtin -fno-pic -fno-pie -no-pie \
+                    -static \
                     -std=c++23 \
-                    -DBOOT_PROTOCOL_MB2 -DDEBUG_FORM \
+                    -fno-exceptions \
+                    -fno-rtti \
                     -I . \
+                    -g \
                     -c "${file#./}" -o "$newpath"
                 ;;
         
@@ -55,9 +48,9 @@ if [[ $# -eq 0 ]]; then
                     -msoft-float \
                     -mno-avx -mno-avx2 \
                     -fno-stack-protector -fno-stack-check -fno-strict-aliasing \
-                    -fno-omit-frame-pointer -fno-builtin -fno-pic \
+                    -fno-omit-frame-pointer -fno-builtin -fno-pic -fno-pie -no-pie \
+                    -static \
                     -std=c2x \
-                    -DBOOT_PROTOCOL_MB2 -DDEBUG_FORM \
                     -I . \
                     -g \
                     -c "${file#./}" -o "$newpath"
@@ -69,7 +62,6 @@ if [[ $# -eq 0 ]]; then
                 -f elf64 \
                 -g \
                 -F dwarf \
-                -DBOOT_PROTOCOL_MB2 -DDEBUG_FORM \
                 -I . \
                 "${file#./}" -o "$newpath" \
                 ;;
@@ -85,7 +77,7 @@ if [[ $# -eq 0 ]]; then
 
     printf "\n[+] Linking kernel...\n"
 
-    ld -nostdlib -m elf_x86_64 -T "linker.ld" -o "build/$kernel_name.elf" "${OBJS[@]}" -z noexecstack # Don't assume stack is executable
+    ld -nostdlib -T "linker.ld" -o "../$kernel_name.bin" "${OBJS[@]}" -z noexecstack # Don't assume stack is executable
 
     printf "\n"
 fi

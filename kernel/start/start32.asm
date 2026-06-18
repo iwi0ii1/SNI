@@ -1,5 +1,5 @@
 bits 32
-global _start
+global _start32
 extern _start64
 
 ; Boot Data Structure (Will be abandoned after far jump)
@@ -33,8 +33,8 @@ boot_stack_top:
 
 
 section .text
-_start:
-    cld 
+_start32:
+    cld
     cli
 
     ; 1. Set up your 32-bit stack
