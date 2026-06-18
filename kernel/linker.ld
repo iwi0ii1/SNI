@@ -2,31 +2,20 @@ OUTPUT_FORMAT("binary") /* Raw binary, not ELF or PE */
 ENTRY(_start16)
 
 SECTIONS {
-    /* Bootloader drops kernel at the 1MB physical boundary */
-    . = 1M;
+    . = 0x7C00;
 
     /* 1. CODE: Explicit ordering prevents 32-bit / 64-bit interleaving */
-    .text : ALIGN(4096) {
-        /* Force the 32-bit entry code to sit exactly at the front */
-        KEEP(*(.text.boot))
-        
-        /* All other 64-bit kernel code files fall safely behind it */
-        *(.text*)
+    .text : ALIGN(4096) { 
+        *(.text._start16)
+        *(.text)
     }
 
     /* 2. READ-ONLY DATA: Constants, strings */
-    .rodata : ALIGN(4096) { 
-        *(.rodata*) 
-    }
+    .rodata : ALIGN(4096) { *(.rodata) }
 
     /* 3. INITIALIZED DATA */
-    .data : ALIGN(4096) { 
-        *(.data*) 
-    }
+    .data : ALIGN(4096) { *(.data) }
 
     /* 4. UNINITIALIZED DATA */
-    .bss : ALIGN(4096) { 
-        *(.bss*) 
-        *(COMMON) 
-    }
+    .bss : ALIGN(4096) { *(.bss) }
 }
