@@ -1,6 +1,0 @@
-bits 64
-
-extern hwd_firmware_init
-extern hwd_buses_init
-extern hwd_controllers_init
-extern hwd_cpu_init

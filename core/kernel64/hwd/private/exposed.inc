@@ -1,0 +1,6 @@
+bits 64
+
+extern k64_hwd_firmware_init
+extern k64_hwd_buses_init
+extern k64_hwd_controllers_init
+extern k64_hwd_cpu_init
