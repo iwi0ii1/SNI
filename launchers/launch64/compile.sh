@@ -68,4 +68,4 @@ for file in "${SOURCES[@]}"; do
             exit 1
             ;;
     esac
-end
+done
