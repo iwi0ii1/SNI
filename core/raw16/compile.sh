@@ -3,7 +3,7 @@ set -e
 
 printf "compile.sh: $(pwd)\n"
 
-build_loc="$../../build/raw1616"
+build_loc="../../build/raw16"
 
 rm -rf "$build_loc"
 mkdir -p "$build_loc"

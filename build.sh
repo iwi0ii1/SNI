@@ -7,6 +7,10 @@ cd core/kernel64
 bash compile.sh
 cd ../raw16
 bash compile.sh
+cd ../../launchers/launch16
+bash compile.sh
+cd ../launch64
+bash compile.sh
 cd ../..
 
 target_firmware="none"

@@ -1,12 +1,12 @@
 OUTPUT_FORMAT("binary") /* Raw binary, not ELF or PE */
-ENTRY(_start16)
+ENTRY(launch16)
 
 SECTIONS {
     . = 0x7C00;
 
     /* 1. CODE: Explicit ordering prevents 32-bit / 64-bit interleaving */
     .text : ALIGN(4096) { 
-        *(.text._start16)
+        *(.text.launch16)
         *(.text)
     }
 
