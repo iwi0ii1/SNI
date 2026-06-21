@@ -8,7 +8,7 @@ launch16:
     mov al, 0x11
     int 0x10
     
-    ; For 0xA000:0000 (ES:DI)
+    ; For 0xA0000 (ES:DI == ES*16 + DI)
     mov ax, 0xA000
     mov es, ax
     xor di, di
@@ -20,12 +20,11 @@ launch16:
     mov cx, 40
     rep stosw
 
-    ; Not one past address
+    ; Check one past end
     cmp di, 0x9600
     jz .hang
 
     not ax ; Flip it
-    inc di ; `stosw` post-increments, so it isn't one past end
 
     jmp .lup
 
