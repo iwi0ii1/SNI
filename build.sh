@@ -25,8 +25,10 @@ if [[ "$1" == "bios" ]]; then
 fi
 
 
-printf "Run with $target_firmware? (y/n)"
-read bool
+if [[ "$target_firmware" != "none" ]]; then
+    printf "Run with $target_firmware? (y/n)"
+    read bool
+fi
 
 
 if [[ "$bool" == "y" ]]; then
