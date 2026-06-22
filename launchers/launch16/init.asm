@@ -7,31 +7,28 @@ launch16:
     mov ax, 0003h
     int 10h
 
-    ; ES = video memory
-    mov ax, 0B800h
+    ; 0xB8000 (stos dest ES:DI)
+    mov ax, 0xB800
     mov es, ax
     xor di, di
 
-    ; DS = boot segment (7C00h)
-    mov ax, 07C0h
+    ; CS + msg (lods src DS:SI)
+    mov ax, cs
     mov ds, ax
-
     mov si, msg
-
-    mov al, [si]
 
     mov ah, 0x0F
 
+    lodsb
     stosw
-
     hlt
 
 .lup:
-    lodsb           ; AL = [DS:SI]
+    lodsb
     test al, al
     jz .hang
 
-    stosw           ; write AX = (char + attribute)
+    stosw
     jmp .lup
 
 .hang:
