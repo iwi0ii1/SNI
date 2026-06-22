@@ -3,35 +3,43 @@ global launch16
 
 section .text.launch16
 launch16:
-    ; Set vid mode to 640x480@1
-    xor ah, ah
-    mov al, 0x11
-    int 0x10
-    
-    ; For 0xA0000 (ES:DI == ES*16 + DI)
-    mov ax, 0xA000
+    ; set text mode
+    mov ax, 0003h
+    int 10h
+
+    ; ES = video memory
+    mov ax, 0B800h
     mov es, ax
     xor di, di
 
-    mov ax, 0b1010_1010_1010_1010
+    ; DS = boot segment (7C00h)
+    mov ax, 07C0h
+    mov ds, ax
+
+    mov si, msg
+
+    mov al, [si]
+
+    mov ah, 0x0F
+
+    stosw
+
+    hlt
 
 .lup:
-    ; For a row
-    mov cx, 40
-    rep stosw
-
-    ; Check one past end
-    cmp di, 0x9600
+    lodsb           ; AL = [DS:SI]
+    test al, al
     jz .hang
 
-    not ax ; Flip it
-
+    stosw           ; write AX = (char + attribute)
     jmp .lup
 
 .hang:
     cli
     hlt
     jmp .hang
+
+msg: db "Hello BIOS!", 0
 
 times 510 - ($ - $$) db 0
 dw 0xAA55
