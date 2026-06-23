@@ -33,3 +33,6 @@ for file in "${SOURCES[@]}"; do
             ;;
     esac
 done
+
+ld -r $build_loc/*.o -o $build_loc/../raw16.o
+rm -rf $build_loc

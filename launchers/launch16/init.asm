@@ -19,10 +19,6 @@ launch16:
 
     mov ah, 0x0F
 
-    lodsb
-    stosw
-    hlt
-
 .lup:
     lodsb
     test al, al
