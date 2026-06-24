@@ -7,3 +7,4 @@
 #define ATTR_ALIGNED(x) ATTR_OF(aligned(x)) // Aligned by...
 #define ATTR_NO_SSE ATTR_OF(target("no-sse,no-sse2,no-mmx")) // No SSE, MMX
 #define ATTR_ALWAYS_INLINE ATTR_OF(always_inline) // Always inline
+#define ATTR_SECTION(x) ATTR_OF(section(#x)) // Place in a section, x doesn't need to be string

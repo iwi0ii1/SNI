@@ -1,17 +1,15 @@
 OUTPUT_FORMAT("binary")
-ENTRY(launch16)
+ENTRY(l16_main)
 
 SECTIONS {
     . = 0x7C00;
 
     .text : {
-        *(.text.launch16)
+        *(.launch16)
         *(.text)
     }
 
     .rodata : { *(.rodata) }
-
     .data : { *(.data) }
-
     .bss : { *(.bss) }
 }

@@ -2,7 +2,7 @@
 
 // A header that tells where the "table of ptrs to other firmware tables (XSDT)" is.
 #include "hwd/private/firmware/acpi/discovery/rsdp.h"
-#include "shared/vgatb.h"
+#include "shared/text.h"
 #include "shared/mem.h"
 
 #define RSDP_SIGNATURE "RSD PTR "

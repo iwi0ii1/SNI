@@ -1,8 +1,10 @@
 bits 16
-global launch16
+global l16_main
 
-section .text.launch16
-launch16:
+extern k64_main
+
+section .launch16
+l16_main:
     ; set text mode
     mov ax, 0003h
     int 10h

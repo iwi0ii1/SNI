@@ -3,7 +3,7 @@ set -e
 
 printf "compile.sh: $(pwd)\n"
 
-build_loc="../../build/kernel64"
+build_loc="../build/kernel64"
 
 rm -rf "$build_loc"
 mkdir -p "$build_loc"
@@ -70,5 +70,5 @@ for file in "${SOURCES[@]}"; do
     esac
 done
 
-ld -r $build_loc/*.o -o $build_loc/../kernel64.o
+ld -r -m elf_x86_64 $build_loc/*.o -o $build_loc/../kernel64.o -z noexecstack
 rm -rf $build_loc

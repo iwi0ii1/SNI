@@ -3,11 +3,9 @@ set -e
 
 name="sni"
 
-cd core/kernel64
+cd kernel64
 bash compile.sh
-cd ../raw16
-bash compile.sh
-cd ../../launchers/launch16
+cd ../launchers/launch16
 bash compile.sh
 cd ../launch64
 bash compile.sh
@@ -21,7 +19,7 @@ if [[ "$1" == "bios" ]]; then
 
     # Raw executable
     ld -nostdlib -T "tests/bios/bios_linker.ld" -o "$test_loc/$name.bin" \
-    build/raw16.o build/kernel64.o build/launch16.o \
+    build/kernel64.o build/launch16.o \
     -z noexecstack # Don't assume stack is executable
 
     # ELF64 binary for debugging
