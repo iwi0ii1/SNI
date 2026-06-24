@@ -3,12 +3,9 @@ ENTRY(l16_main)
 SECTIONS {
     . = 0x7C00;
 
-    .text : {
-        *(.launch16)
-        *(.text)
-    }
-
+    .launch16 : { *(.launch16) } = 0x7C00
+    .text : { *(.text) }
     .rodata : { *(.rodata) }
     .data : { *(.data) }
-    .bss : { *(.bss) }
+    /* Cannot have .bss */
 }

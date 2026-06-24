@@ -34,6 +34,7 @@ l16_main:
     hlt
     jmp .hang
 
+section .rodata
 msg: db "Hello BIOS!", 0
 
 times 510 - ($ - $$) db 0
