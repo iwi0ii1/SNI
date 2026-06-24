@@ -18,8 +18,8 @@ if [[ "$1" == "bios" ]]; then
     test_loc="tests/bios"
 
     # ELF64
-    ld -nostdlib -m elf_x86_64 -T "$test_loc/bios_linker.ld" -o "$test_loc/$name.elf" \
-    build/launch16.o \
+    ld -nostdlib -m elf_x86_64 -T "$test_loc/bios_linker.ld" -o "$test_loc/$name.elf" --nmagic \
+    build/launch16.o build/kernel64.o \
     -z noexecstack # Don't assume stack is executable
 
     # Raw binary

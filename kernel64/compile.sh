@@ -70,5 +70,5 @@ for file in "${SOURCES[@]}"; do
     esac
 done
 
-ld -r -nostdlib -m elf_x86_64 $build_loc/*.o -o $build_loc/../kernel64.o -z noexecstack
+ld -r -nostdlib -m elf_x86_64 $build_loc/*.o -o $build_loc/../kernel64.o -z noexecstack --nmagic
 rm -rf $build_loc
