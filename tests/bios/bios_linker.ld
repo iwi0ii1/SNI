@@ -1,4 +1,3 @@
-OUTPUT_FORMAT("binary")
 ENTRY(l16_main)
 
 SECTIONS {

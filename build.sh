@@ -17,13 +17,13 @@ printf "\n[+] Linking...\n"
 if [[ "$1" == "bios" ]]; then
     test_loc="tests/bios"
 
-    # Raw executable
-    ld -nostdlib -T "tests/bios/bios_linker.ld" -o "$test_loc/$name.bin" \
-    build/kernel64.o build/launch16.o \
+    # ELF64
+    ld -nostdlib -m elf_x86_64 -T "$test_loc/bios_linker.ld" -o "$test_loc/$name.elf" \
+    build/launch16.o \
     -z noexecstack # Don't assume stack is executable
 
-    # ELF64 binary for debugging
-    objcopy -I binary -O elf64-x86-64 "$test_loc/$name.bin" "$test_loc/$name.elf"
+    # Raw binary
+    objcopy -I elf64-x86-64 -O binary "$test_loc/$name.elf" "$test_loc/$name.bin"
 
     target_firmware="BIOS"
 fi
@@ -38,8 +38,6 @@ fi
 
 if [[ "$bool" == "y" ]]; then
     if [[ "$target_firmware" == "BIOS" ]]; then
-        cd tests/bios
-        qemu-system-x86_64 -drive format=raw,file=$name.bin
-        cd ../..
+        qemu-system-x86_64 -drive format=raw,file=$test_loc/$name.bin
     fi
 fi

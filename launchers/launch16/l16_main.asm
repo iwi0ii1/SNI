@@ -1,7 +1,7 @@
 bits 16
 global l16_main
 
-extern k64_main
+;extern k64_main
 
 section .launch16
 l16_main:
