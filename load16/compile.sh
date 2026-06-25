@@ -11,20 +11,11 @@ mkdir -p "$build_loc"
 mapfile -t SOURCES < <(find . -type f \( -name "*.asm" -o -name "*.s" \))
     
 printf "\nCompiling 16-bit build.\n"
-
 for file in "${SOURCES[@]}"; do
     file="${file#./}"
     newpath="$build_loc/$(echo "$file" | sed 's/\//_/g' | sed 's/\.[^.]*$/.o/')"
 
     case "$file" in
-        l16_mbr.asm)
-            printf "[+] Assembling: $file -> $newpath\n"
-            nasm \
-            -f bin \
-            -I . \
-            "${file#./}" -o "$build_loc/../l16_mbr.bin" \
-            ;;
-
         *.asm)
             printf "[+] Assembling: $file -> $newpath\n"
             nasm \
@@ -32,7 +23,7 @@ for file in "${SOURCES[@]}"; do
             -g \
             -F dwarf \
             -I . \
-            "${file#./}" -o "$newpath" \
+            "${file#./}" -o "$newpath"
             ;;
         
         *)

@@ -14,13 +14,19 @@ target_firmware="none"
 if [[ "$1" == "bios" ]]; then
     test_loc="tests/bios"
 
+    printf "[+] Assembling: $test_loc/mbr.asm -> build/mbr.bin\n"
+    nasm \
+        -f bin \
+        -I . \
+        "$test_loc/mbr.asm" -o "build/mbr.bin"
+
     # Build a disk image with those infos needed to run
     disk_img=$test_loc/disk.img
     disk_size=10M
 
     truncate -s $disk_size $disk_img # Generate a file with $disk_size of 0s
-    dd if=build/l16_mbr.bin of=$disk_img bs=512 seek=0 conv=notrunc status=none # Burn l16_mbr at offset 0x0
-    dd if=build/load16.bin of=$disk_img bs=512 seek=1 conv=notrunc status=none # Burn l16_main at offset 0x201
+    dd if=build/mbr.bin of=$disk_img bs=512 seek=0 conv=notrunc status=none # Burn mbr at offset 0x0 (sector 1)
+    dd if=build/l16_main.bin of=$disk_img bs=512 seek=1 conv=notrunc status=none # Burn l16_main at offset 0x200 (sector 2)
 
     dd if=build/kernel64.bin of=$disk_img bs=512 seek=4096 conv=notrunc status=none # Burn kernel64 at offset 0x200000
 
