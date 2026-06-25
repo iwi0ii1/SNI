@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-printf "compile.sh: $(pwd)\n"
+printf "\ncompile.sh: $(pwd)"
 
 build_loc="../build/kernel64"
 
@@ -70,5 +70,5 @@ for file in "${SOURCES[@]}"; do
     esac
 done
 
-ld -r -nostdlib -m elf_x86_64 $build_loc/*.o -o $build_loc/../kernel64.o -z noexecstack --nmagic
+ld -nostdlib -m elf_x86_64 $build_loc/*.o -o $build_loc/../kernel64.bin -z noexecstack --nmagic
 rm -rf $build_loc

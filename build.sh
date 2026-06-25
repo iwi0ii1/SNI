@@ -5,25 +5,24 @@ name="sni"
 
 cd kernel64
 bash compile.sh
-cd ../launchers/launch16
+cd ../load16
 bash compile.sh
-cd ../launch64
-bash compile.sh
-cd ../..
+cd ..
 
 target_firmware="none"
 
-printf "\n[+] Linking...\n"
 if [[ "$1" == "bios" ]]; then
     test_loc="tests/bios"
 
-    # ELF64
-    ld -nostdlib -m elf_x86_64 -T "$test_loc/bios_linker.ld" -o "$test_loc/$name.elf" --nmagic \
-    build/launch16.o build/kernel64.o \
-    -z noexecstack # Don't assume stack is executable
+    # Build a disk image with those infos needed to run
+    disk_img=$test_loc/disk.img
+    disk_size=10M
 
-    # Raw binary
-    objcopy -I elf64-x86-64 -O binary "$test_loc/$name.elf" "$test_loc/$name.bin"
+    truncate -s $disk_size $disk_img # Generate a file with $disk_size of 0s
+    dd if=build/l16_mbr.bin of=$disk_img bs=512 seek=0 conv=notrunc status=none # Burn l16_mbr at offset 0x0
+    dd if=build/load16.bin of=$disk_img bs=512 seek=1 conv=notrunc status=none # Burn l16_main at offset 0x201
+
+    dd if=build/kernel64.bin of=$disk_img bs=512 seek=4096 conv=notrunc status=none # Burn kernel64 at offset 0x200000
 
     target_firmware="BIOS"
 fi
@@ -38,6 +37,15 @@ fi
 
 if [[ "$bool" == "y" ]]; then
     if [[ "$target_firmware" == "BIOS" ]]; then
-        qemu-system-x86_64 -drive format=raw,file=$test_loc/$name.bin
+    qemu-system-x86_64 \
+        -drive file=$disk_img,format=raw,index=0,media=disk \
+        -machine pc-q35-2.4,accel=tcg,usb=off \
+        -cpu qemu64,+nx \
+        -rtc base=localtime,clock=vm,driftfix=slew \
+        -m 128M \
+        -boot c \
+        -vga std \
+        -serial stdio \
+        -display gtk
     fi
 fi
