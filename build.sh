@@ -5,23 +5,21 @@ name="sni"
 
 cd kernel64
 bash compile.sh
-cd ../load16
+cd ../boot/load16
 bash compile.sh
-cd ..
+cd ../..
 
 target_firmware="none"
 
 if [[ "$1" == "bios" ]]; then
-    test_loc="tests/bios"
-
-    printf "[+] Assembling: $test_loc/mbr.asm -> build/mbr.bin\n"
+    printf "\nbuild.sh: $(pwd)\n[+] Assembling: boot/mbr.asm -> build/mbr.bin\n"
     nasm \
         -f bin \
         -I . \
-        "$test_loc/mbr.asm" -o "build/mbr.bin"
+        "boot/mbr.asm" -o "build/mbr.bin"
 
     # Build a disk image with those infos needed to run
-    disk_img=$test_loc/disk.img
+    disk_img=build/disk.img
     disk_size=10M
 
     truncate -s $disk_size $disk_img # Generate a file with $disk_size of 0s
