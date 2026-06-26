@@ -1,35 +1,47 @@
+%include "load/load.inc"
+%include "cpu/cpu.inc"
+%include "display/display.inc"
+
 bits 16
 global l16_main
 
+
+
+l16_config_name              equ 0x00 ; 16 bytes
+
+l16_config_disk_offset       equ 0x10 ; 4 bytes (disk location of binary, direct address)
+l16_config_bin_size          equ 0x14 ; 4 bytes
+
+l16_config_load_dest         equ 0x18 ; 4 bytes (RAM destination for binary, direct address)
+l16_config_entry_offset      equ 0x1C ; 2 bytes (offset starts from bin head)
+
+l16_config_cpu_preset        equ 0x1E ; 4 bytes
+l16_config_displayable_modes equ 0x22 ; 1 byte (available display modes)
+
+
+
 section .l16_main
 l16_main:
-    ; set text mode
+    ; Set text mode
     mov ax, 0x0003
     int 10h
 
-    ; 0xB8000 (stos dest ES:DI)
-    mov ax, 0xB800
+    ; Load 0x100000 - 0x10FFFF (config table)
+    ; 1st Param: 0xFFFF0 + 0x10 = 0x100000 (ES:DI)
+    mov ax, 0xFFFF
     mov es, ax
-    xor di, di
-
-    ; CS + msg (lods src DS:SI)
-    mov ax, cs
+    mov di, 0x10
+    ; 2nd Param: 0x10FFFF - 0x100000 = 0xFFFF (DS:SI)
     mov ds, ax
-    mov si, msg
+    mov si, 0x1000F
+    ; 3rd Param: 0x20000 + 0x00 = 0x20000 (DX:CX)
+    mov dx, 0x2000
+    xor cx, cx
+    call l16_load_from_disk
 
-    mov ah, 0x0F
-
-.lup:
-    lodsb
-    test al, al
-    jz .hang
-
-    stosw
-    jmp .lup
+    
 
 .hang:
     cli
     hlt
     jmp .hang
-
-msg: db "Hello BIOS from l16_main!", 0

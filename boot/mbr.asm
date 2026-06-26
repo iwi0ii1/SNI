@@ -12,28 +12,26 @@ l16_mbr:
     mov ds, ax
     mov es, ax
     mov ss, ax
-    mov sp, 0x7C00  ; Setup stack safely below the MBR
+    mov sp, 0x1000 ; 0x00 - 0x04FF is used by BIOS, 0x500+ are safe. Stack range: 0x500 - 0x1000
     sti
 
     ; Set text mode
     mov ax, 0x0003
-    int 10h
+    int 0x10
 
-    ; LOAD CORE STAGE FROM DISK USING LBA
-    mov si, disk_address_packet     ; DS:SI points to our LBA packet
-    mov ah, 0x42                    ; BIOS Extended Read function
-    ; Note: DL is left untouched because the BIOS naturally loads the boot drive ID into it.
-    int 13h                         ; Call BIOS disk read
-    jc .disk_error                  ; If the carry flag is set, something failed!
+    ; Load core stage from disk using LBA
+    mov si, disk_address_packet ; DS:SI points to DAP
+    mov ah, 0x42                ; BIOS Extended Read function
+    int 0x13                    ; Call BIOS disk read
+    jc .disk_error              ; BIOS set CF for failure
 
-    ; Jump straight to l16_main's execution address
-    jmp 0x00:0x7E00
+    jmp 0x00:0x7E00 ; Far jump to l16_main (changes CS:IP)
 
 .disk_error:
-    ; Flash a red 'E' in the top-left corner if disk read fails
+    ; Red 'E' as indicator
     mov ax, 0xB800
     mov es, ax
-    mov word [es:0], 0x4F45 ; White 'E' on Red background
+    mov word [es:0], 0x4F45
 
 .hang:
     cli
@@ -43,13 +41,13 @@ l16_mbr:
 ; --- BIOS Disk Address Packet (DAP) ---
 align 4
 disk_address_packet:
-    db 0x10                 ; Packet size (Always 16 bytes / 0x10)
-    db 0x00                 ; Reserved (Always 0)
-    dw 30                   ; Number of sectors to read (Your original 30 sectors / ~15KB)
-    dw 0x7E00               ; Destination Offset
-    dw 0x0000               ; Destination Segment (0x0000:0x7E00)
-    dq 1                    ; Starting LBA block (Sector 1 = immediately following MBR)
+    db 0x10   ; Packet size = 16 bytes
+    db 0x00   ; Reserved (mandatory)
+    dw 30     ; Number of sectors to read (15KiB)
+    dw 0x7E00 ; Load destination offset (0x00:0x7E00)
+    dw 0x00   ; Load destination segment (0x00:0x7E00)
+    dq 1      ; Sector to begin (0-based)
 
-; This must be in .load16
-times 510 - ($ - $$) db 0  ; Pad this final block
-dw 0xAA55                  ; Drop the signature
+; BIOS signature
+times 510 - ($ - $$) db 0  ; Pad with 0s.
+dw 0xAA55
