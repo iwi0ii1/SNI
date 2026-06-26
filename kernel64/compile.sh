@@ -12,6 +12,12 @@ mapfile -t SOURCES < <(find . -type f \( -name "*.cpp" -o -name "*.c" -o -name "
     
 printf "\nCompiling 64-bit build.\n"
 
+printf "\nbuild.sh: $(pwd)\n[+] Assembling: load16_cfg.asm -> $build_loc/../k64_load16_cfg.bin\n"
+nasm \
+    -f bin \
+    -I . \
+    "load16_cfg.asm" -o "$build_loc/../k64_load16_cfg.bin"
+
 for file in "${SOURCES[@]}"; do
     file="${file#./}"
     newpath="$build_loc/$(echo "$file" | sed 's/\//_/g' | sed 's/\.[^.]*$/.o/')"
@@ -51,6 +57,10 @@ for file in "${SOURCES[@]}"; do
                 -I . \
                 -g \
                 -c "${file#./}" -o "$newpath"
+            ;;
+
+        load16_cfg.asm)
+            continue
             ;;
 
         *.asm)
