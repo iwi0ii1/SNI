@@ -26,20 +26,19 @@ l16_main:
     mov ax, 0x0003
     int 10h
 
-    ; Load 0x100000 - 0x10FFFF (config table)
-    ; 1st Param: 0xFFFF0 + 0x10 = 0x100000 (ES:DI)
-    mov ax, 0xFFFF
+    ; Load 0x100000 - 0x1000FF (config table)
+    xor ax, ax
     mov es, ax
-    mov di, 0x10
-    ; 2nd Param: 0x10FFFF - 0x100000 = 0xFFFF (DS:SI)
+    mov di, 0xFF
+
     mov ds, ax
-    mov si, 0x1000F
-    ; 3rd Param: 0x20000 + 0x00 = 0x20000 (DX:CX)
-    mov dx, 0x2000
-    xor cx, cx
+    mov si, 1
+
+    xor dx, dx
+    mov cx, 0x1F00 ; 0x1F00 + 0xFF = 0x1FFF (right before 0x2000)
     call l16_load_from_disk
 
-    
+    mov ax, l16_config_disk_offset
 
 .hang:
     cli
