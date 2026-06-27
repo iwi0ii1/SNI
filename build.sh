@@ -24,7 +24,7 @@ if [[ "$1" == "bios" ]]; then
 
     truncate -s $disk_size $disk_img # Generate a file with $disk_size of 0s
     dd if=build/mbr.bin of=$disk_img bs=512 seek=0 conv=notrunc status=none # Sector 1 (offs: 0x00)
-    dd if=build/l16_main.bin of=$disk_img bs=512 seek=1 conv=notrunc status=none # Sector 2 (offs: 00x200)
+    dd if=build/l16_main.bin of=$disk_img bs=512 seek=1 conv=notrunc status=none # Sector 2 (offs: 0x200)
 
     dd if=build/k64_load16_cfg.bin of=$disk_img bs=512 seek=2047 conv=notrunc status=none # Sector 2048 (offs: 0x100000)
     dd if=build/kernel64.bin of=$disk_img bs=512 seek=4096 conv=notrunc status=none # Sector 4096 (offs: 0x200000)

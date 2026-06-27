@@ -3,35 +3,28 @@ global l16_load_from_disk
 
 section .text
 l16_load_from_disk:
-    ; 1. Setup Disk Address Packet (DAP) on the stack
-    ; We need 16 bytes for the DAP structure
-    sub sp, 16
-    mov bp, sp
+    ; 1. Construct DAP on stack
+    sub sp, 16 ; 16 bytes
+    mov bx, sp
     
-    mov byte [bp], 0x10         ; DAP Size: 16 bytes
-    mov byte [bp+1], 0          ; Reserved
-    mov word [bp+2], si         ; Number of sectors
-    mov word [bp+4], bx         ; Buffer Offset
-    mov word [bp+6], cx         ; Buffer Segment
-    mov [bp+8], ax              ; LBA Low
-    mov [bp+10], dx             ; LBA High
-    mov word [bp+12], 0         ; LBA High-High
-    mov word [bp+14], 0         ; LBA High-High
-    
-    ; 2. Call BIOS INT 13h (Extended Read)
-    mov ah, 0x42
-    mov dl, 0x80                ; Drive 0x80 (First HDD)
-    mov si, bp                  ; DS:SI must point to the DAP
-    int 0x13
-    
-    ; 3. Save CF state before cleaning up the stack
-    ; Push flags to stack so we can restore the carry flag later
-    pushf
-    
-    ; Cleanup DAP from stack
-    add sp, 16
+    mov byte [bx], 0x10    ; DAP Size: 16 bytes
+    mov byte [bx + 1], 0   ; Mandatory
+    mov word [bx + 2], si  ; Sector count to read
+    mov word [bx + 4], dx  ; Load dest (low 16: offset)
+    shr edx, 16            
+    mov word [bx + 6], dx  ; Load dest (high 16: segment)
+    mov dword [bx + 12], 0 ; Sector location (up 4)
 
+    ; 2. Load it...
+    mov ah, 0x42 ; Read with LBA
+    mov dl, 0x80 ; First drive
+    mov si, bx   ; Ptr to DAP
+
+    int 0x13
     jc .error
+    
+    ; 3. Restore stack
+    add sp, 16
     
     ret
 
