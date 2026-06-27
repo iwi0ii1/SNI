@@ -3,20 +3,26 @@ set -e
 
 printf "\ncompile.sh: $(pwd)"
 
-build_loc="../build/kernel64"
+if [[ "$1" == "bios" || "$1" == "uefi" ]]; then
+    build_loc="../build/$1/kernel64"
+else
+    build_loc="../build/unknown/kernel64"
+fi
 
 rm -rf "$build_loc"
 mkdir -p "$build_loc"
 
 mapfile -t SOURCES < <(find . -type f \( -name "*.cpp" -o -name "*.c" -o -name "*.asm" -o -name "*.s" \))
     
-printf "\nCompiling 64-bit build.\n"
+printf "\nCompiling 64-bit kernel.\n"
 
-printf "\nbuild.sh: $(pwd)\n[+] Assembling: load16_cfg.asm -> $build_loc/../k64_load16_cfg.bin\n"
-nasm \
-    -f bin \
-    -I . \
-    "load16_cfg.asm" -o "$build_loc/../k64_load16_cfg.bin"
+if [[ "$1" == "bios" ]]; then
+    printf "\nbuild.sh: $(pwd)\n[+] Assembling: load16_cfg.asm -> $build_loc/k64_load16_cfg.bin\n"
+    nasm \
+        -f bin \
+        -I . \
+        "load16_cfg.asm" -o "$build_loc/k64_load16_cfg.bin"
+fi
 
 for file in "${SOURCES[@]}"; do
     file="${file#./}"
@@ -80,5 +86,8 @@ for file in "${SOURCES[@]}"; do
     esac
 done
 
-ld -nostdlib -m elf_x86_64 $build_loc/*.o -o $build_loc/../kernel64.bin -z noexecstack --nmagic
-rm -rf $build_loc
+if [[ "$1" == "bios" ]]; then
+    ld -nostdlib -m bin -T linker.ld $build_loc/*.o -o $build_loc/kernel64.bin -z noexecstack --nmagic
+elif [[ "$1" == "uefi" ]]; then
+    ld -nostdlib -m elf_x86_64 -T linker.ld $build_loc/*.o -o $build_loc/kernel64.elf -z noexecstack --nmagic
+fi

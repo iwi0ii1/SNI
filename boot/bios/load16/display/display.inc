@@ -1,0 +1,2 @@
+bits 16
+extern l16_display_set_mode
