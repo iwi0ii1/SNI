@@ -5,12 +5,9 @@ name="sni"
 target_firmware="none"
 
 if [[ "$1" == "bios" ]]; then
-    printf "Warning: BIOS loader is half made, 100% broken. Look at boot/bios to know more."
-    read cntnu
-
     cd kernel64
     bash compile.sh bios
-    cd ../boot/bios/load16
+    cd ../boot/bios/load32
     bash compile.sh
     cd ../../..
 
@@ -26,9 +23,9 @@ if [[ "$1" == "bios" ]]; then
 
     truncate -s $disk_size $disk_img # Generate a file with $disk_size of 0s
     dd if=build/bios/mbr.bin of=$disk_img bs=512 seek=0 conv=notrunc status=none # Sector 1 (offs: 0x00)
-    dd if=build/bios/load16/l16_main.bin of=$disk_img bs=512 seek=1 conv=notrunc status=none # Sector 2 (offs: 0x200)
+    dd if=build/bios/load32/load32.bin of=$disk_img bs=512 seek=1 conv=notrunc status=none # Sector 2 (offs: 0x200)
 
-    dd if=build/bios/kernel64/k64_load16_cfg.bin of=$disk_img bs=512 seek=2047 conv=notrunc status=none # Sector 2048 (offs: 0x100000)
+    dd if=build/bios/kernel64/k64_load32_cfg.bin of=$disk_img bs=512 seek=2047 conv=notrunc status=none # Sector 2048 (offs: 0x100000)
     dd if=build/bios/kernel64/kernel64.bin of=$disk_img bs=512 seek=4096 conv=notrunc status=none # Sector 4096 (offs: 0x200000)
 
     target_firmware="BIOS"
@@ -75,7 +72,7 @@ if [[ "$bool" == "y" ]]; then
             -cpu qemu64,+nx \
             -rtc base=localtime,clock=vm,driftfix=slew \
             -m 128M \
-            -boot c \
+            -bios /usr/share/ovmf/OVMF.fd \
             -vga std \
             -serial stdio \
             -display gtk

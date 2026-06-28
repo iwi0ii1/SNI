@@ -1,0 +1,2 @@
+bits 32
+extern l32_display_set_mode
