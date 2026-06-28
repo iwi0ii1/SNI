@@ -3,29 +3,6 @@ org 0x7C00
 
 global l16_mbr
 
-; In your data section
-gdt_start:
-    dq 0 ; Null descriptor
-gdt_code:
-    dw 0xFFFF    ; Limit 0-15
-    dw 0x0000    ; Base 0-15
-    db 0x00      ; Base 16-23
-    db 10011010b ; Access (Code, Exec/Read)
-    db 11001111b ; Granularity (4K, 32-bit)
-    db 0x00      ; Base 24-31
-gdt_data:
-    dw 0xFFFF
-    dw 0x0000
-    db 0x00
-    db 10010010b ; Access (Data, Read/Write)
-    db 11001111b
-    db 0x00
-gdt_end:
-
-gdt_descriptor:
-    dw gdt_end - gdt_start - 1
-    dd gdt_start
-
 l16_mbr:
     ; Clear interrupts and setup segments cleanly
     cli
@@ -90,6 +67,8 @@ bits 32
 
     jmp 0x7E00 ; Jump to l32_main
 
+
+
 ; --- BIOS Disk Address Packet (DAP) ---
 align 4
 disk_address_packet:
@@ -99,6 +78,33 @@ disk_address_packet:
     dw 0x7E00 ; Load destination offset (0x00:0x7E00)
     dw 0x00   ; Load destination segment (0x00:0x7E00)
     dq 1      ; Sector to begin (0-based)
+
+
+
+; In your data section
+gdt_start:
+    dq 0 ; Null descriptor
+gdt_code:
+    dw 0xFFFF    ; Limit 0-15
+    dw 0x0000    ; Base 0-15
+    db 0x00      ; Base 16-23
+    db 10011010b ; Access (Code, Exec/Read)
+    db 11001111b ; Granularity (4K, 32-bit)
+    db 0x00      ; Base 24-31
+gdt_data:
+    dw 0xFFFF
+    dw 0x0000
+    db 0x00
+    db 10010010b ; Access (Data, Read/Write)
+    db 11001111b
+    db 0x00
+gdt_end:
+
+gdt_descriptor:
+    dw gdt_end - gdt_start - 1
+    dd gdt_start
+
+
 
 ; BIOS signature
 times 510 - ($ - $$) db 0  ; Pad with 0s.

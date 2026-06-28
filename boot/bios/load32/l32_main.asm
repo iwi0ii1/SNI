@@ -29,7 +29,7 @@ l32_config_displayable_modes equ 0x22 ; 1 byte (available display modes)
 
 section .l32_main
 l32_main:
-    
+    mov dword [0xB8000], 0xF069F068 ; Prints hi
 
 .hang:
     cli
