@@ -38,7 +38,11 @@ l32_main:
     ;call l32_disk_load
 
     ; Test switching video mode with BIOS call from PM
-    
+    mov word [L32_SHARED_BIOSCALL_CALL_FRAME_LOC + L32_SHARED_BIOSCALL_AX_OFF], 0x0012
+    mov byte [L32_SHARED_BIOSCALL_CALL_FRAME_LOC + L32_SHARED_BIOSCALL_INT_NUM_OFF], 0x10
+    call l32_bios_call
+
+    mov byte [0xA0000], 0x0F
 
 .hang:
     cli

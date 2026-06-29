@@ -14,7 +14,7 @@ mkdir -p "$build_loc"
 
 mapfile -t SOURCES < <(find . -type f \( -name "*.cpp" -o -name "*.c" -o -name "*.asm" -o -name "*.s" \))
     
-printf "\nCompiling 64-bit kernel.\n"
+printf "\nCompiling 64-bit kernel."
 
 if [[ "$1" == "bios" ]]; then
     printf "\nbuild.sh: $(pwd)\n[+] Assembling: load32_cfg.asm -> $build_loc/k64_load32_cfg.bin\n"

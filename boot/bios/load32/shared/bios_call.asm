@@ -18,7 +18,6 @@ section .text
 l32_bios_call:
     pushad
     pushfd
-
     cli
 
     ; Enter real mode
@@ -26,7 +25,7 @@ l32_bios_call:
     and eax, 0xFFFFFFFE
     mov cr0, eax
 
-    jmp 0x0000:real_mode_entry
+    jmp 0x0000:real_mode_entry ; Failed.
 
 pm_entry:
     mov ax, 0x10 ; Flat data selector defined in MBR
@@ -42,6 +41,10 @@ pm_entry:
 
 bits 16
 real_mode_entry:
+    mov ax, 0xB800
+    mov es, ax
+    mov word [es:0], 0xF043
+
     xor ax, ax
     mov ds, ax
     mov es, ax
