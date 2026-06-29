@@ -1,3 +1,4 @@
+%include "shared/bios_call.inc"
 %include "disk/disk.inc"
 %include "cpu/cpu.inc"
 %include "display/display.inc"
@@ -29,7 +30,15 @@ l32_config_displayable_modes equ 0x22 ; 1 byte (available display modes)
 
 section .l32_main
 l32_main:
-    mov dword [0xB8000], 0xF069F068 ; Prints hi
+    ; Load Config Table from disk
+    ;mov edi, CFGTB_SECTOR_LOC
+    ;mov esi, CFGTB_SECTOR_CNT_4_BIN
+    ;mov edx, CFGTB_LOAD_DEST
+    ;mov cx, 0x80
+    ;call l32_disk_load
+
+    ; Test switching video mode with BIOS call from PM
+    
 
 .hang:
     cli

@@ -1,0 +1,17 @@
+%define L32_SHARED_BIOSCALL_CALL_FRAME_LOC 0x2000
+
+%define L32_SHARED_BIOSCALL_INT_NUM_OFF 0
+%define L32_SHARED_BIOSCALL_AX_OFF 1
+%define L32_SHARED_BIOSCALL_BX_OFF 3
+%define L32_SHARED_BIOSCALL_CX_OFF 5
+%define L32_SHARED_BIOSCALL_DX_OFF 7
+%define L32_SHARED_BIOSCALL_SI_OFF 9
+%define L32_SHARED_BIOSCALL_DI_OFF 11
+%define L32_SHARED_BIOSCALL_BP_OFF 13
+%define L32_SHARED_BIOSCALL_ES_OFF 15
+%define L32_SHARED_BIOSCALL_DS_OFF 17
+
+bits 32
+; Call into BIOS services
+; Note: No explicit parameters. Use provided macros for offsets.
+extern l32_bios_call

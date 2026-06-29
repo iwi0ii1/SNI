@@ -5,8 +5,8 @@ name="sni"
 target_firmware="none"
 
 if [[ "$1" == "bios" ]]; then
-    cd kernel64 ; bash compile.sh bios && \
-    cd ../boot/bios/load32 ; bash compile.sh && cd ../../..
+    cd kernel64 ; bash compile.sh bios ; \
+    cd ../boot/bios/load32 ; bash compile.sh ; cd ../../..
 
     printf "\nbuild.sh: $(pwd)\n[+] Assembling: boot/bios/mbr.asm -> build/bios/mbr.bin\n"
     # Assembling raw MBR
