@@ -1,9 +1,7 @@
 // File with RSDP related things.
 #pragma once
 
-#include <stdint.h>
-#include <stddef.h>
-
+#include "shared/type.h"
 #include "shared/gcc_attr.h"
 
 /// @brief RSDP descriptor type (v2+)
@@ -26,4 +24,4 @@ struct ATTR_PACKED ks_hwd_firmwareAcpi_rsdpDescriptor_t {
  * @warning Returns NULL if failed to find a valid ones
  */
 [[nodiscard]]
-const struct ks_hwd_firmwareAcpi_rsdpDescriptor_t* const ks_hwd_firmwareAcpi_find_rsdp(const uint32_t start, const uint32_t end);
+const struct ks_hwd_firmwareAcpi_rsdpDescriptor_t* const ks_hwd_firmwareAcpi_findRsdp(const uint32_t start, const uint32_t end);

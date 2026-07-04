@@ -7,7 +7,6 @@ ATTR_NO_SSE // Don't use SSE or MMX for this function
 struct ks_hwd_firmwareAcpi_table_t ks_hwd_firmwareAcpi_cacheTablesRsdt(const struct ks_hwd_firmwareAcpi_rsdt_t* const rsdt) {
     #ifdef DEBUG_FORM
     if (!rsdt) {
-        ks_shared_textAputs("ks_hwd_firmwareAcpi_cache_tables_rsdt: parameter (rsdt) is passed as NULL, type const struct ks_hwd_firmwareAcpi_rsdt_header_t* const...", 0x0F);
         while (1)
             __asm__("hlt");
     }
@@ -39,7 +38,6 @@ ATTR_NO_SSE // Don't use SSE or MMX for this function
 struct ks_hwd_firmwareAcpi_table_t ks_hwd_firmwareAcpi_cacheTablesXsdt(const struct ks_hwd_firmwareAcpi_xsdt_t* const xsdt) {
     #ifdef DEBUG_FORM
     if (!xsdt) {
-        ks_shared_textAputs("ks_hwd_firmwareAcpi_cache_tables_xsdt: parameter (xsdt) is passed as NULL, type const struct ks_hwd_firmwareAcpi_xsdt_header_t* const...", 0x0F);
         while (1)
             __asm__("hlt");
     }

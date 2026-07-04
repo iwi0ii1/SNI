@@ -1,2 +1,0 @@
-bits 32
-extern l32_cpu_set_preset

@@ -3,7 +3,6 @@
 #include "hwd/firmware/acpi/tables.h"
 
 #include "shared/gcc_attr.h"
-#include "shared/text.h"
 #include "shared/mem.h"
 
 [[nodiscard]]

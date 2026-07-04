@@ -5,15 +5,14 @@ name="sni"
 target_firmware="none"
 
 if [[ "$1" == "bios" ]]; then
-    cd kernel ; bash compile.sh bios ; \
-    cd ../boot/bios/load32 ; bash compile.sh ; cd ../../..
+    cd kernel ; bash compile.sh bios ; cd ..
 
     printf "\nbuild.sh: $(pwd)\n[+] Assembling: boot/bios/mbr.asm -> build/bios/mbr.bin\n"
     # Assembling raw MBR
     nasm \
         -f bin \
         -I . \
-        "boot/bios/mbr.asm" -o "build/bios/mbr.bin"
+        "mbr.asm" -o "build/bios/mbr.bin"
 
     # Building a disk image
     disk_img=build/bios/disk.img
@@ -21,13 +20,11 @@ if [[ "$1" == "bios" ]]; then
 
     truncate -s $disk_size $disk_img # Generate a file with $disk_size of 0s
 
-    # Write [MBR] and [Load32]
+    # Write [MBR]
     dd if=build/bios/mbr.bin of=$disk_img bs=512 seek=0 conv=notrunc status=none # Sector 1 (offs: 0x00)
-    dd if=build/bios/load32/load32.bin of=$disk_img bs=512 seek=1 conv=notrunc status=none # Sector 2 (offs: 0x200)
 
-    # Write [Kernel] and [Kernel Config for Load32]
-    dd if=build/bios/kernel/ks_load32_cfg.bin of=$disk_img bs=512 seek=2047 conv=notrunc status=none # Sector 2048 (offs: 0x100000)
-    dd if=build/bios/kernel/kernel.bin of=$disk_img bs=512 seek=4096 conv=notrunc status=none # Sector 4096 (offs: 0x200000)
+    # Write [Kernel]
+    dd if=build/bios/kernel/kernel.bin of=$disk_img bs=512 seek=2048 conv=notrunc status=none # Sector 2048 (offs: 0x100000 = 1MiB)
 
     target_firmware="BIOS"
 elif [[ "$1" == "uefi" ]]; then
@@ -41,7 +38,7 @@ elif [[ "$1" == "uefi" ]]; then
     truncate -s $disk_size $disk_img # Generate a file with $disk_size of 0s
 
     # Write [Kernel]
-    dd if=build/uefi/kernel/kernel.elf of=$disk_img bs=512 seek=4096 conv=notrunc status=none # Sector 4096 (offs: 0x200000)
+    dd if=build/uefi/kernel/kernel.elf of=$disk_img bs=512 seek=2048 conv=notrunc status=none # Sector 2048 (offs: 0x100000 = 1MiB)
 
     target_firmware="UEFI"
 else

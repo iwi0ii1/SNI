@@ -1,8 +1,7 @@
 // ACPI and Firmware tables
 #pragma once
-#include <stdint.h>
-#include <stddef.h>
 
+#include "shared/type.h"
 #include "shared/gcc_attr.h"
 
 /// @brief SDT header

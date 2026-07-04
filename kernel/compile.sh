@@ -16,14 +16,6 @@ mapfile -t SOURCES < <(find . -type f \( -name "*.cpp" -o -name "*.c" -o -name "
     
 printf "\nCompiling 64-bit kernel."
 
-if [[ "$1" == "bios" ]]; then
-    printf "\nbuild.sh: $(pwd)\n[+] Assembling: load32_cfg.asm -> $build_loc/ks_load32_cfg.bin\n"
-    nasm \
-        -f bin \
-        -I . \
-        "load32_cfg.asm" -o "$build_loc/ks_load32_cfg.bin"
-fi
-
 for file in "${SOURCES[@]}"; do
     file="${file#./}"
     newpath="$build_loc/$(echo "$file" | sed 's/\//_/g' | sed 's/\.[^.]*$/.o/')"
@@ -63,10 +55,6 @@ for file in "${SOURCES[@]}"; do
                 -I . \
                 -g \
                 -c "${file#./}" -o "$newpath"
-            ;;
-
-        load32_cfg.asm)
-            continue
             ;;
 
         *.asm)
