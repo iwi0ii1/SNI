@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-printf "\ncompile.sh: $(pwd)"
+printf "\ncompile.sh: $(pwd)\n"
 
 if [[ "$1" == "bios" || "$1" == "uefi" ]]; then
     build_loc="../build/$1/kernel"

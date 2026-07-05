@@ -39,6 +39,3 @@ disk_error:
     jmp disk_error
 
 boot_drive: db 0
-
-times 510-($-$$) db 0
-dw 0xAA55

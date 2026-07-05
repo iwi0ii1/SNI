@@ -6,8 +6,7 @@ target_firmware="none"
 
 if [[ "$1" == "bios" ]]; then
     cd kernel ; bash compile.sh bios ; \
-    cd ../loader/bios ; bash compile.sh bios ; \
-    cd ../..
+    cd ../loader ; bash compile.sh bios ; cd ..
 
     # Building a disk image
     disk_img=build/bios/disk.img
@@ -15,7 +14,7 @@ if [[ "$1" == "bios" ]]; then
 
     truncate -s $disk_size $disk_img # Generate a file with $disk_size of 0s
 
-    # Write [Loader]
+    # Write [Loader stages]
     dd if=build/bios/loader/foundation.bin of=$disk_img bs=512 seek=0 conv=notrunc status=none # Sector 0 (offs: 0x00)
     dd if=build/bios/loader/collection.bin of=$disk_img bs=512 seek=1 conv=notrunc status=none # Sector 1 (offs: 0x0200)
     dd if=build/bios/loader/application.bin of=$disk_img bs=512 seek=2 conv=notrunc status=none # Sector 2 (offs: 0x0400)
