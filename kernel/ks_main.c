@@ -1,3 +1,5 @@
+// Kernel SNI main
+
 #include "shared/gcc_attr.h"
 #include "shared/type.h"
 

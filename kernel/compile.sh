@@ -14,7 +14,7 @@ mkdir -p "$build_loc"
 
 mapfile -t SOURCES < <(find . -type f \( -name "*.cpp" -o -name "*.c" -o -name "*.asm" -o -name "*.s" \))
     
-printf "\nCompiling 64-bit kernel."
+printf "\nCompiling kernel."
 
 for file in "${SOURCES[@]}"; do
     file="${file#./}"

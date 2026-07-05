@@ -1,6 +1,8 @@
 ; MBR at sector 0 and sector 1 (extended), prepares Long mode transition -> check signature (0xABABCDCD - 0x54543232)
 
-%define SIGNATURE_LOAD_DEST 0x1000
+%define SIGNATURE_START 0xABABCDCD
+%define SIGNATURE_END   0x54543232
+%define SIGNATURE_LOAD_DEST_OFF 0x1000
 
 bits 16
 org 0x7C00
@@ -27,7 +29,7 @@ start:
     jc disk_error
 
 .find_end_signature:
-
+    ; Find 0x
 
 .start_continue:
     mov dl, [boot_drive]
@@ -37,7 +39,7 @@ dap:
     db 16     ; Size of DAP (always 16 anyway)
     db 0      ; Reserved
     dw 1      ; Sectors to read
-    dw SIGNATURE_LOAD_DEST ; Load dest offset
+    dw SIGNATURE_LOAD_DEST_OFF ; Load dest offset
     dw 0x00   ; Load dest segment
     dq 2048   ; Sector location
 
