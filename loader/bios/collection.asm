@@ -1,8 +1,8 @@
 ; Collection stage of loader, collect e820, boot disk, VBE, loader boot config (sector 2048), etc.
 
 bits 16
-org 0x7E00
 
+section .ls_collection
 ls_collection: ; Stage 2
     mov ax, 0xB800
     mov es, ax

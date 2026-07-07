@@ -1,8 +1,9 @@
 ; Foundation stage of loader, MBR things. Load the next stages.
 
 bits 16
-org 0x7C00
+org 0x7C00 ; Foundation is MBR, bruh
 
+section .ls_foundation
 ls_foundation: ; Stage 1 (MBR)
     xor ax, ax
     mov ds, ax
