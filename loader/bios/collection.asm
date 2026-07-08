@@ -32,8 +32,8 @@ get_e820:
 
 .next:
     mov eax, 0xE820
-    mov edx, 0x534D4150   ; "SMAP"
-    mov ecx, 24           ; ask for ACPI extended entry
+    mov edx, 0x534D4150 ; "SMAP"
+    mov ecx, 24         ; ask for ACPI extended entry
     int 0x15
 
     jc .fail
@@ -48,10 +48,13 @@ get_e820:
     test ebx, ebx
     jnz .next
     
-.e820_struct:
+.e820_input_struct:
     dq 0
     dq 0
     dw 0
+
+.e820_output_struct:
+
 
 .fail:
     xor ax, ax

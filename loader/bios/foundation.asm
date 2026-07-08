@@ -50,7 +50,7 @@ ls_foundation: ; Stage 1 (MBR)
 
     jmp 0x0000:0x7E00
 
-.tell_done_str: db "SNI's loader's foundation has successfully done its job.", 0
+.tell_done_str: db "SNI's loader's foundation stage has successfully done its job.", 0
 
 disk_error:
     hlt
