@@ -7,6 +7,7 @@
 %define LS_COLLECTION_VBE_CTRL_INFO_DEST 0x9C00
 
 %define LS_COLLECTION_BOOTCFG_SECTOR 3
+%define LS_COLLECTION_BOOTCFG_LOAD_DEST 0x8200
 
 bits 16
 
@@ -100,6 +101,15 @@ get_vbe_ctrl_info:
 
 
 load_boot_config:
+    mov bx, LS_COLLECTION_BOOTCFG_LOAD_DEST
+    mov ah, 0x02
+    mov al, 1  ; sectors to read
+    xor ch, ch ; cylinder
+    xor dh, dh ; head
+    mov cl, LS_COLLECTION_BOOTCFG_SECTOR  ; sector (starts at 1)
+    int 0x13
+    jc .fail
+    ret
 
 .fail:
     xor ax, ax
