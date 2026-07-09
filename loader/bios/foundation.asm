@@ -50,8 +50,11 @@ ls_foundation: ; Stage 1 (MBR)
 
     jmp 0x0000:0x7E00
 
-.tell_done_str: db "SNI's loader's foundation stage has successfully done its job.", 0
+.tell_done_str: db "> SNI loader's foundation stage has successfully done its job.", 0
 
 disk_error:
     hlt
     jmp disk_error
+
+times 510 - ($ - $$) db 0 ; BIOS signature and 512 byte alignment
+dw 0xAA55

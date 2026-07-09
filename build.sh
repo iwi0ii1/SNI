@@ -2,74 +2,80 @@
 set -e
 
 name="sni"
-target_firmware="none"
 
-if [[ "$1" == "bios" ]]; then
-    cd kernel ; bash compile.sh bios ; \
-    cd ../loader ; bash compile.sh bios ; cd ..
+bios_disk_img=build/bios/disk.img
+bios_disk_size=10M
 
-    # Building a disk image
-    disk_img=build/bios/disk.img
-    disk_size=10M
+uefi_disk_img=build/uefi/disk.img
+uefi_disk_size=10M
 
-    truncate -s $disk_size $disk_img # Generate a file with $disk_size of 0s
+build () {
+    if [[ "$1" == "bios" ]]; then
+        cd kernel ; bash compile.sh bios ; \
+        cd ../loader ; bash compile.sh bios ; cd ..
 
-    # Write [Loader stages]
-    dd if=build/bios/loader/loader.bin of=$disk_img bs=512 seek=0 conv=notrunc status=none # Sector 0 (offs: 0x00)
+        truncate -s $bios_disk_size $bios_disk_img # Generate a file with $disk_size of 0s
 
-    # Write [Kernel]
-    dd if=build/bios/kernel/kernel.bin of=$disk_img bs=512 seek=2048 conv=notrunc status=none # Sector 2048 (offs: 0x100000 = 1MiB)
+        # Write [Loader stages]
+        dd if=build/bios/loader/loader.bin of=$bios_disk_img bs=512 seek=0 conv=notrunc status=none # Sector 0 (offs: 0x00)
 
-    target_firmware="BIOS"
-elif [[ "$1" == "uefi" ]]; then
-    cd kernel ; bash compile.sh uefi && \
-    cd ../boot/uefi/load64 ; bash compile.sh && cd ../../..
+        # Write [Kernel]
+        dd if=build/bios/kernel/kernel.bin of=$bios_disk_img bs=512 seek=2048 conv=notrunc status=none # Sector 2048 (offs: 0x100000 = 1MiB)
 
-    # Building a disk image
-    disk_img=build/uefi/disk.img
-    disk_size=10M
+    elif [[ "$1" == "uefi" ]]; then
+        cd kernel ; bash compile.sh uefi && \
+        cd ../boot/uefi/load64 ; bash compile.sh && cd ../../..
 
-    truncate -s $disk_size $disk_img # Generate a file with $disk_size of 0s
+        truncate -s $uefi_disk_size $uefi_disk_img # Generate a file with $disk_size of 0s
 
-    # Write [Kernel]
-    dd if=build/uefi/kernel/kernel.elf of=$disk_img bs=512 seek=2048 conv=notrunc status=none # Sector 2048 (offs: 0x100000 = 1MiB)
+        # Write [Kernel]
+        dd if=build/uefi/kernel/kernel.elf of=$uefi_disk_img bs=512 seek=2048 conv=notrunc status=none # Sector 2048 (offs: 0x100000 = 1MiB)
 
-    target_firmware="UEFI"
-else
-    printf "\"\$1\" must be \"bios\" or \"uefi\"!!"
-    exit 1
-fi
+    else
+        printf "Build BIOS or UEFI??? Try again, cuh."
+        exit 1
+    fi
+}
 
-bool='n'
-
-if [[ "$target_firmware" != "none" ]]; then
-    printf "Run with $target_firmware? (y/n)"
-    read bool
-fi
-
-
-if [[ "$bool" == "y" ]]; then
-    if [[ "$target_firmware" == "BIOS" ]]; then
+run () {
+    if [[ "$1" == "bios" ]]; then
         qemu-system-x86_64 \
-            -drive file=$disk_img,format=raw,index=0,media=disk \
+            -drive file=$bios_disk_img,format=raw,index=0,media=disk \
             -machine pc-q35-2.4,accel=tcg,usb=off \
             -cpu qemu64,+nx \
             -rtc base=localtime,clock=vm,driftfix=slew \
             -m 128M \
             -boot c \
             -vga std \
-            -serial stdio \
-            -display gtk
-    elif [[ "$target_firmware" == "UEFI" ]]; then
+            -display gtk \
+            -monitor stdio
+    elif [[ "$1" == "uefi" ]]; then
         qemu-system-x86_64 \
-            -drive file=$disk_img,format=raw,index=0,media=disk \
+            -drive file=$bios_disk_img,format=raw,index=0,media=disk \
             -machine pc-q35-2.4,accel=tcg,usb=off \
             -cpu qemu64,+nx \
             -rtc base=localtime,clock=vm,driftfix=slew \
             -m 128M \
             -bios /usr/share/ovmf/OVMF.fd \
             -vga std \
-            -serial stdio \
-            -display gtk
+            -display gtk \
+            -monitor stdio
+    else
+        printf "Run BIOS or UEFI??? Try again, cuh."
+        exit 1
     fi
+}
+
+[[ "$2" == "bios" || "$2" == "uefi" ]] && common_bool=true || common_bool=false # Yeah, Bash can't handle simple things like assigning the result of ops to a variable without being dirty
+
+if [[ "$1" == "build" && common_bool -eq true ]]; then
+    build "$2"
+elif [[ "$1" == "run" && common_bool -eq true ]]; then
+    run "$2"
+elif [[ "$1" == "buildrun" && common_bool -eq true ]]; then
+    build "$2"
+    run "$2"
+else
+    printf "U wanna build, run, or both (buildrun)??? Try again, cuh."
+    exit 1
 fi

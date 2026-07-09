@@ -9,3 +9,5 @@ ls_application: ; Stage 3
 .inf:
     hlt
     jmp .inf
+    
+times 512 - ($ - $$) db 0 ; Same
