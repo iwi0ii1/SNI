@@ -4,7 +4,9 @@ bits 16
 
 section .ls_application
 ls_application: ; Stage 3
-    ; Jobs here...
+    mov ax, 0xB81E
+    mov es, ax
+    mov word [es:0], 0xF041
 
 .inf:
     hlt

@@ -1,5 +1,11 @@
 ; Foundation stage of loader, MBR things. Load the next stages.
 
+%define LS_FOUNDATION_LOAD_BY_LBA 1
+
+%define LS_FOUNDATION_NEXT_STAGES_SECTOR 1
+%define LS_FOUNDATION_NEXT_STAGES_SECTOR_COUNT 2
+%define LS_FOUNDATION_NEXT_STAGES_LOAD_DEST 0x7E00
+
 bits 16
 org 0x7C00 ; Foundation is MBR, bruh
 
@@ -11,14 +17,38 @@ ls_foundation: ; Stage 1 (MBR)
     mov ss, ax
 
     ; Enable A20
+    in al, 0x92
+    test al, 2
+    jnz .skip
 
-    ; Read 2 sectors to 0000:7E00
+    or al, 2
+    and al, 0xFE ; avoid triggering reset
+    out 0x92, al
+.skip:
+
+    ; Read sector 1 and 2, load to 0x7E00 - 0x8000
+    ; ES:BX = load dest
+
+    %if LS_FOUNDATION_LOAD_BY_LBA == 1
+    ; LBA-based loading
+    mov ax, LS_FOUNDATION_NEXT_STAGES_LOAD_DEST
+    mov es, ax
+    xor bx, bx
+
+    mov si, dap
+    mov ah, 0x42
+
+    %else
+    ; CHS-based loading
     mov bx, 0x7E00
     mov ah, 0x02
     mov al, 2  ; sectors to read
     xor ch, ch ; cylinder
     xor dh, dh ; head
     mov cl, 2  ; sector (LBA 1)
+
+    %endif
+
     int 0x13
     jc disk_error
 
@@ -50,11 +80,21 @@ ls_foundation: ; Stage 1 (MBR)
 
     jmp 0x0000:0x7E00
 
-.tell_done_str: db "> SNI loader's foundation stage has successfully done its job.", 0
+.tell_done_str: db "> Loader foundation stage: done.", 0
 
 disk_error:
     hlt
     jmp disk_error
+
+%if LS_FOUNDATION_LOAD_BY_LBA == 1
+dap:
+    db 0x10                                   ; DAP size
+    db 0x00                                   ; Reserved
+    dw LS_FOUNDATION_NEXT_STAGES_SECTOR_COUNT ; Sectors to read
+    dw LS_FOUNDATION_NEXT_STAGES_LOAD_DEST    ; Load dest offset
+    dw 0x00                                   ; Load dest segment
+    dq LS_FOUNDATION_NEXT_STAGES_SECTOR       ; LBA sector (starts at 0)
+%endif
 
 times 510 - ($ - $$) db 0 ; BIOS signature and 512 byte alignment
 dw 0xAA55

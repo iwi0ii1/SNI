@@ -1,12 +1,14 @@
 ; Collection stage of loader, collect e820, VBE, load boot config (sector 2048), and preserve boot drive (at DL)
 
-%define LS_COLLECTION_COMMONSTR "> SNI loader's collection stage has "
+%define LS_COLLECTION_COMMONSTR "> Loader collection stage: "
 
 ; Reusing
 %define LS_COLLECTION_E820_LOAD_DEST 0x9000
 %define LS_COLLECTION_VBE_CTRL_INFO_DEST 0x9C00
 
+; 0 based
 %define LS_COLLECTION_BOOTCFG_SECTOR 3
+%define LS_COLLECTION_BOOTCFG_SECTOR_COUNT 1
 %define LS_COLLECTION_BOOTCFG_LOAD_DEST 0x8200
 
 bits 16
@@ -14,6 +16,8 @@ bits 16
 section .ls_collection
 ls_collection: ; Stage 2
     mov sp, 0x7BFF ; Reload stack ptr bc of foundation's far jump.
+
+    mov byte [.boot_drive], dl ; Save Boot drive in `.boot_drive`, can't guarantee DL will preserve.
 
     call get_e820          ; Collect e820 memory map
     call get_vbe_ctrl_info ; Collect VBE controller info
@@ -29,7 +33,9 @@ ls_collection: ; Stage 2
 
     jmp 0x8000
 
-.tell_done_str: db LS_COLLECTION_COMMONSTR, "successfully done its job.", 0
+.tell_done_str: db LS_COLLECTION_COMMONSTR, "done.", 0
+
+.boot_drive: db 0
 
 
 
@@ -63,8 +69,12 @@ get_e820:
 .fail:
     xor ax, ax
     mov ds, ax
-    mov si, .tell_fail_str ; Guaranteed around 0x7E00 - 0x8000
+    mov si, .tell_fail_str
     call print_str
+
+.hang:
+    hlt
+    jmp .hang
 
 .tell_fail_str: db LS_COLLECTION_COMMONSTR, "failed to retrieve e820 memory map!", 0
 
@@ -93,7 +103,10 @@ get_vbe_ctrl_info:
     mov ds, ax
     mov si, .tell_fail_str
     call print_str
-    ret
+
+.hang:
+    hlt
+    jmp .hang
 
 .tell_fail_str:
     db LS_COLLECTION_COMMONSTR, "failed to retrieve VBE controller info!", 0
@@ -101,15 +114,27 @@ get_vbe_ctrl_info:
 
 
 load_boot_config:
-    mov bx, LS_COLLECTION_BOOTCFG_LOAD_DEST
-    mov ah, 0x02
-    mov al, 1  ; sectors to read
-    xor ch, ch ; cylinder
-    xor dh, dh ; head
-    mov cl, LS_COLLECTION_BOOTCFG_SECTOR  ; sector (starts at 1)
+    mov dl, [ls_collection.boot_drive]
+
+    ; ES:BX = load dest
+    mov ax, LS_COLLECTION_BOOTCFG_LOAD_DEST
+    mov es, ax
+    xor bx, bx
+
+    mov si, .dap
+    mov ah, 0x42
     int 0x13
     jc .fail
+
     ret
+
+.dap:
+    db 0x10                               ; DAP size
+    db 0x00                               ; reserved
+    dw LS_COLLECTION_BOOTCFG_SECTOR_COUNT ; sectors to read
+    dw LS_COLLECTION_BOOTCFG_LOAD_DEST    ; buffer offset
+    dw 0                                  ; buffer segment
+    dq LS_COLLECTION_BOOTCFG_SECTOR       ; LBA sector
 
 .fail:
     xor ax, ax
@@ -117,7 +142,12 @@ load_boot_config:
     mov si, .tell_fail_str
     call print_str
 
-.tell_fail_str: db LS_COLLECTION_COMMONSTR, "failed to load boot config, must be on disk sector ", ('0' + LS_COLLECTION_BOOTCFG_SECTOR), "!", 0
+.hang:
+    hlt
+    jmp .hang
+
+.tell_fail_str:
+    db LS_COLLECTION_COMMONSTR, "failed to load boot config, must be at sector ", ('0' + LS_COLLECTION_BOOTCFG_SECTOR), "!", 0
 
 
 
@@ -142,4 +172,4 @@ print_str: ; DS:SI str source, note: must be null-terminated
 .false:
     ret
 
-times 512 - ($ - $$) db 0 ; Ensure 512 bytes with 0 fillings
+times 512 - ($ - $$) db 0 ; Ensure 512 bytes with 0 filling
