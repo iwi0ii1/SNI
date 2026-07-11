@@ -1,10 +1,8 @@
 ; Foundation stage of loader, MBR things. Load the next stages.
 
-%define LS_FOUNDATION_LOAD_BY_LBA 1
+%include "bios/macros.inc"
 
-%define LS_FOUNDATION_NEXT_STAGES_SECTOR 1
-%define LS_FOUNDATION_NEXT_STAGES_SECTOR_COUNT 2
-%define LS_FOUNDATION_NEXT_STAGES_LOAD_DEST 0x7E00
+%define LS_FOUNDATION_LOAD_BY_LBA 1
 
 bits 16
 org 0x7C00 ; Foundation is MBR, bruh

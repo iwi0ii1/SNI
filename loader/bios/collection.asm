@@ -1,15 +1,8 @@
 ; Collection stage of loader, collect e820, VBE, load boot config (sector 2048), and preserve boot drive (at DL)
 
+%include "bios/macros.inc"
+
 %define LS_COLLECTION_COMMONSTR "> Loader collection stage: "
-
-; Reusing
-%define LS_COLLECTION_E820_LOAD_DEST 0x9000
-%define LS_COLLECTION_VBE_CTRL_INFO_DEST 0x9C00
-
-; 0 based
-%define LS_COLLECTION_BOOTCFG_SECTOR 3
-%define LS_COLLECTION_BOOTCFG_SECTOR_COUNT 1
-%define LS_COLLECTION_BOOTCFG_LOAD_DEST 0x8200
 
 bits 16
 
@@ -30,6 +23,8 @@ ls_collection: ; Stage 2
     mov si, .tell_done_str ; This is safe as long as `.tell_done_str` doesn't pass (0x7DFE - strlen) in memory
 
     call print_str
+
+    mov dl, byte [.boot_drive]
 
     jmp 0x8000
 
