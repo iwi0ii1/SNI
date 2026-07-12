@@ -1,0 +1,1 @@
+# This directory only contains tools to make low-level shits easier. Not whatever shits u think like compilers, linkers, assemblers, blah blah blah. It only has things like loader's boot config/settings converter. And I guess that's all!
