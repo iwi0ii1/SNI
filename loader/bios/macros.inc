@@ -2,7 +2,7 @@ bits 16
 
 ; Foundation stage's
 %define LS_FOUNDATION_NEXT_STAGES_SECTOR 1
-%define LS_FOUNDATION_NEXT_STAGES_SECTOR_COUNT 2
+%define LS_FOUNDATION_NEXT_STAGES_SECTOR_COUNT 3
 %define LS_FOUNDATION_NEXT_STAGES_LOAD_DEST 0x7E00
 
 ; Collection stage's
@@ -13,4 +13,6 @@ bits 16
 %define LS_COLLECTION_BOOTCFG_SECTOR_COUNT 1
 %define LS_COLLECTION_BOOTCFG_LOAD_DEST 0x8200
 
-; Application stage's
+; Preparation stage's
+
+; Handoff stage's
