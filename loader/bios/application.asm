@@ -6,7 +6,7 @@ bits 16
 
 section .ls_application
 ls_application: ; Stage 3
-    
+    ; Hard... plan first.
 
 .inf:
     hlt
