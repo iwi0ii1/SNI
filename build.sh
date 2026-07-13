@@ -61,8 +61,7 @@ run () {
                 -boot c \
                 -vga std \
                 -display gtk \
-                -monitor stdio \
-                -s -S
+                -monitor stdio
         fi
     elif [[ "$1" == "uefi" ]]; then
         if [[ "$2" == "dbg" ]]; then
