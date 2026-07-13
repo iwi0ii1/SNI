@@ -1,0 +1,2 @@
+Basically plugins, but called external runtime services.
+This directory contains the APIs for external runtime services, not anything else.
