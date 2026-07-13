@@ -152,10 +152,13 @@ load_boot_config:
 
 ; DS:SI str source, AX begin slot, note: must be null-terminated
 print_str:
-    shl ax, 1 ; AX * 2
-    add ax, 0xB800
+    shl ax, 1 ; AX * 2, rescale BYTE to WORD
+    push ax
+    mov ax, 0xB800
     mov es, ax
-    xor di, di
+    pop di ; AX/DI can hold more than 1999
+    cmp di, 2000
+    jae .false
 
 .lup:
     mov ah, 0xF0 ; Forced color attribute: Black fg White bg
