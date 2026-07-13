@@ -8,14 +8,12 @@ bits 16
 
 section .ls_preparation:
 ls_preparation:
+    ; Hard... plan first.
     mov si, .tell_unready_str
     mov ax, 160
     call print_str ; Defined in collection stage.
 
-.hang:
-    cli
-    hlt
-    jmp .hang
+    jmp 0x8200
 
 .tell_unready_str: db LS_PREPARATION_COMMONSTR, "not ready yet.", 0
 

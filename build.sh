@@ -39,27 +39,56 @@ build () {
 
 run () {
     if [[ "$1" == "bios" ]]; then
-        qemu-system-x86_64 \
-            -drive file=$bios_disk_img,format=raw,index=0,media=disk \
-            -machine pc-q35-2.4,accel=tcg,usb=off \
-            -cpu qemu64,+nx \
-            -rtc base=localtime,clock=vm,driftfix=slew \
-            -m 128M \
-            -boot c \
-            -vga std \
-            -display gtk \
-            -monitor stdio
+        if [[ "$2" == "dbg" ]]; then
+            qemu-system-x86_64 \
+                -drive file=$bios_disk_img,format=raw,index=0,media=disk \
+                -machine pc-q35-2.4,accel=tcg,usb=off \
+                -cpu qemu64,+nx \
+                -rtc base=localtime,clock=vm,driftfix=slew \
+                -m 128M \
+                -boot c \
+                -vga std \
+                -display gtk \
+                -monitor stdio \
+                -s -S
+        else
+            qemu-system-x86_64 \
+                -drive file=$bios_disk_img,format=raw,index=0,media=disk \
+                -machine pc-q35-2.4,accel=tcg,usb=off \
+                -cpu qemu64,+nx \
+                -rtc base=localtime,clock=vm,driftfix=slew \
+                -m 128M \
+                -boot c \
+                -vga std \
+                -display gtk \
+                -monitor stdio \
+                -s -S
+        fi
     elif [[ "$1" == "uefi" ]]; then
-        qemu-system-x86_64 \
-            -drive file=$bios_disk_img,format=raw,index=0,media=disk \
-            -machine pc-q35-2.4,accel=tcg,usb=off \
-            -cpu qemu64,+nx \
-            -rtc base=localtime,clock=vm,driftfix=slew \
-            -m 128M \
-            -bios /usr/share/ovmf/OVMF.fd \
-            -vga std \
-            -display gtk \
-            -monitor stdio
+        if [[ "$2" == "dbg" ]]; then
+            qemu-system-x86_64 \
+                -drive file=$uefi_disk_img,format=raw,index=0,media=disk \
+                -machine pc-q35-2.4,accel=tcg,usb=off \
+                -cpu qemu64,+nx \
+                -rtc base=localtime,clock=vm,driftfix=slew \
+                -m 128M \
+                -bios /usr/share/ovmf/OVMF.fd \
+                -vga std \
+                -display gtk \
+                -monitor stdio \
+                -s -S
+        else
+            qemu-system-x86_64 \
+                -drive file=$uefi_disk_img,format=raw,index=0,media=disk \
+                -machine pc-q35-2.4,accel=tcg,usb=off \
+                -cpu qemu64,+nx \
+                -rtc base=localtime,clock=vm,driftfix=slew \
+                -m 128M \
+                -bios /usr/share/ovmf/OVMF.fd \
+                -vga std \
+                -display gtk \
+                -monitor stdio
+        fi
     else
         printf "Run BIOS or UEFI??? Try again, cuh."
         exit 1
@@ -72,9 +101,14 @@ if [[ "$1" == "build" && common_bool -eq true ]]; then
     build "$2"
 elif [[ "$1" == "run" && common_bool -eq true ]]; then
     run "$2"
+elif [[ "$1" == "rundbg" && common_bool -eq true ]]; then
+    run "$2" "dbg"
 elif [[ "$1" == "buildrun" && common_bool -eq true ]]; then
     build "$2"
     run "$2"
+elif [[ "$1" == "buildrundbg" && common_bool -eq true ]]; then
+    build "$2"
+    run "$2" "dbg"
 else
     printf "U wanna build, run, or both (buildrun)??? Try again, cuh."
     exit 1
