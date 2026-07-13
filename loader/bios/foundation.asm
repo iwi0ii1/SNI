@@ -8,7 +8,7 @@ bits 16
 org 0x7C00 ; Foundation is MBR, bruh
 
 section .ls_foundation
-ls_foundation: ; Stage 1 (MBR)
+ls_foundation: ; MBR
     xor ax, ax
     mov ds, ax
     mov es, ax
@@ -29,7 +29,7 @@ ls_foundation: ; Stage 1 (MBR)
 
     %if LS_FOUNDATION_LOAD_BY_LBA == 1
     ; LBA-based loading
-    mov ax, LS_FOUNDATION_NEXT_STAGES_LOAD_DEST
+    mov ax, LS_MACROS_NEXT_STAGES_LOAD_DEST_OFF
     mov es, ax
     xor bx, bx
 
@@ -86,12 +86,12 @@ disk_error:
 
 %if LS_FOUNDATION_LOAD_BY_LBA == 1
 dap:
-    db 0x10                                   ; DAP size
-    db 0x00                                   ; Reserved
-    dw LS_FOUNDATION_NEXT_STAGES_SECTOR_COUNT ; Sectors to read
-    dw LS_FOUNDATION_NEXT_STAGES_LOAD_DEST    ; Load dest offset
-    dw 0x00                                   ; Load dest segment
-    dq LS_FOUNDATION_NEXT_STAGES_SECTOR       ; LBA sector (starts at 0)
+    db 0x10                                ; DAP size
+    db 0x00                                ; Reserved
+    dw LS_MACROS_NEXT_STAGES_SECTOR_COUNT  ; Sectors to read
+    dw LS_MACROS_NEXT_STAGES_LOAD_DEST_OFF ; Load dest offset
+    dw 0x00                                ; Load dest segment
+    dq 0x01                                ; LBA sector (starts at 0)
 %endif
 
 times 510 - ($ - $$) db 0 ; BIOS signature and 512 byte alignment

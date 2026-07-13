@@ -7,7 +7,7 @@
 bits 16
 
 section .ls_collection
-ls_collection: ; Stage 2
+ls_collection:
     mov sp, 0x7BFF ; Reload stack ptr bc of foundation's far jump.
 
     mov byte [.boot_drive], dl ; Save Boot drive in `.boot_drive`, can't guarantee DL will preserve.
@@ -21,6 +21,7 @@ ls_collection: ; Stage 2
     xor ax, ax
     mov ds, ax
     mov si, .tell_done_str ; This is safe as long as `.tell_done_str` doesn't pass (0x7DFE - strlen) in memory
+    mov ax, 80
 
     call print_str
 
@@ -40,7 +41,7 @@ get_e820:
     ; Info dest
     xor ax, ax
     mov es, ax
-    mov di, LS_COLLECTION_E820_LOAD_DEST
+    mov di, LS_MACROS_E820_LOAD_DEST_OFF
 
 .next:
     mov eax, 0xE820
@@ -65,6 +66,7 @@ get_e820:
     xor ax, ax
     mov ds, ax
     mov si, .tell_fail_str
+    mov ax, 80
     call print_str
 
 .hang:
@@ -79,7 +81,7 @@ get_vbe_ctrl_info:
     ; Info dest
     xor ax, ax
     mov es, ax
-    mov di, LS_COLLECTION_VBE_CTRL_INFO_DEST
+    mov di, LS_MACROS_VBE_CTRL_INFO_DEST_OFF
 
     ; VBE function 4F00h: Return VBE Controller Information
     mov ax, 0x4F00
@@ -97,6 +99,7 @@ get_vbe_ctrl_info:
     xor ax, ax
     mov ds, ax
     mov si, .tell_fail_str
+    mov ax, 80
     call print_str
 
 .hang:
@@ -112,7 +115,7 @@ load_boot_config:
     mov dl, [ls_collection.boot_drive]
 
     ; ES:BX = load dest
-    mov ax, LS_COLLECTION_BOOTCFG_LOAD_DEST
+    mov ax, LS_MACROS_BOOTCFG_LOAD_DEST_OFF
     mov es, ax
     xor bx, bx
 
@@ -124,17 +127,18 @@ load_boot_config:
     ret
 
 .dap:
-    db 0x10                               ; DAP size
-    db 0x00                               ; reserved
-    dw LS_COLLECTION_BOOTCFG_SECTOR_COUNT ; sectors to read
-    dw LS_COLLECTION_BOOTCFG_LOAD_DEST    ; buffer offset
-    dw 0                                  ; buffer segment
-    dq LS_COLLECTION_BOOTCFG_SECTOR       ; LBA sector
+    db 0x10                            ; DAP size
+    db 0x00                            ; reserved
+    dw LS_MACROS_BOOTCFG_SECTOR_COUNT  ; sectors to read
+    dw LS_MACROS_BOOTCFG_LOAD_DEST_OFF ; buffer offset
+    dw 0                               ; buffer segment
+    dq LS_MACROS_BOOTCFG_LBA_START     ; LBA sector start
 
 .fail:
     xor ax, ax
     mov ds, ax
     mov si, .tell_fail_str
+    mov ax, 80
     call print_str
 
 .hang:
@@ -142,12 +146,14 @@ load_boot_config:
     jmp .hang
 
 .tell_fail_str:
-    db LS_COLLECTION_COMMONSTR, "failed to load boot config, must be at sector ", ('0' + LS_COLLECTION_BOOTCFG_SECTOR), "!", 0
+    db LS_COLLECTION_COMMONSTR, "failed to load boot config, must be at sector ", ('0' + LS_MACROS_BOOTCFG_LBA_START), "!", 0
 
 
 
-print_str: ; DS:SI str source, note: must be null-terminated
-    mov ax, 0xB80A
+; DS:SI str source, AX begin slot, note: must be null-terminated
+print_str:
+    shl ax, 1 ; AX * 2
+    add ax, 0xB800
     mov es, ax
     xor di, di
 
@@ -157,9 +163,6 @@ print_str: ; DS:SI str source, note: must be null-terminated
 
     test al, al
     jz .false
-
-    cmp di, 0x140 ; Limit to 160 characters getting printed
-    jae .false
     
     stosw ; Store AX to ES:DI
     jmp .lup

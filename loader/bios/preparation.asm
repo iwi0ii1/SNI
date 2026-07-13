@@ -2,15 +2,21 @@
 
 %include "bios/macros.inc"
 
+%define LS_PREPARATION_COMMONSTR "> Loader preparation stage: "
+
 bits 16
 
 section .ls_preparation:
-ls_application:
-    ; HARD!! PLAN FIRST!!!
+ls_preparation:
+    mov si, .tell_unready_str
+    mov ax, 160
+    call print_str ; Defined in collection stage.
 
 .hang:
     cli
     hlt
     jmp .hang
+
+.tell_unready_str: db LS_PREPARATION_COMMONSTR, "not ready yet.", 0
 
 times 512 - ($ - $$) db 0
