@@ -81,6 +81,7 @@ ls_foundation: ; MBR
 .tell_done_str: db "> Loader foundation stage: done.", 0
 
 disk_error:
+    cli
     hlt
     jmp disk_error
 
