@@ -5,6 +5,7 @@
 %define LS_COLLECTION_COMMONSTR "> Loader collection stage: "
 
 bits 16
+org 0x7E00
 
 section .ls_collection
 ls_collection:
@@ -27,7 +28,7 @@ ls_collection:
 
     mov dl, byte [.boot_drive]
 
-    jmp 0x8000
+    jmp 0x8000 ; Jump to Preparation stage
 
 .tell_done_str: db LS_COLLECTION_COMMONSTR, "done.", 0
 
@@ -148,29 +149,6 @@ load_boot_config:
 .tell_fail_str:
     db LS_COLLECTION_COMMONSTR, "failed to load boot config, must be at sector ", ('0' + LS_MACROS_BOOTCFG_LBA_START), "!", 0
 
-
-
-; DS:SI str source, AX begin slot, note: must be null-terminated
-print_str:
-    shl ax, 1 ; AX * 2, rescale BYTE to WORD
-    push ax
-    mov ax, 0xB800
-    mov es, ax
-    pop di ; AX/DI can hold more than 1999
-    cmp di, 2000
-    jae .false
-
-.lup:
-    mov ah, 0xF0 ; Forced color attribute: Black fg White bg
-    lodsb ; Load current char from DS:SI to AL
-
-    test al, al
-    jz .false
-    
-    stosw ; Store AX to ES:DI
-    jmp .lup
-
-.false:
-    ret
+%include "bios/shared.inc"
 
 times 512 - ($ - $$) db 0 ; Ensure 512 bytes with 0 filling

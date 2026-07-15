@@ -5,10 +5,10 @@
 %define LS_HANDOFF_COMMONSTR "> Loader handoff stage: "
 
 bits 16
+org 0x8200
 
 section .ls_handoff
 ls_handoff:
-    mov word [0xB80FF], 0x0F41
     ; Hard... plan first.
     mov si, .tell_unready_str
     mov ax, 240
@@ -19,5 +19,7 @@ ls_handoff:
     jmp .hang
 
 .tell_unready_str: db LS_HANDOFF_COMMONSTR, "not ready yet.", 0
+
+%include "bios/shared.inc"
     
 times 512 - ($ - $$) db 0 ; Same

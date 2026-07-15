@@ -12,29 +12,15 @@ if [[ "$1" == "bios" ]]; then
     mapfile -t SOURCES < <(find . -type f \( -name "*.asm" -o -name "*.s" \))
     
     printf "\nCompiling 16-bit loader.\n"
-    
-    # for file in "${SOURCES[@]}"; do
-        # file="${file#./}"
-        # newpath="$build_loc/$(echo "$file" | sed 's/\//_/g' | sed 's/\.[^.]*$/.bin/')"
 
-        # case "$file" in
-            # *.asm)
-                # printf "[+] Assembling: $file -> $newpath\n"
-                # nasm \
-                    # -f bin \
-                    # -I . \
-                    # "${file#./}" -o "$newpath" \
-                # ;;
-        
-            # *)
-                # printf "[-] Unknown file type: $file"
-                # exit 1
-                # ;;
-        # esac
-    # done
+    # Assembling
+    printf "[+] Assembling bios/foundation.asm -> $build_loc/foundation.bin\n"   ; nasm -f bin -I . "bios/foundation.asm" -o "$build_loc/foundation.bin"
+    printf "[+] Assembling bios/collection.asm -> $build_loc/collection.bin\n"   ; nasm -f bin -I . "bios/collection.asm" -o "$build_loc/collection.bin"
+    printf "[+] Assembling bios/preparation.asm -> $build_loc/preparation.bin\n" ; nasm -f bin -I . "bios/preparation.asm" -o "$build_loc/preparation.bin"
+    printf "[+] Assembling bios/handoff.asm -> $build_loc/handoff.bin\n"         ; nasm -f bin -I . "bios/handoff.asm" -o "$build_loc/handoff.bin"
 
-    printf "[+] Assembling bios/ls_main.asm -> $build_loc/loader.bin\n"
-    nasm -f bin -I . "bios/ls_main.asm" -o "$build_loc/loader.bin"
+    # Concatenation
+    cat "$build_loc/foundation.bin" "$build_loc/collection.bin" "$build_loc/preparation.bin" "$build_loc/handoff.bin" > "$build_loc/loader.bin"
 
 elif [[ "$1" == "uefi" ]]; then
     build_loc="../build/$1/loader"

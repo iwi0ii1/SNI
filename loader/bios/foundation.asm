@@ -22,9 +22,9 @@ ls_foundation: ; MBR
     or al, 2
     and al, 0xFE ; avoid triggering reset
     out 0x92, al
-.skip:
 
-    ; Read sector 1 and 2, load to 0x7E00 - 0x8000
+.skip:
+    ; Read sector 1 and 2, load to 0x7E00 - 0x8200
     ; ES:BX = load dest
 
     %if LS_FOUNDATION_LOAD_BY_LBA == 1
@@ -40,7 +40,7 @@ ls_foundation: ; MBR
     ; CHS-based loading
     mov bx, 0x7E00
     mov ah, 0x02
-    mov al, 2  ; sectors to read
+    mov al, LS_MACROS_NEXT_STAGES_SECTOR_COUNT ; sectors to read
     xor ch, ch ; cylinder
     xor dh, dh ; head
     mov cl, 2  ; sector (LBA 1)

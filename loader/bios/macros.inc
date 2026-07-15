@@ -12,7 +12,7 @@ bits 16
 %define LS_MACROS_VBE_CTRL_INFO_DEST_OFF 0x9C00
 
 ; Boot configuration (entries + settings range, not individual domain)
-%define LS_MACROS_BOOTCFG_LBA_START 4
+%define LS_MACROS_BOOTCFG_LBA_START (LS_MACROS_NEXT_STAGES_SECTOR_COUNT + 1)
 %define LS_MACROS_BOOTCFG_SECTOR_COUNT 1
 %define LS_MACROS_BOOTCFG_LOAD_DEST_OFF 0x8200
 
