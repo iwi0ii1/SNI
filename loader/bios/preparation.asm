@@ -16,7 +16,7 @@ ls_preparation:
 
     jmp 0x8200 ; Jump to Handoff stage
 
-.tell_unready_str: db LS_PREPARATION_COMMONSTR, "not ready yet. Stay tuned for 2 months... (FAHHHHHHHHH)", 0
+.tell_unready_str: db LS_PREPARATION_COMMONSTR, "not ready yet. Stay tuned for 2 months... (FAHHHH)", 0
 
 %include "bios/shared.inc"
 
