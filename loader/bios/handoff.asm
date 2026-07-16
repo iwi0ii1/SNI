@@ -9,7 +9,7 @@ org 0x8200
 
 section .ls_handoff
 ls_handoff:
-    ; Hard... plan first.
+    ; Wait for Preparation stage to be implemented...
     mov si, .tell_unready_str
     mov ax, 240
     call print_str ; Defined in collection stage.
