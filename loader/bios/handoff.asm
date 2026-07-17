@@ -20,10 +20,15 @@ ls_handoff:
 
 .actual_handoff: ; AL -> boot entry option
     ; DS:SI -> chosen boot entry begin addr
-    movzx ebx, al
+    movzx bx, al
 
     ; BX * LS_MACROS_BOOTENTRY_SIZEB + LS_MACROS_BOOTENTRY_SRC_OFF
+    ; Explicit opimization
+    %if LS_MACROS_BOOTENTRY_SIZEB == 34
+    
+    %else
     imul bx, LS_MACROS_BOOTENTRY_SIZEB
+    %endif
     add bx, LS_MACROS_BOOTENTRY_SRC_OFF
 
     mov si, word [bx] ; AX illegal here in real mode

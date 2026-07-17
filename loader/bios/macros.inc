@@ -3,6 +3,7 @@
 
 bits 16
 
+; Loader's things
 ; Stages
 %define LS_MACROS_NEXT_STAGES_SECTOR_COUNT 2
 %define LS_MACROS_NEXT_STAGES_LOAD_DEST_OFF 0x7E00
