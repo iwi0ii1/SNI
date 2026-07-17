@@ -22,6 +22,19 @@ build () {
         # Write [Kernel]
         dd if=build/bios/kernel/kernel.bin of=$bios_disk_img bs=512 seek=2048 conv=notrunc status=none # Sector 2048 (offs: 0x100000 = 1MiB)
 
+        # Write [Kernel's default boot entry for loader]
+        cat > dflt_krnl_bootentry.asm <<'EOF'
+            section .rodata
+            dq "SNI.Kernel" ; Display name
+            dq 0x00
+            dd 2048 ; LBA Src
+            dd KRNL_LBA_COUNT
+            dq 0x100000
+            dw 0x00
+EOF
+        nasm -f bin "dflt_krnl_bootentry.asm" -o "build/bios/dflt_krnl_bootentry.bin" -dKRNL_LBA_COUNT=$(( ( $(stat -c%s build/bios/kernel/kernel.bin) + 511 ) / 512 ))
+        dd if=build/bios/dflt_krnl_bootentry.bin of=$bios_disk_img bs=34 seek=4 conv=notrunc # Sector 3 (offs: 0x8200)
+
     elif [[ "$1" == "uefi" ]]; then
         cd kernel ; bash compile.sh uefi && \
         cd ../boot/uefi/load64 ; bash compile.sh && cd ../../..

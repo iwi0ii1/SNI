@@ -24,7 +24,7 @@ ls_collection:
     mov si, .tell_done_str ; This is safe as long as `.tell_done_str` doesn't pass (0x7DFE - strlen) in memory
     mov ax, 80
 
-    call print_str
+    call ls_shared_print_str
 
     mov dl, byte [.boot_drive]
 
@@ -68,7 +68,7 @@ get_e820:
     mov ds, ax
     mov si, .tell_fail_str
     mov ax, 80
-    call print_str
+    call ls_shared_print_str
 
 .hang:
     hlt
@@ -101,7 +101,7 @@ get_vbe_ctrl_info:
     mov ds, ax
     mov si, .tell_fail_str
     mov ax, 80
-    call print_str
+    call ls_shared_print_str
 
 .hang:
     hlt
@@ -116,38 +116,31 @@ load_boot_config:
     mov dl, [ls_collection.boot_drive]
 
     ; ES:BX = load dest
-    mov ax, LS_MACROS_BOOTCFG_LOAD_DEST_OFF
+    xor ax, ax
     mov es, ax
-    xor bx, bx
+    mov bx, LS_MACROS_BOOTCFG_LOAD_DEST_OFF
 
-    mov si, .dap
-    mov ah, 0x42
-    int 0x13
+    mov eax, LS_MACROS_BOOTCFG_LBA_BEGIN
+    mov cx, LS_MACROS_BOOTCFG_SECTOR_COUNT
+
+    call ls_shared_load_from_disk
     jc .fail
 
     ret
-
-.dap:
-    db 0x10                            ; DAP size
-    db 0x00                            ; reserved
-    dw LS_MACROS_BOOTCFG_SECTOR_COUNT  ; sectors to read
-    dw LS_MACROS_BOOTCFG_LOAD_DEST_OFF ; buffer offset
-    dw 0                               ; buffer segment
-    dq LS_MACROS_BOOTCFG_LBA_START     ; LBA sector start
 
 .fail:
     xor ax, ax
     mov ds, ax
     mov si, .tell_fail_str
     mov ax, 80
-    call print_str
+    call ls_shared_print_str
 
 .hang:
     hlt
     jmp .hang
 
 .tell_fail_str:
-    db LS_COLLECTION_COMMONSTR, "failed to load boot config, must be at sector ", ('0' + LS_MACROS_BOOTCFG_LBA_START), "!", 0
+    db LS_COLLECTION_COMMONSTR, "failed to load boot config, must be at sector ", ('0' + LS_MACROS_BOOTCFG_LBA_BEGIN), "!", 0
 
 %include "bios/shared.inc"
 
