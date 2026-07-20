@@ -2,8 +2,6 @@
 
 %include "bios/macros.inc"
 
-%define LS_FOUNDATION_LOAD_BY_LBA 1
-
 bits 16
 org 0x7C00 ; Foundation is MBR, bruh
 
@@ -24,31 +22,12 @@ ls_foundation: ; MBR
     out 0x92, al
 
 .skip:
-    ; Read sector 1 and 2, load to 0x7E00 - 0x8200
-    ; ES:BX = load dest
-
-    %if LS_FOUNDATION_LOAD_BY_LBA == 1
-    ; LBA-based loading
-    mov ax, LS_MACROS_NEXT_STAGES_LOAD_DEST_OFF
-    mov es, ax
-    xor bx, bx
-
-    mov si, dap
+    ; Load the next stages
+    mov si, .dap
     mov ah, 0x42
 
-    %else
-    ; CHS-based loading
-    mov bx, 0x7E00
-    mov ah, 0x02
-    mov al, LS_MACROS_NEXT_STAGES_SECTOR_COUNT ; sectors to read
-    xor ch, ch ; cylinder
-    xor dh, dh ; head
-    mov cl, 2  ; sector (LBA 1)
-
-    %endif
-
     int 0x13
-    jc disk_error
+    jc .hang
 
     ; Clear screen
     mov ax, 0xB800
@@ -78,22 +57,20 @@ ls_foundation: ; MBR
 
     jmp 0x0000:0x7E00
 
-.tell_done_str: db "> Loader foundation stage: done.", 0
-
-disk_error:
+.hang:
     cli
     hlt
-    jmp disk_error
+    jmp .hang
 
-%if LS_FOUNDATION_LOAD_BY_LBA == 1
-dap:
+.tell_done_str: db "Foundation: Done.", 0
+
+.dap:
     db 0x10                                ; DAP size
     db 0x00                                ; Reserved
-    dw LS_MACROS_NEXT_STAGES_SECTOR_COUNT  ; Sectors to read
+    dw LS_MACROS_NEXT_STAGES_LBA_COUNT     ; Sectors to read
     dw LS_MACROS_NEXT_STAGES_LOAD_DEST_OFF ; Load dest offset
     dw 0x00                                ; Load dest segment
-    dq 0x01                                ; LBA sector (starts at 0)
-%endif
+    dq LS_MACROS_NEXT_STAGES_LBA_BEGIN     ; LBA begin (starts with 0)
 
 times 510 - ($ - $$) db 0 ; BIOS signature and 512 byte alignment
 dw 0xAA55

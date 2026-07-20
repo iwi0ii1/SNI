@@ -4,6 +4,7 @@
 
 bits 16
 
+%ifndef LS_SHARED_EXCLUDE_PRINT_STR
 ; DS:SI -> str source, AX -> begin slot, note: must be null-terminated
 ls_shared_print_str:
     shl ax, 1 ; AX * 2, rescale BYTE to WORD
@@ -27,32 +28,84 @@ ls_shared_print_str:
 
 .done:
     ret
+%endif
 
 
 
-; EAX -> LBA Src Begin (starts at 0), CX -> LBA Count -> LBA ES:BX -> Load Dest
-; CF set -> failed.
-ls_shared_load_from_disk:
-    mov dword [.dap_lba_begin], eax ; i386 already supports this in real mode natively
-    mov word [.dap_lba_count], cx
-    mov word [.dap_load_dest_seg], es
-    mov word [.dap_load_dest_off], bx
+%ifndef LS_SHARED_EXCLUDE_ENTER_MODES
+; Just enter unreal mode, BIOS interrupts might make things bad,
+; so make sure to return to real mode before BISO interrupts.
+ls_shared_enter_unreal_mode:
+    cli
 
-    xor ax, ax
+    lgdt [ls_shared_unreal_mode_gdt_descriptor]
+
+    mov eax, cr0
+    or eax, 1
+    mov cr0, eax
+
+    jmp 0x08:.hi_protected_mode
+
+bits 32
+.hi_protected_mode:
+    mov ax, 0x10
     mov ds, ax
-    mov si, .dap_size_and_reserved
-    mov ah, 0x42
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
+    mov ss, ax
 
-    int 0x13
+    mov eax, cr0
+    and eax, 0xFFFFFFFE
+    mov cr0, eax
+
+bits 16
+    jmp 0x00:.back_to_real_mode
+
+.back_to_real_mode:
+    sti
 
     ret
 
-.dap_size_and_reserved:
-    db 0x10 ; DAP size
-    db 0x00 ; reserved
-.dap_lba_count:     dw 0x00 ; sectors to read
-.dap_load_dest_off: dw 0x00 ; buffer offset
-.dap_load_dest_seg: dw 0    ; buffer segment
-.dap_lba_begin:     dq 0x00 ; LBA sector start
 
+
+; Technically unreal mode IS real mode... but to make it normal real mode, this is the one.
+ls_shared_enter_real_mode:
+    xor ax, ax
+    mov ds, ax
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
+    mov ss, ax
+
+    ret
+    
+
+
+ls_shared_unreal_mode_gdt:
+.null:
+    dq 0
+.code:
+    ; base=0, limit=4GB, code segment
+    dw 0xffff
+    dw 0
+    db 0
+    db 10011010b
+    db 11001111b
+    db 0
+.data:
+    ; base=0, limit=4GB, data segment
+    dw 0xffff
+    dw 0
+    db 0
+    db 10010010b
+    db 11001111b
+    db 0
+.end:
+
+ls_shared_unreal_mode_gdt_descriptor:
+    dw ls_shared_unreal_mode_gdt.end - ls_shared_unreal_mode_gdt - 1
+    dd ls_shared_unreal_mode_gdt
+
+%endif
 %endif

@@ -2,10 +2,10 @@
 
 %include "bios/macros.inc"
 
-%define LS_COLLECTION_COMMONSTR "> Loader collection stage: "
-
 bits 16
 org 0x7E00
+
+%define LS_COLLECTION_COMMONSTR "Collection: "
 
 section .ls_collection
 ls_collection:
@@ -27,10 +27,9 @@ ls_collection:
     call ls_shared_print_str
 
     mov dl, byte [.boot_drive]
+    jmp 0x8000 ; Jump to Handoff stage
 
-    jmp 0x8000 ; Jump to Preparation stage
-
-.tell_done_str: db LS_COLLECTION_COMMONSTR, "done.", 0
+.tell_done_str: db LS_COLLECTION_COMMONSTR, "Done.", 0
 
 .boot_drive: db 0
 
@@ -74,7 +73,7 @@ get_e820:
     hlt
     jmp .hang
 
-.tell_fail_str: db LS_COLLECTION_COMMONSTR, "failed to retrieve e820 memory map!", 0
+.tell_fail_str: db LS_COLLECTION_COMMONSTR, "Failed to retrieve e820 memory map!", 0
 
 
 
@@ -108,22 +107,17 @@ get_vbe_ctrl_info:
     jmp .hang
 
 .tell_fail_str:
-    db LS_COLLECTION_COMMONSTR, "failed to retrieve VBE controller info!", 0
+    db LS_COLLECTION_COMMONSTR, "Failed to retrieve VBE controller info!", 0
 
 
 
 load_boot_config:
     mov dl, [ls_collection.boot_drive]
 
-    ; ES:BX = load dest
-    xor ax, ax
-    mov es, ax
-    mov bx, LS_MACROS_BOOTCFG_LOAD_DEST_OFF
+    mov si, .dap
+    mov ah, 0x42
 
-    mov eax, LS_MACROS_BOOTCFG_LBA_BEGIN
-    mov cx, LS_MACROS_BOOTCFG_SECTOR_COUNT
-
-    call ls_shared_load_from_disk
+    int 0x13
     jc .fail
 
     ret
@@ -140,8 +134,17 @@ load_boot_config:
     jmp .hang
 
 .tell_fail_str:
-    db LS_COLLECTION_COMMONSTR, "failed to load boot config, must be at sector ", ('0' + LS_MACROS_BOOTCFG_LBA_BEGIN), "!", 0
+    db LS_COLLECTION_COMMONSTR, "Failed to load boot config, must be at sector ", ('0' + LS_MACROS_BOOTCFG_LBA_BEGIN), "!", 0
 
+.dap:
+    db 0x10                            ; DAP size
+    db 0x00                            ; Reserved
+    dw LS_MACROS_BOOTCFG_LBA_COUNT     ; Sectors to read
+    dw LS_MACROS_BOOTCFG_LOAD_DEST_OFF ; Load dest offset
+    dw 0x00                            ; Load dest segment
+    dq LS_MACROS_BOOTCFG_LBA_BEGIN     ; LBA begin (starts at 0)
+
+%define LS_SHARED_EXCLUDE_ENTER_MODES
 %include "bios/shared.inc"
 
 times 512 - ($ - $$) db 0 ; Ensure 512 bytes with 0 filling

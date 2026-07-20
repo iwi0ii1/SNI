@@ -1,7 +1,14 @@
             section .rodata
-            dq "SNI.Kernel" ; Display name
-            dq 0x00
+
+            db "SNI.Kernel" ; Display name
+            dd 0x00
+            dw 0x00
+
             dd 2048 ; LBA Src
+
             dd KRNL_LBA_COUNT
-            dq 0x100000
+
+            dd 0x100000
+
+            dd 0x00
             dw 0x00

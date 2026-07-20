@@ -25,11 +25,18 @@ build () {
         # Write [Kernel's default boot entry for loader]
         cat > build/bios/dflt_krnl_bootentry.asm <<'EOF'
             section .rodata
-            dq "SNI.Kernel" ; Display name
-            dq 0x00
+
+            db "SNI.Kernel" ; Display name
+            dd 0x00
+            dw 0x00
+
             dd 2048 ; LBA Src
+
             dd KRNL_LBA_COUNT
-            dq 0x100000
+
+            dd 0x100000
+
+            dd 0x00
             dw 0x00
 EOF
         nasm -f bin "build/bios/dflt_krnl_bootentry.asm" -o "build/bios/dflt_krnl_bootentry.bin" -dKRNL_LBA_COUNT=$(( ( $(stat -c%s build/bios/kernel/kernel.bin) + 511 ) / 512 ))
