@@ -16,6 +16,8 @@ ls_collection:
     call get_e820          ; Collect e820 memory map
     call get_vbe_ctrl_info ; Collect VBE controller info
     call load_boot_config  ; Load boot config
+    cli
+    hlt
 
 .done:
     ; Tell that loader's foundation has been done

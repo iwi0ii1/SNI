@@ -11,8 +11,10 @@ section .ls_handoff
 ls_handoff:
     ; Primary default boot entry option
     mov al, byte [LS_MACROS_BOOTCFG_LOAD_DEST_OFF + LS_MACROS_BOOTSETTINGS_FIELD_PRIMARY_OPTION_BEGIN]
+
     cli
     hlt
+
     test al, al
     jnz .actual_handoff
 
