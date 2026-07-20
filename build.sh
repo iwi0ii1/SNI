@@ -17,10 +17,10 @@ build () {
         truncate -s $bios_disk_size $bios_disk_img # Generate a file with $disk_size of 0s
 
         # Write [Loader stages]
-        dd if=build/bios/loader/loader.bin of=$bios_disk_img bs=512 seek=0 conv=notrunc status=none # Sector 0 (offs: 0x00)
+        dd if=build/bios/loader/loader.bin of=$bios_disk_img bs=512 seek=0 conv=notrunc status=none # Sector 0 (mem offs: 0x00)
 
         # Write [Kernel]
-        dd if=build/bios/kernel/kernel.bin of=$bios_disk_img bs=512 seek=2048 conv=notrunc status=none # Sector 2048 (offs: 0x100000 = 1MiB)
+        dd if=build/bios/kernel/kernel.bin of=$bios_disk_img bs=512 seek=2048 conv=notrunc status=none # Sector 2048 (mem offs: 0x100000 = 1MiB)
 
         # Write [Kernel's default boot entry for loader]
         cat > build/bios/dflt_krnl_bootentry.asm <<'EOF'
@@ -40,7 +40,7 @@ build () {
             dw 0x00
 EOF
         nasm -f bin "build/bios/dflt_krnl_bootentry.asm" -o "build/bios/dflt_krnl_bootentry.bin" -dKRNL_LBA_COUNT=$(( ( $(stat -c%s build/bios/kernel/kernel.bin) + 511 ) / 512 ))
-        dd if=build/bios/dflt_krnl_bootentry.bin of=$bios_disk_img bs=34 seek=4 conv=notrunc # Sector 3 (offs: 0x8200)
+        dd if=build/bios/dflt_krnl_bootentry.bin of=$bios_disk_img bs=512 seek=3 conv=notrunc # Sector 3 (mem offs: 0x8200)
 
     elif [[ "$1" == "uefi" ]]; then
         cd kernel ; bash compile.sh uefi && \

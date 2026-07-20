@@ -55,7 +55,7 @@ ls_foundation: ; MBR
     test al, al
     jnz .done
 
-    jmp 0x0000:0x7E00
+    jmp 0x0000:LS_MACROS_NEXT_STAGES_LOAD_DEST_OFF
 
 .hang:
     cli
