@@ -11,6 +11,8 @@ uefi_disk_size=10M
 
 build () {
     if [[ "$1" == "bios" ]]; then
+        mkdir -p "build/bios/" && find "build/bios" -mindepth 1 -delete # emptying build/bios
+
         cd kernel ; bash compile.sh bios ; \
         cd ../loader ; bash compile.sh bios ; cd ..
 
@@ -25,24 +27,16 @@ build () {
         # Write [Kernel's default boot entry for loader]
         cat > build/bios/dflt_krnl_bootentry.asm <<'EOF'
             section .rodata
-
-            db "SNI.Kernel" ; Display name
-            dd 0x00
-            dw 0x00
-
-            dd 2048 ; LBA Src
-
-            dd KRNL_LBA_COUNT
-
-            dd 0x100000
-
-            dd 0x00
-            dw 0x00
+            times 510 db 0x00
+            
+            dw 0xABCD
 EOF
         nasm -f bin "build/bios/dflt_krnl_bootentry.asm" -o "build/bios/dflt_krnl_bootentry.bin" -dKRNL_LBA_COUNT=$(( ( $(stat -c%s build/bios/kernel/kernel.bin) + 511 ) / 512 ))
         dd if=build/bios/dflt_krnl_bootentry.bin of=$bios_disk_img bs=512 seek=3 conv=notrunc # Sector 3 (mem offs: 0x8200)
 
     elif [[ "$1" == "uefi" ]]; then
+        mkdir -p "build/uefi" && find "build/uefi" -mindepth 1 -delete # emptying build/uefi
+
         cd kernel ; bash compile.sh uefi && \
         cd ../boot/uefi/load64 ; bash compile.sh && cd ../../..
 
