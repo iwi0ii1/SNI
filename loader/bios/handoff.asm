@@ -9,36 +9,27 @@ org 0x8000
 
 section .ls_handoff
 ls_handoff:
-    ; Primary default boot entry option
-    mov al, byte [LS_MACROS_BOOTCFG_LOAD_DEST_OFF + LS_MACROS_BOOTSETTINGS_FIELD_PRIMARY_OPTION_BEGIN]
-
-    test al, al
-    jnz handoff_routine
-
-    ; Prompt user for boot entry option
-    ; ...
-    jmp handoff_routine.load_failed
-
-
-
 ; ---------------------------------------------------------
 ; Handoff rountine (like what the handoff codes would do)
 ; ---------------------------------------------------------
-handoff_routine: ; AL -> boot entry option
-    ; ESI -> chosen boot entry begin addr
-    movzx bx, al
+; ESI -> chosen boot entry begin addr
+.handoff_routine:
+    movzx bx, byte [LS_MACROS_BOOTCFG_LOAD_DEST_OFF + LS_MACROS_BOOTSETTINGS_FIELD_PRIMARY_OPTION_BEGIN] ; Primary default boot entry option (zero-based)
 
     ; BX * LS_MACROS_BOOTENTRY_SIZEB + LS_MACROS_BOOTENTRY_SRC_OFF
     imul bx, LS_MACROS_BOOTENTRY_SIZEB
     add bx, LS_MACROS_BOOTENTRY_SRC_OFF
 
-    movzx esi, word [bx] ; BX will always be below 0x9FFF, so it's safe
+    movzx esi, word [bx] ; BX will always be below 0xFFFF, so it's safe
 
     ; Load payload according to boot entry
     ; [.dap + 8] is LBA start, which differs at runtime -> defaulted to 0 in DAP
     ; here will set it to the runtime LBA start
     mov eax, dword [si + LS_MACROS_BOOTENTRY_FIELD_START_LBA_BEGIN]
     mov dword [.dap + 8], eax
+    ; Halt here for debugging
+    cli
+    hlt
 
 ;--------------------------
 ; Loop of loading binary
@@ -55,7 +46,7 @@ sectors_count_per_load equ (LS_MACROS_TMP_MEM_END_SEG * 16 + LS_MACROS_TMP_MEM_E
     mov ah, 0x42
 
     int 0x13
-    jc .load_failed ; Failed here... possibly bc of DAP
+    jc .load_failed
 
     ; ------------------------------
     ; Enters Unreal mode fields
