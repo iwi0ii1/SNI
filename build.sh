@@ -16,13 +16,13 @@ build () {
         cd kernel ; bash compile.sh bios ; \
         cd ../loader ; bash compile.sh bios ; cd ..
 
-        truncate -s $bios_disk_size $bios_disk_img # Generate a file with $disk_size of 0s
+        truncate -s $bios_disk_size $bios_disk_img # Generate a file with $biso_disk_size of 0s
 
         # Write [Loader stages]
-        dd if=build/bios/loader/loader.bin of=$bios_disk_img bs=512 seek=0 conv=notrunc status=none # Sector 0 (mem offs: 0x00)
+        dd if=build/bios/loader/loader.bin of=$bios_disk_img bs=512 seek=0 conv=notrunc status=none # Sector 0
 
         # Write [Kernel]
-        dd if=build/bios/kernel/kernel.bin of=$bios_disk_img bs=512 seek=2048 conv=notrunc status=none # Sector 2048 (mem offs: 0x100000 = 1MiB)
+        dd if=build/bios/kernel/kernel.bin of=$bios_disk_img bs=512 seek=2048 conv=notrunc status=none # Sector 2048
 
         # Write [Kernel's default boot entry for loader]
         cat > build/bios/dflt_krnl_bootentry.asm <<'EOF'
@@ -32,7 +32,7 @@ build () {
             dw 0xABCD
 EOF
         nasm -f bin "build/bios/dflt_krnl_bootentry.asm" -o "build/bios/dflt_krnl_bootentry.bin" -dKRNL_LBA_COUNT=$(( ( $(stat -c%s build/bios/kernel/kernel.bin) + 511 ) / 512 ))
-        dd if=build/bios/dflt_krnl_bootentry.bin of=$bios_disk_img bs=512 seek=3 conv=notrunc # Sector 3 (mem offs: 0x8200)
+        dd if=build/bios/dflt_krnl_bootentry.bin of=$bios_disk_img bs=512 seek=3 conv=notrunc # Sector 3
 
     elif [[ "$1" == "uefi" ]]; then
         mkdir -p "build/uefi" && find "build/uefi" -mindepth 1 -delete # emptying build/uefi
@@ -40,10 +40,10 @@ EOF
         cd kernel ; bash compile.sh uefi && \
         cd ../boot/uefi/load64 ; bash compile.sh && cd ../../..
 
-        truncate -s $uefi_disk_size $uefi_disk_img # Generate a file with $disk_size of 0s
+        truncate -s $uefi_disk_size $uefi_disk_img # Generate a file with $uefi_disk_size of 0s
 
         # Write [Kernel]
-        dd if=build/uefi/kernel/kernel.elf of=$uefi_disk_img bs=512 seek=2048 conv=notrunc status=none # Sector 2048 (offs: 0x100000 = 1MiB)
+        dd if=build/uefi/kernel/kernel.elf of=$uefi_disk_img bs=512 seek=2048 conv=notrunc status=none
 
     else
         printf "Build BIOS or UEFI??? Try again, cuh."
