@@ -34,7 +34,9 @@ ls_collection:
 .boot_drive: db 0
 
 
-
+; --------------------------
+; Retrieve e820 memory map
+; --------------------------
 get_e820:
     xor ebx, ebx ; continuation value = 0
 
@@ -77,6 +79,9 @@ get_e820:
 
 
 
+; --------------------------------
+; Retrieve VBE Controller info
+; --------------------------------
 get_vbe_ctrl_info:
     ; Info dest
     xor ax, ax
@@ -111,10 +116,16 @@ get_vbe_ctrl_info:
 
 
 
+; ---------------------------------------------------------
+; Load boot config from LS_MACROS_BOOTCFG_START_LBA_BEGIN
+; ---------------------------------------------------------
 load_boot_config:
     mov dl, [ls_collection.boot_drive]
 
+    xor ax, ax
+    mov ds, ax
     mov si, .dap
+
     mov ah, 0x42
 
     int 0x13
@@ -133,16 +144,19 @@ load_boot_config:
     hlt
     jmp .hang
 
+; ----------------------
+; Read-only data
+; ----------------------
 .tell_fail_str:
-    db LS_COLLECTION_COMMONSTR, "Failed to load boot config, must be at sector ", ('0' + LS_MACROS_BOOTCFG_LBA_BEGIN), "!", 0
+    db LS_COLLECTION_COMMONSTR, "Failed to load boot config, must be at sector ", ('0' + LS_MACROS_BOOTCFG_START_LBA_BEGIN), "!", 0
 
 .dap:
-    db 0x10                            ; DAP size
-    db 0x00                            ; Reserved
-    dw LS_MACROS_BOOTCFG_LBA_COUNT     ; Sectors to read
-    dw LS_MACROS_BOOTCFG_LOAD_DEST_OFF ; Load dest offset
-    dw 0x00                            ; Load dest segment
-    dq LS_MACROS_BOOTCFG_LBA_BEGIN     ; LBA begin (starts at 0)
+    db 0x10                              ; DAP size
+    db 0x00                              ; Reserved
+    dw LS_MACROS_BOOTCFG_SECTORS_COUNT   ; Sectors to read
+    dw LS_MACROS_BOOTCFG_LOAD_DEST_OFF   ; Load dest offset
+    dw 0x00                              ; Load dest segment
+    dq LS_MACROS_BOOTCFG_START_LBA_BEGIN ; LBA begin (starts at 0)
 
 %define LS_SHARED_EXCLUDE_ENTER_MODES
 %include "bios/shared.inc"

@@ -44,10 +44,10 @@ ls_foundation: ; MBR
     xor di, di
     mov ax, 0xF000
 
-    mov si, .tell_done_str ; This is safe as long as `tell_done_str` doesn't pass (0x7DFE - strlen) in memory
+    mov si, .tell_done_str ; Safe if `.tell_done_str` isn't 0xFFFF> in memory (impossible)
 
 .done:
-    ; Tell that loader's foundation has been done
+    ; Print .tell_done_str to tell that the loader has done its job
     mov al, byte [si]
     stosw
     inc si
@@ -62,12 +62,15 @@ ls_foundation: ; MBR
     hlt
     jmp .hang
 
+; ----------------------
+; Read-only data
+; ----------------------
 .tell_done_str: db "Foundation: Done.", 0
 
 .dap:
     db 0x10                                ; DAP size
     db 0x00                                ; Reserved
-    dw LS_MACROS_NEXT_STAGES_LBA_COUNT     ; Sectors to read
+    dw LS_MACROS_NEXT_STAGES_SECTORS_COUNT     ; Sectors to read
     dw LS_MACROS_NEXT_STAGES_LOAD_DEST_OFF ; Load dest offset
     dw 0x00                                ; Load dest segment
     dq LS_MACROS_NEXT_STAGES_LBA_BEGIN     ; LBA begin (starts with 0)

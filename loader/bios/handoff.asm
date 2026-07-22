@@ -13,13 +13,18 @@ ls_handoff:
     mov al, byte [LS_MACROS_BOOTCFG_LOAD_DEST_OFF + LS_MACROS_BOOTSETTINGS_FIELD_PRIMARY_OPTION_BEGIN]
 
     test al, al
-    jnz .actual_handoff
+    jnz handoff_routine
 
     ; Prompt user for boot entry option
     ; ...
-    jmp .load_failed
+    jmp handoff_routine.load_failed
 
-.actual_handoff: ; AL -> boot entry option
+
+
+; ---------------------------------------------------------
+; Handoff rountine (like what the handoff codes would do)
+; ---------------------------------------------------------
+handoff_routine: ; AL -> boot entry option
     ; ESI -> chosen boot entry begin addr
     movzx bx, al
 
@@ -30,33 +35,18 @@ ls_handoff:
     movzx esi, word [bx] ; BX will always be below 0x9FFF, so it's safe
 
     ; Load payload according to boot entry
-    mov eax, dword [si + LS_MACROS_BOOTENTRY_FIELD_LBA_SRC_BEGIN]
+    ; [.dap + 8] is LBA start, which differs at runtime -> defaulted to 0 in DAP
+    ; here will set it to the runtime LBA start
+    mov eax, dword [si + LS_MACROS_BOOTENTRY_FIELD_START_LBA_BEGIN]
     mov dword [.dap + 8], eax
 
-    sectors_pack equ (LS_MACROS_TMP_MEM_END_SEG * 16 + LS_MACROS_TMP_MEM_END_OFF - LS_MACROS_TMP_MEM_BEGIN_OFF + 1) / 512
-
+;--------------------------
+; Loop of loading binary
+;--------------------------
+sectors_count_per_load equ (LS_MACROS_TMP_MEM_END_SEG * 16 + LS_MACROS_TMP_MEM_END_OFF - LS_MACROS_TMP_MEM_BEGIN_OFF + 1) >> 9 ; Doesn't need remainder
 .load_loop:
-    call ls_shared_enter_unreal_mode
-
-    add dword [.dap + 8], sectors_pack ; Increment LBA begin per BIOS call
-
-    ; If remain sectors r less than defined sectors pack count
-    mov ax, word [esi + LS_MACROS_BOOTENTRY_FIELD_LBA_COUNT_BEGIN]
-    cmp ax, sectors_pack
-    jb .load_last_sectors
-
-    ; Move bytes to load dest
-    push esi
-    mov edi, dword [esi + LS_MACROS_BOOTENTRY_FIELD_LOAD_DEST_BEGIN]
-    mov esi, LS_MACROS_TMP_MEM_BEGIN_OFF
-
-    mov cx, sectors_pack * 512 / 4
-    rep movsd
-
-    pop esi
-    add dword [esi + LS_MACROS_BOOTENTRY_FIELD_LOAD_DEST_BEGIN], LS_MACROS_TMP_MEM_END_SEG * 16 + LS_MACROS_TMP_MEM_END_OFF ; Increment load dest
-
-    call ls_shared_enter_real_mode
+    ; Basically, it will keep loading 600KiB (depends on sectors * 512) from the total binary to
+    ; (LS_MACROS_TMP_MEM_END_SEG * 16) + LS_MACROS_TMP_MEM_END_OFF then move the 600KiB to the actual load dest
 
     xor ax, ax
     mov ds, ax
@@ -65,14 +55,40 @@ ls_handoff:
     mov ah, 0x42
 
     int 0x13
-    jc .load_failed
+    jc .load_failed ; Failed here... possibly bc of DAP
+
+    ; ------------------------------
+    ; Enters Unreal mode fields
+    ; ------------------------------
+    call ls_shared_enter_unreal_mode
+
+    ; If remain sectors r less than defined sectors pack count
+    mov ax, word [esi + LS_MACROS_BOOTENTRY_FIELD_SECTORS_COUNT_BEGIN]
+    cmp ax, sectors_count_per_load
+    jb .load_last_sectors
+
+    ; Move bytes to load dest
+    push esi
+    mov edi, dword [esi + LS_MACROS_BOOTENTRY_FIELD_LOAD_DEST_BEGIN]
+    mov esi, LS_MACROS_TMP_MEM_BEGIN_OFF
+
+    mov cx, sectors_count_per_load * 512 / 4
+    rep movsd
+
+    pop esi
+    add dword [esi + LS_MACROS_BOOTENTRY_FIELD_LOAD_DEST_BEGIN], LS_MACROS_TMP_MEM_END_SEG * 16 + LS_MACROS_TMP_MEM_END_OFF ; Increment load dest
+    add dword [.dap + 8], sectors_count_per_load ; Increment LBA begin to next read point
+    sub dword [esi + LS_MACROS_BOOTENTRY_FIELD_SECTORS_COUNT_BEGIN], sectors_count_per_load ; Decrement leftover LBA count
+
+    call ls_shared_enter_real_mode
 
     jmp .load_loop
 
 .load_last_sectors:
-
+    jmp .hang
 
 .jump:
+
 
 .load_failed:
     xor ax, ax
@@ -82,9 +98,13 @@ ls_handoff:
     call ls_shared_print_str
 
 .hang:
+    cli
     hlt
     jmp .hang
 
+; ----------------------
+; Read-only data
+; ----------------------
 .tell_failed2load_str: db LS_HANDOFF_COMMONSTR, "Failed to load payload.", 0
 
 .dap: ; [.dap+2] and [.dap+8] must be dynamically defined

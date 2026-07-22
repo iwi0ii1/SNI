@@ -27,11 +27,19 @@ build () {
         # Write [Kernel's default boot entry for loader]
         cat > build/bios/dflt_krnl_bootentry.asm <<'EOF'
             section .rodata
-            times 510 db 0x00
-            
-            dw 0xABCD
+            db "SNI.Kernel (x64)" ; Display name
+            dd 2048               ; Start LBA
+            dd KRNL_SECTORS_COUNT ; Sectors count
+            dd 1024 * 1024        ; Load dest
+            dd 0x00               ; Extra
+            dw 0x00               ; Extra
+
+            times 512 - 34 - 2 db 0x00 ; Zero out between entries and settings
+
+            db 1 ; Primary boot option
+            db 0 ; Secondary boot option
 EOF
-        nasm -f bin "build/bios/dflt_krnl_bootentry.asm" -o "build/bios/dflt_krnl_bootentry.bin" -dKRNL_LBA_COUNT=$(( ( $(stat -c%s build/bios/kernel/kernel.bin) + 511 ) / 512 ))
+        nasm -f bin "build/bios/dflt_krnl_bootentry.asm" -o "build/bios/dflt_krnl_bootentry.bin" -dKRNL_SECTORS_COUNT=$(( ( $(stat -c%s build/bios/kernel/kernel.bin) + 511 ) / 512 ))
         dd if=build/bios/dflt_krnl_bootentry.bin of=$bios_disk_img bs=512 seek=3 conv=notrunc # Sector 3
 
     elif [[ "$1" == "uefi" ]]; then
