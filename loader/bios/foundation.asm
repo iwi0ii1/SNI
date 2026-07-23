@@ -75,5 +75,5 @@ ls_foundation: ; MBR
     dw 0x00                                ; Load dest segment
     dq LS_MACROS_NEXT_STAGES_LBA_BEGIN     ; LBA begin (starts with 0)
 
-times 510 - ($ - $$) db 0 ; BIOS signature and 512 byte alignment
+times 510 - ($ - $$) db 0 ; BIOS signature and 512 bytes alignment
 dw 0xAA55

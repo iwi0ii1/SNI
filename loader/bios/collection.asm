@@ -161,4 +161,4 @@ load_boot_config:
 %define LS_SHARED_EXCLUDE_ENTER_MODES
 %include "bios/shared.inc"
 
-times 512 - ($ - $$) db 0 ; Ensure 512 bytes with 0 filling
+times 512 - ($ - $$) db 0 ; 512 bytes alignment
