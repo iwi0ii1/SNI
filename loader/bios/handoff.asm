@@ -45,11 +45,11 @@ ls_handoff:
     mov es, ax ; Just to be sure
     mov ah, 0x42
 
+    int 0x13
+    jc .load_failed
     ; Halt here for debug
     cli
     hlt
-    int 0x13
-    jc .load_failed
 
     ; -----------------------------------------------------------------
     ; Enters Unreal mode -> move buffer to correct destination
